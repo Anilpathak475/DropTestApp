@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue500">#2196F3</color>
+    <color name="blue700">#1976D2</color>
+    <color name="greenA700">#00C853</color>
+    <color name="backgroud_grey">#EFEFF3</color>
+    <color name="white">#FFFFFF</color>
+    <color name="grey">#D3D3D3</color>
+    <color name="cancelled_bg">#FFD2C4</color>
+    <color name="cancelled_font">#FF3B30</color>
+    <color name="today_date">#C4E8FF</color>
+    <color name="edited_date">#FFF3C4</color>
+    <color name="edited_date_font">#FF8900</color>
+    <color name="text_color_light_grey">#AAAAAA</color>
+<color name="disabel_backgroud">#C7C7CC </color>
+    <color name="divider">#EFEFF3</color>
+    <color name="text_color_red">#FF1300</color>
+    <color name="current_date_background">#C4E8FF</color>
+    <color name="current_date_font">#007AFF</color>
+</resources>

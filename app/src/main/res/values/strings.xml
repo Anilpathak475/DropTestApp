@@ -1,0 +1,38 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Customer App</string>
+    <string name="end_time">Out Time</string>
+    <string name="start_time">In Time</string>
+    <string name="_11_34_am">11:34 am</string>
+    <string name="thursday_3_november">Thursday 3 november</string>
+    <string name="_8_00_pm">8:00 pm</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="no_event_schedule_for_this_day">No Event Schedule for This day</string>
+
+    <string-array name="custom_weekdays">
+        <item>Su</item>
+        <item>M</item>
+        <item>Tu</item>
+        <item>W</item>
+        <item>Th</item>
+        <item>F</item>
+        <item>Sa</item>
+    </string-array>
+
+    <string-array name="custom_months">
+        <item>JAN</item>
+        <item>Feb</item>
+        <item>MARCH</item>
+        <item>April</item>
+        <item>MAY</item>
+        <item>June</item>
+        <item>JULY</item>
+        <item>Aug</item>
+        <item>SEPT</item>
+        <item>Oct</item>
+        <item>Nov</item>
+        <item>DEC</item>
+    </string-array>
+</resources>
