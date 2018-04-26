@@ -1,34 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="horizontal_padding">16dp</dimen>
-    <dimen name="vertical_padding">16dp</dimen>
-    <dimen name="padding_circle">8dp</dimen>
-    <dimen name="padding">8dp</dimen>
-    <dimen name="margin">8dp</dimen>
     <dimen name="default_elevation">4dp</dimen>
-    <dimen name="divider_size">1dp</dimen>
-    <dimen name="dot_size">4dp</dimen>
-    <dimen name="time_width">96dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="padding_text">4dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
 
 
-    <dimen name="ts_xxsmall">10sp</dimen>
-    <dimen name="ts_xsmall">12sp</dimen>
-    <dimen name="ts_small">14sp</dimen>
     <dimen name="ts_regular">16sp</dimen>
-    <dimen name="ts_xregular">17sp</dimen>
-    <dimen name="ts_large">18sp</dimen>
-    <dimen name="ts_xlarge">20sp</dimen>
-    <dimen name="ts_xxlarge">22sp</dimen>
+    <dimen name="ts_x_regular">18sp</dimen>
+    <dimen name="ts_large">20sp</dimen>
+    <dimen name="ts_xlarge">22sp</dimen>
+    <dimen name="ts_xx_large">24sp</dimen>
 
-    <dimen name="validate_opt_height">200dp</dimen>
-    <dimen name="set_password_height">320dp</dimen>
-    <dimen name="emojio_size">26sp</dimen>
-    <dimen name="keyboard_height">250dp</dimen>
-    <dimen name="header_height">33dp</dimen>
 
 </resources>

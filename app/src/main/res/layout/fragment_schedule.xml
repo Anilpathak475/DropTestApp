@@ -1,27 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/calendarView"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-      />
-
+        android:elevation="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_height="wrap_content">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TableLayout
+            android:id="@+id/table_layout"
+            android:layout_width="match_parent"
+            android:stretchColumns="*"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+    </android.support.v7.widget.CardView>
+
+    <View
+        android:id="@+id/top_view"
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:paddingBottom="5dp"
+        android:background="#EFEFF3" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8">
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/calendarView"
-            android:layout_weight="1" />
+            android:background="@color/white"
+            android:layout_height="wrap_content" />
     </FrameLayout>
 
 </LinearLayout>

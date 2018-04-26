@@ -1,21 +1,38 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/app_theme_red</item>
+        <item name="colorPrimaryDark">@color/app_theme_red</item>
+        <item name="colorAccent">@color/app_theme_red</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="alertDialogTheme">@style/Theme.AppTheme.Dialog.Alert</item>
+    </style>
+
+    <style name="Theme.AppCompat.Light.NoActionBar" parent="@style/Theme.AppCompat.Light">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="colorPrimary">@color/blue500</item>
         <item name="colorPrimaryDark">@color/blue700</item>
         <item name="colorAccent">@color/greenA700</item>
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:textStyle">bold</item>
-        <item name="alertDialogTheme">@style/Theme.AppTheme.Dialog.Alert</item>
+        <item name="android:textSize">@dimen/ts_regular</item>
     </style>
+
+
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/blue500</item>
-        <item name="colorPrimaryDark">@color/blue700</item>
+        <item name="colorPrimaryDark">#121212</item>
         <item name="colorAccent">@color/greenA700</item>
         <item name="alertDialogTheme">@style/Theme.AppTheme.Dialog.Alert</item>
+    </style>
+
+    <style name="Base.Widget.Design.TabLayout" parent="android:Widget" tools:ignore="PrivateResource">
+        <item name="tabBackground">@drawable/tab_background</item>
+        <item name="android:textColor">@color/white</item>
+
     </style>
 
     <style name="Theme.AppTheme.Dialog.Alert" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -23,21 +40,10 @@
         <item name="colorAccent">@color/greenA700</item>
     </style>
 
-    <style name="SCBSwitch" parent="Theme.AppCompat.Light">
-        <!-- active thumb & track color (30% transparency) -->
-        <item name="colorControlActivated">#46bdbf</item>
-
-        <!-- inactive thumb color -->
-        <item name="colorSwitchThumbNormal">#f1f1f1</item>
-
-        <!-- inactive track color (30% transparency) -->
-        <item name="android:colorForeground">#42221f1f</item>
-    </style>
-
-
     <style name="button_basic" parent="@android:style/Widget.Button">
         <item name="android:textSize">@dimen/ts_regular</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/rounded_buttons</item>
     </style>
+
 </resources>

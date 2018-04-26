@@ -1,38 +1,54 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">Customer App</string>
     <string name="end_time">Out Time</string>
     <string name="start_time">In Time</string>
-    <string name="_11_34_am">11:34 am</string>
-    <string name="thursday_3_november">Thursday 3 november</string>
-    <string name="_8_00_pm">8:00 pm</string>
-    <string name="title_activity_home">HomeActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="no_event_schedule_for_this_day">No Event Schedule for This day</string>
+    <string name="in_time">In Time</string>
+    <string name="out_time">Out Time</string>
+    <string name="loading">Loading</string>
+    <string name="wait">Please wait</string>
+    <string name="map_package">com.google.android.apps.maps</string>
+    <string name="maps_navigation">google.navigation:q=</string>
+    <string name="maps_mode"><![CDATA[&mode=w&avoid=f]]></string>
 
-    <string-array name="custom_weekdays">
-        <item>Su</item>
-        <item>M</item>
-        <item>Tu</item>
-        <item>W</item>
-        <item>Th</item>
-        <item>F</item>
-        <item>Sa</item>
-    </string-array>
+    <string name="title_activity_login">Customer App</string>
 
-    <string-array name="custom_months">
-        <item>JAN</item>
-        <item>Feb</item>
-        <item>MARCH</item>
-        <item>April</item>
-        <item>MAY</item>
-        <item>June</item>
-        <item>JULY</item>
-        <item>Aug</item>
-        <item>SEPT</item>
-        <item>Oct</item>
-        <item>Nov</item>
-        <item>DEC</item>
-    </string-array>
+    <!-- Strings related to login -->
+    <string name="login">Login</string>
+    <string name="address">Address</string>
+    <string name="group">Group &amp; Shift</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="tap_to_select_your_nodal_pick_up_location">Tap to select your nodal pick up location</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="email_id">Email id</string>
+    <string name="last_name">Last Name</string>
+    <string name="first_name">First Name</string>
+    <string name="upload">Upload</string>
+    <string name="employee_id">Employee Id</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="alternative_email_id">Alternative Email id</string>
+    <string name="password">Password</string>
+    <string name="set_as_home_address">Select and Save</string>
+    <string name="set_as_nodal_point">Select and Save</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="back">Back</string>
+    <string name="location">Location</string>
+    <string name="membership_validity">Membership Validity</string>
+    <string name="right">Right</string>
+    <string name="logout">Logout</string>
+    <string name="submit">Submit</string>
+    <string name="boarding_pass">Boarding Pass</string>
+    <string name="bulk">Bulk</string>
+    <string name="change_password">Change password</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="group_and_shift">Groups and Shifts</string>
+    <string name="profile">Profile</string>
+    <string name="schedule">Schedule</string>
+    <string name="map_fragment">Map Fragment</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="new_password">New Password</string>
+    <string name="new_account">Don\'t have an account yet, Click Register</string>
+    <string name="register">Register</string>
+
 </resources>

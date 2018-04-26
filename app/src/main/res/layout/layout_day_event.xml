@@ -1,35 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="4dp"
+    android:elevation="10dp"
     android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="33dp"
-        android:background="#EFEFF3"
-        android:visibility="gone"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/txt_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:padding="5dp"
-            android:textStyle="normal"
-            android:textSize="@dimen/ts_xregular"
-            android:text="---" />
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_data"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="115dp"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -39,14 +20,13 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="center"
-
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/start_time"
-                android:textSize="@dimen/ts_xregular"
+                android:textSize="@dimen/ts_x_regular"
                 android:textAlignment="center"
                 android:textStyle="normal" />
 
@@ -54,7 +34,7 @@
                 android:id="@+id/txt_start_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="2dp"
                 android:text="--:--"
                 android:textAlignment="center"
                 android:textSize="@dimen/ts_large"
@@ -80,14 +60,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/end_time"
                 android:textAlignment="center"
-                android:textSize="@dimen/ts_xregular"
+                android:textSize="@dimen/ts_x_regular"
                 android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/txt_end_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="2dp"
                 android:text="--:--"
                 android:textAlignment="center"
                 android:textSize="@dimen/ts_xlarge"
@@ -98,8 +78,8 @@
     <RelativeLayout
         android:id="@+id/layout_no_data"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:visibility="visible">
+        android:layout_height="120dp"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -109,7 +89,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/txt_no_trip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No trip scheduled"
@@ -118,7 +97,6 @@
                 android:textStyle="normal" />
 
             <TextView
-                android:id="@+id/txt_tap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tap to book your ride"

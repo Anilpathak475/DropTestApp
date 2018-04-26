@@ -1,30 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:background="@color/white">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#5C5C5C"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        app:contentInsetEnd="0dp"
+        app:contentInsetStart="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/btn_refresh"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/ic_refresh_black_24dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:background="@drawable/ic_left_arrow"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txt_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="-10dp"
+                android:text="Titel"
+                android:textColor="@color/white"
+
+                android:textSize="@dimen/ts_xx_large" />
+
+            <Button
+                android:id="@+id/btn_activate_bulk_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="#5C5C5C"
+                android:stateListAnimator="@null"
+                android:text="Bulk"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_done_bulk_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="#5C5C5C"
+                android:stateListAnimator="@null"
+                android:text="Done"
+                android:textColor="@color/white"
+
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_save_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="#5C5C5C"
+                android:stateListAnimator="@null"
+                android:text="Save"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_update_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="#5C5C5C"
+                android:stateListAnimator="@null"
+                android:text="Update"
+                android:textColor="@color/white" />
+
+            <ImageView
+                android:id="@+id/img_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/ic_power_button"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
 
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/navigation"
-            />
+            android:layout_above="@+id/card_navigation" />
 
-        <android.support.design.widget.BottomNavigationView
-            android:id="@+id/navigation"
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/windowBackground"
             android:layout_alignParentBottom="true"
-            app:menu="@menu/navigation"
-            app:layout_scrollFlags="scroll|enterAlways|snap" />
 
+            android:elevation="10dp">
+
+            <android.support.design.widget.BottomNavigationView
+                android:id="@+id/navigation"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+
+                android:background="#fafafa"
+                app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
+                app:menu="@menu/navigation" />
+        </android.support.v7.widget.CardView>
     </RelativeLayout>
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
