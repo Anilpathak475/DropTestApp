@@ -101,7 +101,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         MapsInitializer.initialize(activity);
         ((HomeActivity) activity).setTitle("Your Ride");
     }
@@ -139,7 +138,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     public void onResume() {
         super.onResume();
         mMapView.onResume();
-
         startTrackingRepeated();
     }
 

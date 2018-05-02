@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -34,9 +33,6 @@ public class ClientGenerator {
             .client(
                     new OkHttpClient.Builder()
                             .retryOnConnectionFailure(true)
-                            .connectTimeout(1, TimeUnit.MINUTES)
-                            .readTimeout(40, TimeUnit.SECONDS)
-                            .writeTimeout(15, TimeUnit.SECONDS)
                             .addInterceptor(new Interceptor() {
                                 @Override
                                 public Response intercept(Chain chain) throws IOException {

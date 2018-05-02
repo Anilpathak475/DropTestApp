@@ -73,22 +73,6 @@ public class LoginActivity extends BaseActivity implements LoginView {
         }
     }
 
-
-   /* @OnClick(R.id.img_btn_show_password)
-    void onClickShowPassword() {
-        if (isPasswordVisible) {
-            imgBtnShowPassword.setImageDrawable(getResources().getDrawable(R.drawable.ic_hide));
-            isPasswordVisible = false;
-            edtPassword.setInputType(InputType.TYPE_CLASS_TEXT |
-                    InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        } else {
-            imgBtnShowPassword.setImageDrawable(getResources().getDrawable(R.drawable.ic_view));
-            isPasswordVisible = true;
-            edtPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-        }
-        edtPassword.setSelection(edtPassword.getText().length());
-    }*/
-
     @OnClick(R.id.btn_login)
     void onLogin() {
 
@@ -118,12 +102,6 @@ public class LoginActivity extends BaseActivity implements LoginView {
 
     private void startHomeActivity() {
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-       /* if(user.getShift() == null || user.getGroup() == null || user.getHomeStop() == null || user.getNodalStop()== null) {
-            intent.putExtra(Constants.PROFILE_STATUS, Constants.PROFILE_STATUS_IN_COMPLETED);
-        } else {
-            intent.putExtra(Constants.PROFILE_STATUS, Constants.PROFILE_STATUS_COMPLETED);
-        }*/
-
         startActivity(intent);
         finish();
     }

@@ -4,6 +4,7 @@ package com.cityzipcorp.customer.activities;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -73,7 +74,8 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     @BindView(id.btn_update_password)
     Button btnUpdatePassword;
 
-    int LOCATION_PERMISSION = 101;
+    private int LOCATION_PERMISSION = 101;
+    private UiUtils uiUtils;
     boolean bulkModeActivated = false;
     private LocationUtils locationUtils;
     SharedPreferenceManager sharedPreferenceManager;
@@ -129,14 +131,19 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     private void checkProfileStatus() {
+        uiUtils.showProgressDialog();
+
         UserStore.getInstance().getProfileStatus(sharedPreferenceManager.getAccessToken(), new ProfileStatusCallback() {
             @Override
             public void onSuccess(ProfileStatus profileStatus) {
+                uiUtils.dismissDialog();
                 validateProfileStatus(profileStatus);
             }
 
             @Override
             public void onFailure(Error error) {
+                uiUtils.dismissDialog();
+                setUpBottomNavigationView(0);
                 replaceFragment(new BoardingPassFragment(), getString(string.boarding_pass));
             }
         });
@@ -169,6 +176,8 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private void initVariables() {
         locationUtils = new LocationUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
+        uiUtils = new UiUtils(this);
+        registerReceiver(mMessageReceiver, new IntentFilter("fcm_data"));
     }
 
     public void setUpBottomNavigationView(int index) {

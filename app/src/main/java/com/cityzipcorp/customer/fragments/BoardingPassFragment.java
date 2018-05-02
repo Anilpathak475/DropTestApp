@@ -37,7 +37,6 @@ import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.LocationUtils;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -104,7 +103,6 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     private BoardingPass boardingPass;
     private BoardingPassPresenter boardingPassPresenter;
     private LocationUtils locationUtils;
-    private FusedLocationProviderClient fusedLocationProviderClient;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -115,7 +113,9 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        if (getScreenShotStatus()) {
+            activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        }
 
     }
 
@@ -126,7 +126,6 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
         ButterKnife.bind(this, view);
 
         locationUtils = new LocationUtils(activity);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
         buildGoogleApiClient();
 
         init();
@@ -346,5 +345,16 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     @Override
     public void onRefresh() {
         getPassDetails();
+    }
+
+    private boolean getScreenShotStatus() {
+        boolean isAllowed = true;
+        if (activity.getPackageName().equalsIgnoreCase("com.cityzipcorp.customer.staging")) {
+            isAllowed = false;
+        }
+        if (activity.getPackageName().equalsIgnoreCase("com.cityzipcorp.customer.preprod")) {
+            isAllowed = false;
+        }
+        return isAllowed;
     }
 }

@@ -109,7 +109,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
         ButterKnife.bind(this);
         initVariables();
         buildGoogleApiClient();
@@ -144,7 +143,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void initView() {
-
         if (ADDRESS_TYPE == 0) {
             autoCompleteLayout.setVisibility(View.VISIBLE);
             layoutTap.setVisibility(View.GONE);
@@ -175,11 +173,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         } else {
                             tv.setTextColor(getResources().getColor(R.color.black));
                         }
-
                     }
                 }
             });
-
             tickMarkLabelsRelativeLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -350,8 +346,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
-
-
         MapStyleOptions mapStyleOptions = MapStyleOptions.loadRawResourceStyle(this, R.raw.grey_map_style);
         map.setMapStyle(mapStyleOptions);
     }
@@ -466,7 +460,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void setMarkerBounce(ClusterManager clusterManager) {
         for (final com.google.android.gms.maps.model.Marker m : clusterManager.getMarkerCollection().getMarkers()) {
-
             final Handler handler = new Handler();
             final long startTime = SystemClock.uptimeMillis();
             final long duration = 2000;
@@ -477,7 +470,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     long elapsed = SystemClock.uptimeMillis() - startTime;
                     float t = Math.max(1 - interpolator.getInterpolation((float) elapsed / duration), 0);
                     m.setAnchor(0.5f, 1.0f + t);
-
                     if (t > 0.0) {
                         handler.postDelayed(this, 16);
                     }
@@ -485,7 +477,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             });
             return;
         }
-
     }
 
     void setNodalStopValue(NodalStop nodalStopValue) {

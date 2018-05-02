@@ -1,5 +1,6 @@
 package com.cityzipcorp.customer.store;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.cityzipcorp.customer.callbacks.GroupCallBack;
@@ -53,12 +54,10 @@ public class UserStore {
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
                     userCallback.onSuccess(response.body());
+                } else if (response.code() == 404 || response.code() == 400) {
+                    userCallback.onFailure(new Error("Invalid Credentials!"));
                 } else {
-                    if (response.code() == 404 && response.code() == 400) {
-                        userCallback.onFailure(new Error("Invalid Credentials!"));
-                    } else {
-                        userCallback.onFailure(new Error("Unable to login!"));
-                    }
+                    userCallback.onFailure(new Error("Unable to login!"));
                 }
             }
 
@@ -223,14 +222,14 @@ public class UserStore {
         Call<ResponseBody> call = userClient.registerDeviceToFcm(fcmRegistrationToken, Utils.getHeader(accessToken));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     Log.d("FCM Sync Status", "Fcm registration successfully");
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 Log.d(" FCM Sync Status", "Fcm registration failure");
             }
         });
