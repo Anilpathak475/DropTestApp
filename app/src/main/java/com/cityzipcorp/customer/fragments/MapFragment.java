@@ -34,6 +34,7 @@ import com.cityzipcorp.customer.model.GeoJsonPoint;
 import com.cityzipcorp.customer.model.TrackRide;
 import com.cityzipcorp.customer.store.BoardingPassStore;
 import com.cityzipcorp.customer.utils.CalenderUtil;
+import com.cityzipcorp.customer.utils.LocationUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -78,11 +79,12 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     TextView txtLastUpdated;
     @BindView(R.id.layout_otp)
     LinearLayout layoutOtp;
-    Marker vehicleMarker;
-    Marker serviceMarker;
-    Marker userLocationMarker;
 
-    List<LatLng> markers = new ArrayList<>();
+    private Marker vehicleMarker;
+    private Marker serviceMarker;
+    private Marker userLocationMarker;
+    private LocationUtils locationUtils;
+    private List<LatLng> markers = new ArrayList<>();
 
     private GoogleApiClient googleApiClient;
     private TrackRide trackRide;
@@ -115,10 +117,12 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     }
 
     private void init(@Nullable Bundle savedInstanceState, View view) {
+        locationUtils = new LocationUtils(activity);
+        buildGoogleApiClient();
         mMapView = view.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
-        buildGoogleApiClient();
+
     }
 
     @Override
@@ -156,9 +160,17 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        if (locationUtils.checkLocationPermission()) {
+            if (!locationUtils.isLocationEnabled()) {
+                locationUtils.enableGps(googleApiClient);
+            }
+            googleMap.setMyLocationEnabled(true);
+        }
+        getBundleExtra();
+
         MapStyleOptions mapStyleOptions = MapStyleOptions.loadRawResourceStyle(activity, R.raw.grey_map_style);
         googleMap.setMapStyle(mapStyleOptions);
-        getBundleExtra();
+
     }
 
     private boolean checkLocationPermission() {
@@ -241,7 +253,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                 if (serviceMarker == null) {
                     serviceMarker = googleMap.addMarker(new MarkerOptions().
                             position(latLng).
-                            anchor(0.6f, 0.50f).
                             title("Service Location").icon(BitmapDescriptorFactory.
                             fromBitmap(getBitmapBySize(R.drawable.service_location, 70, 100))));
                     markers.add(latLng);
@@ -254,7 +265,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                 if (vehicleMarker == null) {
                     vehicleMarker = googleMap.addMarker(new MarkerOptions().
                             position(latLng).
-                            anchor(0.3f, 0.90f).
                             title("Vehicle Location").icon(BitmapDescriptorFactory.
                             fromBitmap(getBitmapBySize(R.drawable.ic_car_placeholder, 70, 100))));
                     markers.add(latLng);
@@ -293,23 +303,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     }
 
 
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (checkLocationPermission()) return;
-        googleMap.setMyLocationEnabled(true);
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        if (mLastLocation != null) {
-           /* if (userLocationMarker == null) {
-                userLocationMarker = googleMap.addMarker(new MarkerOptions().
-                        position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude())).
-                        anchor(0.6f, 0.50f).
-                        title("Service Location").icon(BitmapDescriptorFactory.
-                        fromBitmap(getBitmapBySize(R.drawable.nodal_pin, 130, 130))));
-            } else {
-                animateMarker(userLocationMarker, new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), false);
-            }*/
-        }
         try {
             LocationRequest locationRequest = getLocationRequest();
             if (checkLocationPermission()) return;
@@ -320,6 +315,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         }
         googleMap.getUiSettings().setZoomControlsEnabled(false);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
     }
 
     private LocationRequest getLocationRequest() {
@@ -342,17 +338,17 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void onLocationChanged(Location location) {
-
-    }
-
-    private void changeMap(Location location) {
-        if (googleMap != null) {
-            googleMap.getUiSettings().setZoomControlsEnabled(false);
-            googleMap.getUiSettings().setMapToolbarEnabled(false);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14.0f));
-
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        if (userLocationMarker == null) {
+            userLocationMarker = googleMap.addMarker(new MarkerOptions().
+                    position(latLng).
+                    title("Service Location").icon(BitmapDescriptorFactory.
+                    fromBitmap(getBitmapBySize(R.drawable.home_pin, 70, 100))));
+        } else {
+            animateMarker(vehicleMarker, latLng, false);
         }
     }
+
 
     private Bitmap getBitmapBySize(int iconResID, int width, int height) {
         Drawable drawable = ContextCompat.getDrawable(activity, iconResID);

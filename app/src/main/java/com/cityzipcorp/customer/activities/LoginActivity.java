@@ -39,14 +39,10 @@ public class LoginActivity extends BaseActivity implements LoginView {
     @BindView(R.id.btn_login)
     protected Button btnLogin;
 
-//    @BindView(R.id.img_btn_show_password)
-//    protected ImageButton imgBtnShowPassword;
-
     @BindView(R.id.btn_register)
     protected TextView btnRegister;
 
     private UiUtils uiUtils;
-    private boolean isPasswordVisible = false;
     private LoginPresenter loginPresenter;
 
     @Override
@@ -75,7 +71,6 @@ public class LoginActivity extends BaseActivity implements LoginView {
 
     @OnClick(R.id.btn_login)
     void onLogin() {
-
         String email = edtUserName.getText().toString();
         String password = edtPassword.getText().toString();
         if (NetworkUtils.isNetworkAvailable(this)) {
@@ -94,7 +89,6 @@ public class LoginActivity extends BaseActivity implements LoginView {
 
     @OnClick(R.id.btn_register)
     void register() {
-
         Intent intent = new Intent(LoginActivity.this, ForgotPassword.class);
         intent.putExtra("action", "register");
         startActivity(intent);

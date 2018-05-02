@@ -132,7 +132,6 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private void checkProfileStatus() {
         uiUtils.showProgressDialog();
-
         UserStore.getInstance().getProfileStatus(sharedPreferenceManager.getAccessToken(), new ProfileStatusCallback() {
             @Override
             public void onSuccess(ProfileStatus profileStatus) {
@@ -170,7 +169,6 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         bundle.putString(Constants.PROFILE_STATUS, Constants.PROFILE_STATUS_IN_COMPLETED);
         fragment.setArguments(bundle);
         replaceFragment(fragment, getString(string.edit_profile));
-        replaceFragment(new BoardingPassFragment(), getString(string.boarding_pass));
     }
 
     private void initVariables() {
@@ -181,10 +179,12 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     public void setUpBottomNavigationView(int index) {
+        navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         addFragmentByIndex(index);
         navigationView.setVisibility(View.VISIBLE);
-        navigationView.setSelectedItemId(index);
-        navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        navigationView.getMenu().getItem(index).setChecked(true);
+
+
     }
 
     private void addFragmentByIndex(int index) {

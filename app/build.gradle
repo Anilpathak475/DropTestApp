@@ -23,7 +23,7 @@ android {
             versionCode 1
             versionName '1.0'
             multiDexEnabled true
-            buildConfigField 'String', 'BASE_URL', "\" http://api-preprod.cityzipcorp.in/\""
+            buildConfigField 'String', 'BASE_URL', "\" http://api-preprod.cityzipcorp.in\""
 
         }
         preprod {
@@ -33,7 +33,7 @@ android {
             versionCode 1
             versionName '1.0'
             multiDexEnabled true
-            buildConfigField 'String', 'BASE_URL', "\"http://api-customer-preprod.cityzipcorp.in/\""
+            buildConfigField 'String', 'BASE_URL', "\"http://api-customer-preprod.cityzipcorp.in\""
             resValue 'string', 'google_maps_api_key', "\"AIzaSyDAmlBKUTYq6bc3D42L7i9_krGre-zvUrg\""
 
 
@@ -45,7 +45,7 @@ android {
             versionCode 1
             versionName '1.0'
             multiDexEnabled true
-            buildConfigField 'String', 'BASE_URL', "\"http://139.59.86.70\""
+            buildConfigField 'String', 'BASE_URL', "\"http://api-customer-staging.cityzipcorp.in\""
             resValue 'string', 'google_maps_api_key', "\"AIzaSyDUj5kX3TqwW3pCStQpK43oswapBCvLc-s\""
 
         }

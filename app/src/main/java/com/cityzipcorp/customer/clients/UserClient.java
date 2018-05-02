@@ -29,7 +29,7 @@ public interface UserClient {
     @POST("/api/v1/users/login/")
     Call<User> login(@Body UserCredential userCredential);
 
-    @GET("api/v1/users/profile_status/")
+    @GET("/api/v1/users/profile_status/")
     Call<ProfileStatus> getProfileStatus(@HeaderMap Map<String, String> headers);
 
     @POST("/api/v1/users/logout/")

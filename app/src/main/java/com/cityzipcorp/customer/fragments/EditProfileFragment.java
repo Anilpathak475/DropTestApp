@@ -170,7 +170,7 @@ public class EditProfileFragment extends BaseFragment {
         edtEmailId.setText(Utils.replaceNull(user.getEmail()));
         edtAlternativeEmailId.setText(Utils.replaceNull(user.getAlternateEmail()));
         edtEmployeeId.setText(Utils.replaceNull(user.getEmployeeId()));
-        edtMobileNo.setText(Utils.replaceNull(user.getPhoneNumber().replace("+91", "")));
+        edtMobileNo.setText(Utils.replaceNull(user.getPhoneNumber()).replace("+91", ""));
         userId = Utils.replaceNull(user.getId());
         String gender = Utils.replaceNull(user.getGender());
         if (gender.equalsIgnoreCase("m")) {
@@ -196,6 +196,7 @@ public class EditProfileFragment extends BaseFragment {
         sharedPreferenceUtils.isImageStored(true);
         sharedPreferenceUtils.saveImageData(encodedImage);
         uiUtils.showProgressDialog();
+        user.setId(userId);
         UserStore.getInstance().updateProfileInfo(sharedPreferenceUtils.getAccessToken(), user, new UserCallback() {
             @Override
             public void onSuccess(User user) {
