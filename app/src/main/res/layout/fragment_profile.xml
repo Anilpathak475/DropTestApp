@@ -136,7 +136,7 @@
                                     <ImageView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:src="@drawable/ic_group" />
+                                        android:src="@drawable/groups" />
 
                                     <TextView
                                         android:id="@+id/txt_grp"
@@ -161,7 +161,7 @@
                                     <ImageView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:src="@drawable/ic_clock_circular_outline" />
+                                        android:src="@drawable/shift_icon" />
 
                                     <TextView
                                         android:id="@+id/txt_shift"
@@ -216,7 +216,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_marginStart="10dp"
-                                android:src="@drawable/ic_home_location" />
+                                android:src="@drawable/home_location" />
 
                             <TextView
                                 android:id="@+id/txt_home_address"
@@ -271,7 +271,7 @@
                                 android:layout_height="20dp"
                                 android:layout_marginStart="10dp"
                                 android:contentDescription="@string/location"
-                                android:src="@drawable/ic_node_location" />
+                                android:src="@drawable/nodal_location" />
 
                             <TextView
                                 android:id="@+id/txt_nodal_address"

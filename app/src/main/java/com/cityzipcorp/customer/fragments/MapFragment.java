@@ -254,7 +254,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                     serviceMarker = googleMap.addMarker(new MarkerOptions().
                             position(latLng).
                             title("Service Location").icon(BitmapDescriptorFactory.
-                            fromBitmap(getBitmapBySize(R.drawable.service_location, 70, 100))));
+                            fromBitmap(getBitmapBySize(R.drawable.service_location_pin, 70, 100))));
                     markers.add(latLng);
                 }
             }
