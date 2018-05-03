@@ -204,6 +204,7 @@
                 android:id="@+id/layout_change_password"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:visibility="gone"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 >

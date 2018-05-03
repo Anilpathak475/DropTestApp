@@ -173,10 +173,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     private void setValues(User user) {
         this.user = user;
         if (user.getFirstName() != null && user.getLastName() != null) {
-            if (getActivity() != null)
-                getActivity().setTitle(user.getFirstName() + " " + user.getLastName());
+            if (homeActivity != null)
+                homeActivity.setTitle(user.getFirstName() + " " + user.getLastName());
         } else {
-            if (getActivity() != null) getActivity().setTitle("Profile");
+            if (homeActivity != null) homeActivity.setTitle("Profile");
         }
         if (user.getHomeStop() != null && user.getAddress() != null) {
             Address address = user.getAddress();

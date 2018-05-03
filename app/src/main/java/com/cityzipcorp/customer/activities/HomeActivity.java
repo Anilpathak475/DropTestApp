@@ -361,10 +361,10 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
             btnSaveProfile.setVisibility(View.VISIBLE);
             btnBack.setVisibility(View.VISIBLE);
         }
-        if (pageName.equalsIgnoreCase(getString(string.change_password))) {
+        /*if (pageName.equalsIgnoreCase(getString(string.change_password))) {
             btnSaveProfile.setVisibility(View.VISIBLE);
             btnBack.setVisibility(View.VISIBLE);
-        }
+        }*/
 
         if (pageName.equalsIgnoreCase(getString(string.boarding_pass))) {
             imgRefresh.setVisibility(View.VISIBLE);
