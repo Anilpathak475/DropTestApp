@@ -90,6 +90,8 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     implementation 'com.google.firebase:firebase-messaging:15.0.0'
     implementation 'com.google.zxing:core:3.3.2'
+    implementation 'com.wang.avi:library:1.0.5'
+
     implementation 'com.marlonmafra.android.widget:edittext-password:1.0.0'
     implementation 'com.google.android.gms:play-services-location:15.0.0'
     implementation 'com.google.android.gms:play-services-places:15.0.0'

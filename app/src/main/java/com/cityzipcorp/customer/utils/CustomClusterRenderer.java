@@ -43,10 +43,11 @@ public class CustomClusterRenderer extends DefaultClusterRenderer<NodalStop> {
                                                MarkerOptions markerOptions) {
         BitmapDescriptor markerDescriptor;
         if (selectedNodalStopId.equalsIgnoreCase(item.getId())) {
-            markerDescriptor = bitmapDescriptorFromVector(mContext, R.drawable.nodal_pin_selected);
+            markerDescriptor = BitmapDescriptorFactory.
+                    fromBitmap(getBitmapBySize(R.drawable.nodal_pin_selected, 80, 120));
         } else {
-            markerDescriptor = bitmapDescriptorFromVector(mContext, R.drawable.nodal_pin);
-
+            markerDescriptor = BitmapDescriptorFactory.
+                    fromBitmap(getBitmapBySize(R.drawable.nodal_pin, 80, 120));
         }
         markerOptions.icon(markerDescriptor).snippet(item.getStop().getName());
     }

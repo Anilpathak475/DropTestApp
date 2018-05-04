@@ -279,7 +279,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     @OnClick(id.img_logout)
     void onLogout() {
-        new UiUtils(this).getAlertDialogWithMessage("R u sure, You want to logout.", new DialogCallback() {
+        new UiUtils(this).getAlertDialogWithMessage(" Are you sure you want to logout ?.", new DialogCallback() {
             @Override
             public void onYes() {
                 navigateToLogin();

@@ -11,7 +11,6 @@ import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -31,24 +30,37 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 public class UiUtils {
     private ProgressDialog progress;
     public Activity activity;
+    AVLoadingIndicatorDialog avLoadingIndicatorDialog;
+
     public UiUtils(Activity activity) {
-        this.activity =activity;
+        this.activity = activity;
+
     }
 
-    public  void showDialog(String title,String message) {
+    public void showDialog(String title, String message) {
         progress = ProgressDialog.show(activity, title,
                 message, true);
     }
 
     public void showProgressDialog() {
-        progress = ProgressDialog.show(activity, getString(R.string.loading),
+        avLoadingIndicatorDialog = new AVLoadingIndicatorDialog(activity);
+        avLoadingIndicatorDialog.setMessage(getString(R.string.loading));
+        avLoadingIndicatorDialog.show();
+       /* progress = ProgressDialog.show(activity, getString(R.string.loading),
                 getString(R.string.wait), true);
-        progress.setCanceledOnTouchOutside(true);
+        progress.setCanceledOnTouchOutside(true);*/
     }
-    public  void dismissDialog() {
-        if(progress!=null) {
+
+    public void dismissDialog() {
+       /* if(progress!=null) {
             if (progress.isShowing()) {
                 progress.dismiss();
+            }
+        }*/
+
+        if (avLoadingIndicatorDialog != null) {
+            if (avLoadingIndicatorDialog.isShowing()) {
+                avLoadingIndicatorDialog.dismiss();
             }
         }
     }
@@ -94,10 +106,10 @@ public class UiUtils {
         dialog.setContentView(R.layout.layout_conformation_pop_up);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        /*lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         lp.gravity = Gravity.CENTER;
-        dialog.getWindow().setAttributes(lp);
+        dialog.getWindow().setAttributes(lp);*/
         Button btnOk = dialog.findViewById(R.id.btn_ok);
         TextView textView = dialog.findViewById(R.id.txt_message);
         textView.setText(message);

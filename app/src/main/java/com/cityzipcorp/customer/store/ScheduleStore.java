@@ -99,6 +99,7 @@ public class ScheduleStore {
                     activity.setResult(Activity.RESULT_OK, new Intent().putExtra("status", "success"));
                     activity.finish();
                 } else {
+
                     Toast.makeText(activity, "Error code is " + response.code(), Toast.LENGTH_LONG).show();
                 }
             }
@@ -120,13 +121,13 @@ public class ScheduleStore {
                 if (response.isSuccessful()) {
                     shiftCallback.onSuccess(response.body());
                 } else {
-                    shiftCallback.onFailure(new Error("Request failed with requestCode " + response.code()));
+                    shiftCallback.onFailure(new Error("Unable to get Shift timings"));
                 }
             }
 
             @Override
             public void onFailure(Call<ShiftTiming> call, Throwable t) {
-                shiftCallback.onFailure(new Error(t));
+                shiftCallback.onFailure(new Error("Unable to get Shift timings"));
             }
         });
 

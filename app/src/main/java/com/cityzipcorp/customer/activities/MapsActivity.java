@@ -129,8 +129,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else if (!locationUtils.isLocationEnabled()) {
             locationUtils.enableGps(googleApiClient);
         }
-
-
     }
 
     private void getBundleExtra() {
@@ -318,7 +316,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             homeMarker = googleMap.addMarker(new MarkerOptions().
                     position(latLng).
                     title("Home").icon(BitmapDescriptorFactory.
-                    fromBitmap(uiUtils.getBitmapBySize(R.drawable.home_pin, 80, 120))));
+                    fromBitmap(uiUtils.getBitmapBySize(R.drawable.home_location_pin, 80, 120))));
             moveMap();
         } else {
             if (locationUtils.checkLocationPermission()) {

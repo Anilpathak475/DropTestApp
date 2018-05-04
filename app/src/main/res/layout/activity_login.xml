@@ -43,6 +43,7 @@
                 android:imeOptions="actionNext"
                 android:inputType="textEmailAddress"
                 android:padding="5dp"
+                android:text="renuka+suhasmandrawadkar@theprocedure.in"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
                 android:textColorLink="@color/white" />

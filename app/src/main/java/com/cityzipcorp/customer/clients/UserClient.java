@@ -1,5 +1,6 @@
 package com.cityzipcorp.customer.clients;
 
+import com.cityzipcorp.customer.model.ChangePassword;
 import com.cityzipcorp.customer.model.FcmRegistrationToken;
 import com.cityzipcorp.customer.model.Group;
 import com.cityzipcorp.customer.model.NodalStop;
@@ -54,6 +55,9 @@ public interface UserClient {
 
     @POST("/api/v1/gcm_devices/")
     Call<ResponseBody> registerDeviceToFcm(@Body FcmRegistrationToken fcmRegistrationToken, @HeaderMap Map<String, String> headers);
+
+    @POST("/api/v1/users/change_password/")
+    Call<ResponseBody> changePassword(@Body ChangePassword changePassword, @HeaderMap Map<String, String> headers);
 
 
 }

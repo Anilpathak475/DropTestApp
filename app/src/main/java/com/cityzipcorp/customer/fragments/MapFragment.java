@@ -1,6 +1,5 @@
 package com.cityzipcorp.customer.fragments;
 
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -12,7 +11,6 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
@@ -22,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -53,12 +52,11 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static com.cityzipcorp.customer.utils.Utils.replaceNull;
 
@@ -79,17 +77,18 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     TextView txtLastUpdated;
     @BindView(R.id.layout_otp)
     LinearLayout layoutOtp;
+    @BindView(R.id.center_map)
+    ImageButton centerMap;
 
     private Marker vehicleMarker;
     private Marker serviceMarker;
     private Marker userLocationMarker;
     private LocationUtils locationUtils;
-    private List<LatLng> markers = new ArrayList<>();
-
     private GoogleApiClient googleApiClient;
     private TrackRide trackRide;
     private BoardingPass boardingPass;
-
+    private LatLngBounds bounds;
+    private LatLngBounds.Builder builder;
     private Runnable locationRequestRunnable = new Runnable() {
         @Override
         public void run() {
@@ -119,6 +118,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     private void init(@Nullable Bundle savedInstanceState, View view) {
         locationUtils = new LocationUtils(activity);
         buildGoogleApiClient();
+        initLocation();
+        getBundleExtra();
         mMapView = view.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
@@ -128,7 +129,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getActivity().setTitle(getString(R.string.boarding_pass));
+        ((HomeActivity) getActivity()).setTitle(getString(R.string.boarding_pass));
     }
 
     @Override
@@ -156,6 +157,10 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         handler.postDelayed(locationRequestRunnable, 10000);
     }
 
+    private void moveMap() {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(boardingPass.getGeoJsonPoint().getLocation(), 14.0f));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -166,15 +171,22 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             }
             googleMap.setMyLocationEnabled(true);
         }
-        getBundleExtra();
-
+        trackMyRide();
         MapStyleOptions mapStyleOptions = MapStyleOptions.loadRawResourceStyle(activity, R.raw.grey_map_style);
         googleMap.setMapStyle(mapStyleOptions);
-
     }
 
-    private boolean checkLocationPermission() {
-        return ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
+    private void initLocation() {
+        if (!locationUtils.checkLocationPermission()) {
+            locationUtils.requestLocationPermission();
+        } else if (!locationUtils.isLocationEnabled()) {
+            locationUtils.enableGps(googleApiClient);
+        }
+    }
+
+    @OnClick(R.id.center_map)
+    void onRecenterMap() {
+        recenterMap();
     }
 
     private void getBundleExtra() {
@@ -182,20 +194,20 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         if (bundle != null) {
             trackRide = bundle.getParcelable("track");
             boardingPass = bundle.getParcelable("boardingPass");
-            drawTripDetailsOnMap(trackRide);
-            trackMyRide();
         }
     }
 
     private void requestLatestTrackLocations() {
-
-        if (checkLocationPermission()) return;
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        if (location != null) {
-            Log.d("Location", "my location is " + location.toString());
-            fetchTripDetailsOnMap(location);
+        if (locationUtils.checkLocationPermission()) {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+            if (location != null) {
+                Log.d("Location", "my location is " + location.toString());
+                fetchTripDetailsOnMap(location);
+            } else {
+                uiUtils.shortToast("Unable to fetch location");
+            }
         } else {
-            uiUtils.shortToast("Unable to fetch location");
+            locationUtils.requestLocationPermission();
         }
     }
 
@@ -233,20 +245,20 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                 layoutOtp.setVisibility(View.GONE);
             } else {
                 layoutOtp.setVisibility(View.VISIBLE);
-                txtOtp.setText(boardingPass.getOtp());
+                txtOtp.setText(" " + boardingPass.getOtp());
             }
             if (trackRide.getEta() >= 0) {
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(trackRide.getEta());
                 txtEta.setText(String.valueOf(minutes) + " m");
             }
-
+            drawTripDetailsOnMap(trackRide);
             startTrackingRepeated();
         }
     }
 
     private void drawTripDetailsOnMap(TrackRide trackRide) {
-        markers.clear();
         if (googleMap != null) {
+            builder = new LatLngBounds.Builder();
             if (trackRide.getServiceLocation() != null) {
                 GeoJsonPoint geoJsonPoint = trackRide.getServiceLocation();
                 LatLng latLng = new LatLng(geoJsonPoint.getCoordinates()[1], geoJsonPoint.getCoordinates()[0]);
@@ -254,9 +266,10 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                     serviceMarker = googleMap.addMarker(new MarkerOptions().
                             position(latLng).
                             title("Service Location").icon(BitmapDescriptorFactory.
-                            fromBitmap(getBitmapBySize(R.drawable.service_location_pin, 70, 100))));
-                    markers.add(latLng);
+                            fromBitmap(getBitmapBySize(R.drawable.service_location_pin, 80, 120))));
+
                 }
+                builder.include(latLng);
             }
 
             if (trackRide.getVehicleLocation() != null) {
@@ -266,50 +279,40 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                     vehicleMarker = googleMap.addMarker(new MarkerOptions().
                             position(latLng).
                             title("Vehicle Location").icon(BitmapDescriptorFactory.
-                            fromBitmap(getBitmapBySize(R.drawable.ic_car_placeholder, 70, 100))));
-                    markers.add(latLng);
+                            fromBitmap(getBitmapBySize(R.drawable.track_bus_pin, 80, 120))));
 
                 } else {
                     animateMarker(vehicleMarker, latLng, false);
-                    markers.add(latLng);
                 }
+                builder.include(latLng);
             }
-            drawRootAndCenterBoundMap();
             if (trackRide.getRecordedAt() != null) {
                 txtLastUpdated.setText(CalenderUtil.getTime(trackRide.getRecordedAt()));
             }
+
+            if (bounds == null) {
+                recenterMap();
+            }
         }
     }
 
+    private void recenterMap() {
+        bounds = builder.build();
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
 
-    private void drawRootAndCenterBoundMap() {
-        try {
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-
-            builder.include(markers.get(0));
-            builder.include(markers.get(1));
-
-            LatLngBounds bounds = builder.build();
-
-            int width = getResources().getDisplayMetrics().widthPixels;
-            int height = getResources().getDisplayMetrics().heightPixels;
-            int padding = (int) (width * 0.50); // offset from edges of the map 10% of screen
-
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-            googleMap.animateCamera(cu);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+        googleMap.animateCamera(cu);
     }
-
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         try {
             LocationRequest locationRequest = getLocationRequest();
-            if (checkLocationPermission()) return;
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-
+            if (locationUtils.checkLocationPermission()) {
+                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -343,9 +346,10 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             userLocationMarker = googleMap.addMarker(new MarkerOptions().
                     position(latLng).
                     title("Service Location").icon(BitmapDescriptorFactory.
-                    fromBitmap(getBitmapBySize(R.drawable.home_pin, 70, 100))));
+                    fromBitmap(getBitmapBySize(R.drawable.home_location_pin, 80, 120))));
+
         } else {
-            animateMarker(vehicleMarker, latLng, false);
+            animateMarker(userLocationMarker, latLng, false);
         }
     }
 
@@ -362,21 +366,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
         return Bitmap.createScaledBitmap(bitmap, width, height, false);
-    }
-
-    private LatLng getCurrentLocation() {
-        //Creating a location object
-        LatLng latLng = null;
-
-        if (checkLocationPermission()) return latLng;
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        if (googleApiClient == null) {
-            buildGoogleApiClient();
-        }
-        if (location != null) {
-            latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        }
-        return latLng;
     }
 
     public void animateMarker(final Marker marker, final LatLng toPosition,

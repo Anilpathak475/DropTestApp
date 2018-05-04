@@ -1,17 +1,20 @@
 package com.cityzipcorp.customer.fragments;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +34,7 @@ import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.Utils;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -259,10 +263,15 @@ public class EditProfileFragment extends BaseFragment {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            imgProfile.setImageBitmap(photo);
+            Bundle bundle = data.getExtras();
+            if (Objects.requireNonNull(bundle).containsKey("data") && bundle.get("data") != null) {
+                Bitmap photo = (Bitmap) bundle.get("data");
+                imgProfile.setImageBitmap(photo);
+                Log.i("Camera", "" + photo + "  /  " + data.getExtras().get("data") + "  / " + data.getData());
+            }
         }
     }
 

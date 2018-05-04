@@ -9,6 +9,7 @@ public class SetNewPassword {
     @SerializedName("password")
     private String newPassword;
 
+
     private String confirmPassword;
     private String email;
 

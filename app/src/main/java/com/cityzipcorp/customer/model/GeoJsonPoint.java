@@ -3,6 +3,8 @@ package com.cityzipcorp.customer.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by anilpathak on 21/11/17.
  */
@@ -44,6 +46,9 @@ public class GeoJsonPoint implements Parcelable {
         dest.writeDoubleArray(this.coordinates);
     }
 
+    public LatLng getLocation() {
+        return new LatLng(coordinates[1], coordinates[0]);
+    }
     public double[] getCoordinates() {
         return coordinates;
     }

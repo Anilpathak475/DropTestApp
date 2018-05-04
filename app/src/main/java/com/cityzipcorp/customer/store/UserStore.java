@@ -10,6 +10,7 @@ import com.cityzipcorp.customer.callbacks.StatusCallback;
 import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.clients.LoginClient;
 import com.cityzipcorp.customer.clients.UserClient;
+import com.cityzipcorp.customer.model.ChangePassword;
 import com.cityzipcorp.customer.model.FcmRegistrationToken;
 import com.cityzipcorp.customer.model.Group;
 import com.cityzipcorp.customer.model.NodalStop;
@@ -231,6 +232,28 @@ public class UserStore {
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 Log.d(" FCM Sync Status", "Fcm registration failure");
+            }
+        });
+    }
+
+    public void changePassword(ChangePassword changePassword, String accessToken, final StatusCallback statusCallback) {
+        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        Call<ResponseBody> call = userClient.changePassword(changePassword, Utils.getHeader(accessToken));
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    statusCallback.onSuccess();
+                } else if (response.code() == 400) {
+                    statusCallback.onFailure(new Error("Current password do not match"));
+                } else {
+                    statusCallback.onFailure(new Error("Unable to change password"));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                statusCallback.onFailure(new Error("Unable to change password"));
             }
         });
     }

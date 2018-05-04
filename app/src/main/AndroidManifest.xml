@@ -73,7 +73,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="dev-crm.cityzipcorp.in"
+                    android:host="dev-customer.cityzipcorp.in"
                     android:pathPrefix="/access/set-new-password"
                     android:scheme="http" />
             </intent-filter>
@@ -84,7 +84,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="preprod-crm.cityzipcorp.in"
+                    android:host="preprod-customer.cityzipcorp.in"
                     android:pathPrefix="/access/set-new-password"
                     android:scheme="http" />
             </intent-filter>
