@@ -112,6 +112,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
         initTabLayout();
         getShiftTimings();
         getReason();
+
     }
 
     private void initTabLayout() {
