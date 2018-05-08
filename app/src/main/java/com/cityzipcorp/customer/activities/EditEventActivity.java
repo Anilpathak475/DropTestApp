@@ -90,8 +90,6 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
 
-    private boolean isStartTime;
-
     private List<String> inTimes = new ArrayList<>();
     private List<String> outTimes = new ArrayList<>();
 
