@@ -3,6 +3,7 @@ package com.cityzipcorp.customer.store;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.cityzipcorp.customer.callbacks.AreaCallback;
 import com.cityzipcorp.customer.callbacks.GroupCallBack;
 import com.cityzipcorp.customer.callbacks.NodalStopCallback;
 import com.cityzipcorp.customer.callbacks.ProfileStatusCallback;
@@ -10,6 +11,7 @@ import com.cityzipcorp.customer.callbacks.StatusCallback;
 import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.clients.LoginClient;
 import com.cityzipcorp.customer.clients.UserClient;
+import com.cityzipcorp.customer.model.Area;
 import com.cityzipcorp.customer.model.ChangePassword;
 import com.cityzipcorp.customer.model.FcmRegistrationToken;
 import com.cityzipcorp.customer.model.Group;
@@ -254,6 +256,27 @@ public class UserStore {
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 statusCallback.onFailure(new Error("Unable to change password"));
+            }
+        });
+    }
+
+
+    public void getAreas(String accessToken, final AreaCallback areaCallback) {
+        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        Call<List<Area>> call = userClient.getAreas(Utils.getHeader(accessToken));
+        call.enqueue(new Callback<List<Area>>() {
+            @Override
+            public void onResponse(Call<List<Area>> call, Response<List<Area>> response) {
+                if (response.isSuccessful()) {
+                    areaCallback.onSuccess(response.body());
+                } else {
+                    areaCallback.onFailure(new Error("Unable to get Areas"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Area>> call, Throwable t) {
+                areaCallback.onFailure(new Error("Unable to get Areas"));
             }
         });
     }

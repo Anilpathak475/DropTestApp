@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.model.SetNewPassword;
@@ -14,6 +13,7 @@ import com.cityzipcorp.customer.mvp.setpassword.SetNewPasswordPresenterImpl;
 import com.cityzipcorp.customer.mvp.setpassword.SetNewPasswordView;
 import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.UiUtils;
+import com.marlonmafra.android.widget.EditTextPassword;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,10 +23,10 @@ public class SetNewPasswordActivity extends AppCompatActivity implements SetNewP
 
 
     @BindView(R.id.edt_new_password)
-    EditText edtNewPassword;
+    EditTextPassword edtNewPassword;
 
     @BindView(R.id.edt_confirm_password)
-    EditText edtConfirmPassword;
+    EditTextPassword edtConfirmPassword;
 
     @BindView(R.id.btn_submit)
     Button btnSubmit;
@@ -39,7 +39,7 @@ public class SetNewPasswordActivity extends AppCompatActivity implements SetNewP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_set_new_password);
+        setContentView(R.layout.activity_new_user_password);
         ButterKnife.bind(this);
         presenter = new SetNewPasswordPresenterImpl(this);
         uiUtils = new UiUtils(this);

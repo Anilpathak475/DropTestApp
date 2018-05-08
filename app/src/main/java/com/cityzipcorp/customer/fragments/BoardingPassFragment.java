@@ -22,7 +22,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.activities.HomeActivity;
@@ -99,7 +98,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    GoogleApiClient googleApiClient;
+    private GoogleApiClient googleApiClient;
     private BoardingPass boardingPass;
     private BoardingPassPresenter boardingPassPresenter;
     private LocationUtils locationUtils;
@@ -124,7 +123,6 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_borading_pass, container, false);
         ButterKnife.bind(this, view);
-
         locationUtils = new LocationUtils(activity);
         buildGoogleApiClient();
 
@@ -149,8 +147,6 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null)
-            getActivity().setTitle(getString(R.string.boarding_pass));
     }
 
     @Override
@@ -181,7 +177,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     }
 
     protected synchronized void buildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(activity).addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) activity).addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener) activity).addApi(LocationServices.API).build();
+        googleApiClient = new GoogleApiClient.Builder(activity).addConnectionCallbacks(activity).addOnConnectionFailedListener(activity).addApi(LocationServices.API).build();
         googleApiClient.connect();
     }
 
@@ -194,8 +190,8 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
         try {
 
             this.boardingPass = boardingPass;
-            if (getActivity() != null)
-                getActivity().setTitle("Pass ID :#" + boardingPass.getId().substring(0, 8).toUpperCase());
+            if (activity != null)
+                activity.setTitle("Pass ID :#" + boardingPass.getId().substring(0, 8).toUpperCase());
             txtVehicleName.setText(replaceNull(boardingPass.getVehicleColor() + " " + boardingPass.getVehicleType() + " " + boardingPass.getVehicleModel()));
             txtVehicleNo.setText(boardingPass.getVehicleNumber());
             if (boardingPass.getOtp().equalsIgnoreCase("")) {
@@ -264,9 +260,8 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
-                Toast.makeText(activity, "Cancelled", Toast.LENGTH_LONG).show();
+                uiUtils.shortToast("Cancelled");
             } else {
-                Toast.makeText(activity, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                 markAttendance();
             }
         } else {

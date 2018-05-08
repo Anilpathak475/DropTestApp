@@ -397,7 +397,6 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         Crashlytics.setUserName("Anil Pathak");
     }
 
-    @Override
     public void setTitle(String title) {
         if (txtTitle != null) txtTitle.setText(title);
     }

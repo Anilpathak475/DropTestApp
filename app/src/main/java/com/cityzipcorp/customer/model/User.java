@@ -46,6 +46,7 @@ public class User implements Parcelable {
     private NodalStopBody nodalStop;
     private Group group;
     private Shift shift;
+    private String profilePicUri;
     @SerializedName("group_id")
     private String groupId;
     @SerializedName("shift_id")
@@ -218,5 +219,13 @@ public class User implements Parcelable {
 
     public void setShiftId(String shiftId) {
         this.shiftId = shiftId;
+    }
+
+    public String getProfilePicUri() {
+        return profilePicUri;
+    }
+
+    public void setProfilePicUri(String profilePicUri) {
+        this.profilePicUri = profilePicUri;
     }
 }

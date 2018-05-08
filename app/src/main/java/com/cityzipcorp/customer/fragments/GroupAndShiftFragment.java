@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import com.cityzipcorp.customer.R;
-import com.cityzipcorp.customer.activities.HomeActivity;
 import com.cityzipcorp.customer.base.BaseFragment;
 import com.cityzipcorp.customer.callbacks.GroupCallBack;
 import com.cityzipcorp.customer.callbacks.UserCallback;
@@ -49,7 +48,6 @@ public class GroupAndShiftFragment extends BaseFragment {
     private User userFromProfile;
 
     private boolean isiInit = true;
-    private String profileStatus = "";
 
     public static GroupAndShiftFragment getInstance() {
         return new GroupAndShiftFragment();
@@ -58,7 +56,7 @@ public class GroupAndShiftFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity() != null) getActivity().setTitle(getString(R.string.group_and_shift));
+        activity.setTitle(getString(R.string.group_and_shift));
     }
 
     @Nullable
@@ -66,7 +64,6 @@ public class GroupAndShiftFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group_and_shift, container, false);
         ButterKnife.bind(this, view);
-
         initListeners();
         getGroupsAndShifts();
 
@@ -79,7 +76,7 @@ public class GroupAndShiftFragment extends BaseFragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedIndexOfGroup = i;
                 setAdapter(spnShift, groupList.get(i).getStringShifts());
-                if (isiInit && profileStatus.equalsIgnoreCase("")) {
+                if (isiInit) {
                     setAdapter(spnShift, getShiftFromGroupList(groupList.get(i)));
                     List<Shift> shiftList = groupList.get(i).getShifts();
                     for (int j = 0; j < shiftList.size(); j++) {
@@ -116,23 +113,23 @@ public class GroupAndShiftFragment extends BaseFragment {
     private void getBundleExtra() {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            if (bundle.containsKey(PROFILE_STATUS) && bundle.containsKey("user")) {
-                if ((getActivity()) != null) ((HomeActivity) getActivity()).
-                        btnBack.setVisibility(View.GONE);
-                profileStatus = bundle.getString(PROFILE_STATUS);
-                userFromProfile = bundle.getParcelable("user");
-                setAdapter(spnGroup, getGroupsFromGroupList(groupList));
-            } else if (bundle.containsKey("user")) {
+            if (bundle.containsKey("user")) {
                 userFromProfile = bundle.getParcelable("user");
                 if (userFromProfile != null) {
                     setValues(userFromProfile);
                 }
             }
+        } else {
+            setAdapter(spnGroup, getGroupsFromGroupList(groupList));
+            getProfileInfo();
         }
 
     }
 
     private void setValues(User user) {
+        if (userFromProfile == null) {
+            userFromProfile = user;
+        }
         if (user.getGroup() != null && user.getShift() != null) {
             isiInit = true;
             Group group = user.getGroup();
@@ -145,6 +142,25 @@ public class GroupAndShiftFragment extends BaseFragment {
             }
         }
 
+    }
+
+    private void getProfileInfo() {
+        uiUtils.showProgressDialog();
+        UserStore.getInstance().getProfileInfo(sharedPreferenceUtils.getAccessToken(), new UserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                if (user != null) {
+                    userFromProfile = user;
+                }
+                uiUtils.dismissDialog();
+            }
+
+            @Override
+            public void onFailure(Error error) {
+                uiUtils.dismissDialog();
+                uiUtils.shortToast("Unable to fetch profile details!");
+            }
+        });
     }
 
     @OnClick(R.id.btn_update)
@@ -182,7 +198,6 @@ public class GroupAndShiftFragment extends BaseFragment {
 
 
     private void updateGroupAndShift() {
-        /* if (validate()) {*/
         uiUtils.showProgressDialog();
         User user = new User();
         user.setId(userFromProfile.getId());
@@ -194,8 +209,8 @@ public class GroupAndShiftFragment extends BaseFragment {
             @Override
             public void onSuccess(User user) {
                 uiUtils.dismissDialog();
-                if (!profileStatus.equalsIgnoreCase("")) {
-                    ((HomeActivity) getActivity()).setUpBottomNavigationView(2);
+                if (user.getHomeStop() == null || user.getNodalStop() == null) {
+                    activity.setUpBottomNavigationView(2);
                 } else {
                     activity.onBackPressed();
                 }
@@ -207,16 +222,7 @@ public class GroupAndShiftFragment extends BaseFragment {
                 uiUtils.shortToast("Unable to update details");
             }
         });
-        //}
     }
-
-    /*private boolean validate() {
-        if (selectedIndexOfGroup == 0) {
-            uiUtils.shortToast("Please Select group");
-            return false;
-        }
-        return true;
-    }*/
 
     private List<String> getGroupsFromGroupList(List<Group> groups) {
         List<String> groupList = new ArrayList<>();

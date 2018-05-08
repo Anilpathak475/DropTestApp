@@ -49,7 +49,7 @@ public class CalenderUtil {
     }
 
     public static String getMonth(Date date) {
-        String dateFormat = "MMM";
+        String dateFormat = "MMMM";
         SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
         return dateFormatter.format(date);
     }

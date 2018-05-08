@@ -45,7 +45,7 @@ public class ChangePasswordFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity() != null) getActivity().setTitle(getString(R.string.change_password));
+        //    if (getActivity() != null) getActivity().setTitle(getString(R.string.change_password));
     }
 
     @Nullable
@@ -79,6 +79,7 @@ public class ChangePasswordFragment extends BaseFragment {
             });
         }
     }
+
 
     private boolean validate() {
         if (TextUtils.isEmpty(edtCurrentPassword.getText().toString())) {

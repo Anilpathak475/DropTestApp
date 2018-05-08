@@ -32,4 +32,5 @@
     <color name="fifty_percent_transparency_primary">#8003A9F4</color>
     <color name="fifty_percent_transparency_darker_primary_dark">#80028bca</color>
     <color name="app_yellow">#FEBE1B</color>
+    <color name="too_bar_color">#5C5C5C</color>
 </resources>

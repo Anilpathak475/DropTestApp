@@ -25,7 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cityzipcorp.customer.R;
-import com.cityzipcorp.customer.activities.HomeActivity;
 import com.cityzipcorp.customer.base.BaseFragment;
 import com.cityzipcorp.customer.callbacks.TrackRideCallback;
 import com.cityzipcorp.customer.model.BoardingPass;
@@ -103,7 +102,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MapsInitializer.initialize(activity);
-        ((HomeActivity) activity).setTitle("Your Ride");
+        activity.setTitle("Your Ride");
     }
 
     @Nullable
@@ -129,7 +128,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((HomeActivity) getActivity()).setTitle(getString(R.string.boarding_pass));
+        //  ((HomeActivity) getActivity()).setTitle(getString(R.string.boarding_pass));
     }
 
     @Override

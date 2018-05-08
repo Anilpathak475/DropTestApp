@@ -101,11 +101,6 @@ public class LoginActivity extends BaseActivity implements LoginView {
     }
 
     @Override
-    public void setTitle(String title) {
-
-    }
-
-    @Override
     public void showProgress() {
         uiUtils.showProgressDialog();
     }

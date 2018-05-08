@@ -24,8 +24,5 @@ public abstract class BaseActivity extends AppCompatActivity  implements Constan
         super.onCreate(savedInstanceState, persistentState);
         activity = this;
         sharedPreferenceManager = new SharedPreferenceManager(activity);
-
     }
-
-    public abstract void setTitle(String title);
 }

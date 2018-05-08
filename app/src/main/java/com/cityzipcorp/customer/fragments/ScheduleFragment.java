@@ -38,7 +38,6 @@ import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.LinearLayoutManagerWithSmoothScroller;
 import com.cityzipcorp.customer.utils.NetworkUtils;
-import com.cityzipcorp.customer.utils.UiUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -75,7 +74,6 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     private Handler handler = new Handler();
     private boolean isCalenderClicked = false;
     private List<Schedule> scheduleList = new ArrayList<>();
-    private UiUtils uiUtils;
     private LinkedHashMap<String, RelativeLayout> dateMapList = new LinkedHashMap<>();
     private ColorDrawable editedBackgroundColor;
     private ColorDrawable currentBackgroundColor;
@@ -85,8 +83,6 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        uiUtils = new UiUtils(activity);
-
     }
 
     @Nullable
@@ -114,8 +110,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null)
-            getActivity().setTitle(getString(R.string.schedule));
+        //    if (getActivity() != null) getActivity().setTitle(getString(R.string.schedule));
     }
 
     private void getSchedule() {
@@ -296,8 +291,8 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                 if (position == 0) {
                     txtMonthName.setVisibility(View.VISIBLE);
                     txtMonthName.setText(CalenderUtil.getMonth(dateFromString.getTime()));
-                    if (getActivity() != null)
-                        getActivity().setTitle(CalenderUtil.getFullMonthName(dateFromString.getTime()));
+                    if (activity != null)
+                        activity.setTitle(CalenderUtil.getFullMonthName(dateFromString.getTime()));
 
                 }
                 if (dateScheduleLinkedHashMap.get(date) != null) {

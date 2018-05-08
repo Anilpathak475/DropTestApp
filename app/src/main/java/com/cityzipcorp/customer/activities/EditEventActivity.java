@@ -281,18 +281,13 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
         }
     }
 
-    private Date getTimeFromString(String time ,Date dateFromSchedule) throws ParseException {
-
-//SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
-//the above commented line was changed to the one below, as per Grodriguez's pertinent comment:
+    private Date getTimeFromString(String time, Date dateFromSchedule) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
         Date date = sdf.parse(time);
-
         Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
         calendar.setTime(date);
         calendar.set(Calendar.DATE, dateFromSchedule.getDate());
         calendar.set(Calendar.MONTH, dateFromSchedule.getMonth());
-
         return calendar.getTime();
     }
 
@@ -300,59 +295,12 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
         ScheduleStore.getInstance().updateSchedule(this, schedule, sharedPreferenceManager.getAccessToken());
     }
 
-    // TODO: remove deprecated methods
-
-   /* // Used to convert 24hr format to 12hr format with AM/PM values
-    private void updateTime(int hours, int mins) {
-
-        String timeSet;
-        if (hours > 12) {
-            hours -= 12;
-            timeSet = "PM";
-        } else if (hours == 0) {
-            hours += 12;
-            timeSet = "AM";
-        } else if (hours == 12) {
-            timeSet = "PM";
-        } else {
-            timeSet = "AM";
-        }
-
-
-        String minutes;
-        if (mins < 10) {
-            minutes = "0" + mins;
-        } else {
-            minutes = String.valueOf(mins);
-        }
-        // Append in a StringBuilder
-        setTime(hours, minutes, timeSet);
-    }
-
-    private void setTime(int hours, String minutes, String timeSet) {
-        String time = hours + ":" + minutes + " " + timeSet;
-        if (isStartTime) {
-            startHour = hours;
-            startMinute = Integer.parseInt(minutes);
-            txtInTime.setText(time);
-        } else {
-            if (txtOutTime.getText().toString().contains("PM")) {
-                Toast.makeText(this, "Date has been changed", Toast.LENGTH_SHORT).show();
-            }
-            endHour = hours;
-            endMinute = Integer.parseInt(minutes);
-            txtOutTime.setText(time);
-        }
-    }*/
-
-    public void setInTimeValues() {
+    private void setInTimeValues() {
         txtDate.setText(CalenderUtil.getMonthAndDate(schedule.getDate()));
         txtDay.setText(CalenderUtil.getDay(schedule.getDate()));
         Date inTimeDate = inTimeUpdate.getTimestamp();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(inTimeDate);
-        int startHour = calendar.get(Calendar.HOUR_OF_DAY);
-        int startMinute = calendar.get(Calendar.MINUTE);
         if (inTimes.indexOf(CalenderUtil.getTime(inTimeDate)) <= 0) {
             spnInTime.setSelection(inTimes.indexOf(CalenderUtil.getTime(inTimeDate)));
         }
@@ -369,8 +317,6 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
         Date outTimeDate = outTimeUpdate.getTimestamp();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(outTimeDate);
-        int endHour = calendar.get(Calendar.HOUR_OF_DAY);
-        int endMinute = calendar.get(Calendar.MINUTE);
         if (inTimes.indexOf(CalenderUtil.getTime(outTimeDate)) <= 0) {
             spnInTime.setSelection(inTimes.indexOf(CalenderUtil.getTime(outTimeDate)));
         }
@@ -409,6 +355,9 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
             Toast.makeText(this, "Please Select Time", Toast.LENGTH_SHORT).show();
             return false;
         }
+        if (spnInTime.getSelectedItem().toString().equalsIgnoreCase(CalenderUtil.getTime(schedule.getInTimeUpdate().getTimestamp()))) {
+
+        }
         if (spnCancelReasonInTime.getSelectedItem().toString().
                 equalsIgnoreCase("Select Reason")) {
             Toast.makeText(this, "Please Select Reason", Toast.LENGTH_SHORT).show();
@@ -435,11 +384,6 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     public void onBackPressed() {
         this.setResult(RESULT_CANCELED, new Intent().putExtra("status", "backPressed"));
         finish();
-    }
-
-    @Override
-    public void setTitle(String title) {
-
     }
 }
 

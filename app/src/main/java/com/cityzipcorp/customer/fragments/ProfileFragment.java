@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cityzipcorp.customer.R;
-import com.cityzipcorp.customer.activities.HomeActivity;
 import com.cityzipcorp.customer.activities.MapsActivity;
 import com.cityzipcorp.customer.base.BaseFragment;
 import com.cityzipcorp.customer.callbacks.UserCallback;
@@ -89,12 +88,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     boolean isAllowedToCLickOnGroup = false;
     int ADDRESS_CODE_HOME = 101;
     int ADDRESS_CODE_NODAL = 102;
-    private HomeActivity homeActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        homeActivity = (HomeActivity) activity;
     }
 
     @Nullable
@@ -102,8 +99,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, view);
-        homeActivity.backAllowed = false;
-        homeActivity.inProfile = true;
+        activity.backAllowed = false;
+        activity.inProfile = true;
         init();
         return view;
     }
@@ -111,7 +108,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null) getActivity().setTitle(getString(R.string.profile));
+        //   if (getActivity() != null) getActivity().setTitle(getString(R.string.profile));
     }
 
     private void init() {
@@ -132,8 +129,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", user);
         updateProfileFragment.setArguments(bundle);
-        homeActivity.replaceFragment(updateProfileFragment, activity.getString(R.string.edit_profile));
-        homeActivity.backAllowed = true;
+        activity.replaceFragment(updateProfileFragment, activity.getString(R.string.edit_profile));
+        activity.backAllowed = true;
     }
 
     @OnClick(R.id.card_home_address)
@@ -152,8 +149,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", user);
         groupAndShiftFragment.setArguments(bundle);
-        homeActivity.replaceFragment(groupAndShiftFragment, activity.getString(R.string.group_and_shift));
-        homeActivity.backAllowed = true;
+        activity.replaceFragment(groupAndShiftFragment, activity.getString(R.string.group_and_shift));
+        activity.backAllowed = true;
     }
 
     @OnClick(R.id.card_nodal_address)
@@ -173,10 +170,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     private void setValues(User user) {
         this.user = user;
         if (user.getFirstName() != null && user.getLastName() != null) {
-            if (homeActivity != null)
-                homeActivity.setTitle(user.getFirstName() + " " + user.getLastName());
+            if (activity != null)
+                activity.setTitle(user.getFirstName() + " " + user.getLastName());
         } else {
-            if (homeActivity != null) homeActivity.setTitle("Profile");
+            if (activity != null) activity.setTitle("Profile");
         }
         if (user.getHomeStop() != null && user.getAddress() != null) {
             Address address = user.getAddress();
@@ -210,7 +207,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
         boolean imageStatus = sharedPreferenceUtils.getImageStatus();
         if (imageStatus) {
-            String encodedImage = sharedPreferenceUtils.getImageData();
+            user.setProfilePicUri(sharedPreferenceUtils.getImageData());
+            String encodedImage = user.getProfilePicUri();
             byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             imgProfile.setImageBitmap(decodedByte);

@@ -33,6 +33,7 @@ import com.cityzipcorp.customer.model.NodalStop;
 import com.cityzipcorp.customer.model.NodalStopBody;
 import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
+import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.CustomClusterRenderer;
 import com.cityzipcorp.customer.utils.LocationUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
@@ -234,6 +235,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geoLocateAddress.setAddress(address);
         geoLocateAddress.setPoint(geoJsonPoint);
         user.setHomeStop(geoLocateAddress);
+       /* Bundle bundle = new Bundle();
+        bundle.putParcelable("user", user);
+        Intent intent = new Intent(MapsActivity.this, AddressActivity.class);
+        intent.putExtras(bundle);
+        startActivityForResult(intent, Constants.REQUEST_CODE_ADDRESS_INTENT);*/
+
+
         UserStore.getInstance().updateProfileInfo(sharedPreferenceManager.getAccessToken(), user, new UserCallback() {
             @Override
             public void onSuccess(User user) {
@@ -386,6 +394,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 new FetchAddress().execute(latLng);
                 moveMap();
             }
+        } else if (requestCode == Constants.REQUEST_CODE_ADDRESS_INTENT) {
+            if (resultCode == RESULT_OK) {
+                navigateToProfile();
+            }
         }
     }
 
@@ -537,11 +549,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 txtAddressHome.setText(replaceNull(coreAddress.getAddressLine(0) + coreAddress.getAddressLine(1)));
                 address.setPostalCode(replaceNull(coreAddress.getPostalCode()));
                 address.setCity(replaceNull(coreAddress.getLocality()));
-                address.setArea(replaceNull(coreAddress.getFeatureName()));
-                address.setLocality(replaceNull(coreAddress.getAddressLine(1)));
-                address.setSociety(replaceNull(coreAddress.getAddressLine(1)));
+                address.setLocality(replaceNull(coreAddress.getFeatureName() + coreAddress.getThoroughfare() + coreAddress.getSubThoroughfare() + coreAddress.getLocality() + coreAddress.getPremises() + coreAddress.getSubLocality()));
+                address.setSociety(replaceNull(coreAddress.getFeatureName()));
                 address.setState(replaceNull(coreAddress.getAdminArea()));
-                address.setLandmark(replaceNull(coreAddress.getThoroughfare()));
+                address.setLandmark(replaceNull(coreAddress.getLocality() + " , " + coreAddress.getSubLocality()));
                 address.setCountry(replaceNull(coreAddress.getCountryName()));
                 geoJsonPoint = new GeoJsonPoint(coreAddress.getLongitude(), coreAddress.getLatitude());
             } else {

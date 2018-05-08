@@ -28,6 +28,10 @@ public class ForgotPasswordStore {
                     statusCallback.onSuccess();
                 } else if (response.code() == 404) {
                     statusCallback.onFailure(new Error("User Not found"));
+                } else if (response.code() == 400) {
+                    statusCallback.onFailure(new Error("Email not valid or already exists"));
+                } else {
+                    statusCallback.onFailure(new Error("Unable to register"));
                 }
             }
 

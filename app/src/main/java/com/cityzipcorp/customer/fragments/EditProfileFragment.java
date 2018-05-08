@@ -1,5 +1,6 @@
 package com.cityzipcorp.customer.fragments;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -14,7 +15,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,15 +26,14 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.cityzipcorp.customer.R;
-import com.cityzipcorp.customer.activities.HomeActivity;
 import com.cityzipcorp.customer.base.BaseFragment;
 import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
+import com.cityzipcorp.customer.utils.ChoosePhoto;
 import com.cityzipcorp.customer.utils.Utils;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +46,8 @@ import butterknife.OnClick;
 public class EditProfileFragment extends BaseFragment {
 
     private static final int CAMERA_REQUEST = 1888;
+    private static final int GALLERY_PICTURE_REQUEST = 1889;
+    private String picture_directory = "/picture/";
     @BindView(R.id.img_profile)
     ImageView imgProfile;
     @BindView(R.id.txt_upload)
@@ -74,7 +75,11 @@ public class EditProfileFragment extends BaseFragment {
     private String gender;
     private String userId;
     private User user;
-    private String profileStatus = "";
+    private String imgPath;
+    private Bitmap bitmap;
+    private String selectedImagePath;
+
+    private ChoosePhoto choosePhoto = null;
 
     @Nullable
     @Override
@@ -98,12 +103,11 @@ public class EditProfileFragment extends BaseFragment {
                 if (user != null) {
                     setValues(user);
                 }
-            } else if (bundle.containsKey(PROFILE_STATUS)) {
-                ((HomeActivity) getActivity()).btnBack.setVisibility(View.GONE);
-                profileStatus = bundle.getString(PROFILE_STATUS);
+            } else {
                 getProfileInfo();
             }
         }
+        setProfilePic();
         return view;
     }
 
@@ -134,7 +138,7 @@ public class EditProfileFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null) getActivity().setTitle(getString(R.string.update_profile));
+        if (activity != null) activity.setTitle(getString(R.string.update_profile));
     }
 
     public void onSave() {
@@ -163,9 +167,8 @@ public class EditProfileFragment extends BaseFragment {
         Bundle bundle = new Bundle();
         bundle.putString("password", user.getPassword());
         changePasswordFragment.setArguments(bundle);
-        assert getActivity() != null;
-        ((HomeActivity) getActivity()).replaceFragment(changePasswordFragment, activity.getString(R.string.change_password));
-        ((HomeActivity) getActivity()).backAllowed = true;
+        activity.replaceFragment(changePasswordFragment, activity.getString(R.string.change_password));
+        activity.backAllowed = true;
     }
 
     private void setValues(User user) {
@@ -182,9 +185,12 @@ public class EditProfileFragment extends BaseFragment {
         } else if (gender.equalsIgnoreCase("f")) {
             rdFemale.setChecked(true);
         }
-        boolean imageStatus = sharedPreferenceUtils.getImageStatus();
-        if (imageStatus) {
-            String encodedImage = sharedPreferenceUtils.getImageData();
+        setProfilePic();
+    }
+
+    private void setProfilePic() {
+        if (user.getProfilePicUri() != null && !user.getProfilePicUri().equalsIgnoreCase("")) {
+            String encodedImage = user.getProfilePicUri();
             byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             imgProfile.setImageBitmap(decodedByte);
@@ -192,36 +198,20 @@ public class EditProfileFragment extends BaseFragment {
     }
 
     private void updateProfile(User user) {
-        Bitmap image = ((BitmapDrawable) imgProfile.getDrawable()).getBitmap();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] imageInByte = stream.toByteArray();
-        String encodedImage = Base64.encodeToString(imageInByte, Base64.DEFAULT);
-        sharedPreferenceUtils.isImageStored(true);
-        sharedPreferenceUtils.saveImageData(encodedImage);
         uiUtils.showProgressDialog();
         user.setId(userId);
         UserStore.getInstance().updateProfileInfo(sharedPreferenceUtils.getAccessToken(), user, new UserCallback() {
             @Override
             public void onSuccess(User user) {
                 uiUtils.dismissDialog();
-                assert getActivity() != null;
-                if (!profileStatus.equalsIgnoreCase("")) {
-                    if (user.getShift() == null) {
-                        GroupAndShiftFragment groupAndShiftFragment = new GroupAndShiftFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(PROFILE_STATUS, PROFILE_STATUS_IN_COMPLETED);
-                        bundle.putParcelable("user", user);
-                        groupAndShiftFragment.setArguments(bundle);
-                        ((HomeActivity) getActivity()).replaceFragment(groupAndShiftFragment, getString(R.string.group_and_shift));
-                    } else {
-                        ((HomeActivity) getActivity()).setUpBottomNavigationView(2);
-                        //  ((HomeActivity) getActivity()).replaceFragment(new ProfileFragment(), "Profile");
-                    }
-
+                sharedPreferenceUtils.isImageStored(true);
+                sharedPreferenceUtils.saveImageData(getImageUri());
+                if (user.getShift() == null) {
+                    GroupAndShiftFragment groupAndShiftFragment = new GroupAndShiftFragment();
+                    activity.backAllowed = false;
+                    activity.replaceFragment(groupAndShiftFragment, getString(R.string.group_and_shift));
                 } else {
-                    ((HomeActivity) getActivity()).setUpBottomNavigationView(2);
-                    //   ((HomeActivity) getActivity()).replaceFragment(new ProfileFragment(), "Profile");
+                    activity.onBackPressed();
                 }
             }
 
@@ -233,31 +223,37 @@ public class EditProfileFragment extends BaseFragment {
         });
     }
 
+    private String getImageUri() {
+        Bitmap image = ((BitmapDrawable) imgProfile.getDrawable()).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] imageInByte = stream.toByteArray();
+        return Base64.encodeToString(imageInByte, Base64.DEFAULT);
+    }
+
     @OnClick(R.id.img_profile)
     void onClickImage() {
-        if (ContextCompat.checkSelfPermission(activity,
+        if ((ContextCompat.checkSelfPermission(activity,
                 android.Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(activity,
-                    new String[]{android.Manifest.permission.CAMERA},
+                    new String[]{android.Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
                     1);
         } else {
-            startCamera();
+            choosePhoto = new ChoosePhoto(activity);
         }
     }
-
-    private void startCamera() {
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        activity.startActivityForResult(cameraIntent, CAMERA_REQUEST);
-    }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         if (requestCode == 1 && grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            startCamera();
+            choosePhoto = new ChoosePhoto(activity);
         } else {
             uiUtils.shortToast("Camera permission is required");
         }
@@ -265,14 +261,19 @@ public class EditProfileFragment extends BaseFragment {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            Bundle bundle = data.getExtras();
-            if (Objects.requireNonNull(bundle).containsKey("data") && bundle.get("data") != null) {
-                Bitmap photo = (Bitmap) bundle.get("data");
-                imgProfile.setImageBitmap(photo);
-                Log.i("Camera", "" + photo + "  /  " + data.getExtras().get("data") + "  / " + data.getData());
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == ChoosePhoto.CHOOSE_PHOTO_INTENT) {
+                if (data != null && data.getData() != null) {
+                    choosePhoto.handleGalleryResult(data);
+                } else {
+                    choosePhoto.handleCameraResult(choosePhoto.getCameraUri());
+                }
+            } else if (requestCode == ChoosePhoto.SELECTED_IMG_CROP) {
+                imgProfile.setImageURI(choosePhoto.getCropImageUrl());
+                user.setProfilePicUri(getImageUri());
             }
         }
+
     }
 
     private boolean validate(String email, String firstName, String lastName, String gender, String phoneNo, String alternateEmail, String employeeId) {

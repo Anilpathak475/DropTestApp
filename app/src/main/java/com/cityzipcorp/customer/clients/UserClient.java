@@ -1,5 +1,6 @@
 package com.cityzipcorp.customer.clients;
 
+import com.cityzipcorp.customer.model.Area;
 import com.cityzipcorp.customer.model.ChangePassword;
 import com.cityzipcorp.customer.model.FcmRegistrationToken;
 import com.cityzipcorp.customer.model.Group;
@@ -58,6 +59,9 @@ public interface UserClient {
 
     @POST("/api/v1/users/change_password/")
     Call<ResponseBody> changePassword(@Body ChangePassword changePassword, @HeaderMap Map<String, String> headers);
+
+    @GET("/api/v1/areas/")
+    Call<List<Area>> getAreas(@HeaderMap Map<String, String> headers);
 
 
 }
