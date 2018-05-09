@@ -279,7 +279,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     @OnClick(id.img_logout)
     void onLogout() {
-        new UiUtils(this).getAlertDialogWithMessage(" Are you sure you want to logout ?.", new DialogCallback() {
+        new UiUtils(this).getAlertDialogWithMessage(" Are you sure you want to logout?", new DialogCallback() {
             @Override
             public void onYes() {
                 navigateToLogin();
@@ -348,6 +348,9 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private void navigateToLogin() {
         sharedPreferenceManager.clearAccessToken();
+        sharedPreferenceManager.clearFcmToken();
+        sharedPreferenceManager.clearImageData();
+        sharedPreferenceManager.clearImageStored();
         sharedPreferenceManager.saveAccessToken("");
         Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
         startActivity(intent);

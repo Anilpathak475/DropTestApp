@@ -206,7 +206,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         }
 
         boolean imageStatus = sharedPreferenceUtils.getImageStatus();
-        if (imageStatus) {
+        if (imageStatus && !sharedPreferenceUtils.getImageData().equalsIgnoreCase("")) {
             user.setProfilePicUri(sharedPreferenceUtils.getImageData());
             String encodedImage = user.getProfilePicUri();
             byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);

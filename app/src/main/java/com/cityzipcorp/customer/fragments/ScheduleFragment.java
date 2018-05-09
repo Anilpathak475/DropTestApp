@@ -105,6 +105,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         editedBackgroundColor = new ColorDrawable(activity.getResources().getColor(R.color.edited_date));
         currentBackgroundColor = new ColorDrawable(activity.getResources().getColor(R.color.current_date_background));
         cancelledBackgroundColor = new ColorDrawable(activity.getResources().getColor(R.color.cancelled_bg));
+        recyclerView.addItemDecoration(new RecyclerSectionItemDecoration(33, true, getSectionCallback()));
     }
 
     @Override
@@ -154,7 +155,6 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         ScheduleAdapter scheduleAdapter = new ScheduleAdapter(activity, scheduleList, this);
         recyclerView.setLayoutManager(new LinearLayoutManagerWithSmoothScroller(activity));
         recyclerView.setAdapter(scheduleAdapter);
-
         recyclerView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
@@ -179,12 +179,6 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                 }
             }
         });
-        try {
-            RecyclerSectionItemDecoration sectionItemDecoration = new RecyclerSectionItemDecoration(33, true, getSectionCallback());
-            recyclerView.addItemDecoration(sectionItemDecoration);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 

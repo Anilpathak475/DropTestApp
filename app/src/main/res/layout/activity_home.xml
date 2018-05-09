@@ -45,9 +45,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginStart="-10dp"
-                android:text="Titel"
+                android:text="Loading..."
                 android:textColor="@color/white"
-
                 android:textSize="@dimen/ts_xx_large" />
 
             <Button
@@ -95,7 +94,8 @@
                 android:background="#5C5C5C"
                 android:stateListAnimator="@null"
                 android:text="Update"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/img_logout"
@@ -125,7 +125,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-
             android:elevation="10dp">
 
             <android.support.design.widget.BottomNavigationView

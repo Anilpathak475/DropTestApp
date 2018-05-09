@@ -64,6 +64,18 @@ public class SharedPreferenceManager {
         editor.apply();
     }
 
+    public void clearImageData() {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.remove(IMAGE_DATA);
+        editor.apply();
+    }
+
+    public void clearImageStored() {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.remove(IMAGE_STORED);
+        editor.apply();
+    }
+
     public String getFcmToken() {
         return getSharedPreferences().getString(FCM_TOKEN, "");
     }

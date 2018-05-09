@@ -207,6 +207,9 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
             cardBoardingPass.setVisibility(View.VISIBLE);
             scanLayout.setVisibility(View.VISIBLE);
             swipeRefreshLayout.setRefreshing(false);
+            if (boardingPass.getAttendedAt() != null) {
+                attendanceSuccess();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

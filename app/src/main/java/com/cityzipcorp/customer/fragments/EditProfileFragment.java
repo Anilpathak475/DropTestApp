@@ -107,7 +107,6 @@ public class EditProfileFragment extends BaseFragment {
                 getProfileInfo();
             }
         }
-        setProfilePic();
         return view;
     }
 
@@ -189,11 +188,13 @@ public class EditProfileFragment extends BaseFragment {
     }
 
     private void setProfilePic() {
-        if (user.getProfilePicUri() != null && !user.getProfilePicUri().equalsIgnoreCase("")) {
-            String encodedImage = user.getProfilePicUri();
-            byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            imgProfile.setImageBitmap(decodedByte);
+        if (user.getProfilePicUri() != null) {
+            if (!user.getProfilePicUri().equalsIgnoreCase("")) {
+                String encodedImage = user.getProfilePicUri();
+                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                imgProfile.setImageBitmap(decodedByte);
+            }
         }
     }
 

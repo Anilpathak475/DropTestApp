@@ -172,20 +172,6 @@
             android:background="@color/app_yellow"
             android:text="@string/login"
             android:textColor="@color/black" />
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/btn_login"
-            android:layout_marginTop="15dp"
-            android:text="By logging in you agree to the terms and conditions*"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="normal" />
-
-
     </RelativeLayout>
 
 </ScrollView>

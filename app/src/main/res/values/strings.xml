@@ -48,7 +48,7 @@
     <string name="map_fragment">Map Fragment</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="new_password">New Password</string>
-    <string name="new_account">Don\'t have an account yet, Click Register</string>
+    <string name="new_account">Don\'t have an account yet, click Register!</string>
     <string name="register">Register</string>
 
 </resources>

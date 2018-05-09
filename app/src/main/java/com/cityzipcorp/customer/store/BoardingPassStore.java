@@ -1,7 +1,5 @@
 package com.cityzipcorp.customer.store;
 
-import android.util.Log;
-
 import com.cityzipcorp.customer.callbacks.BoardingPassCallback;
 import com.cityzipcorp.customer.callbacks.StatusCallback;
 import com.cityzipcorp.customer.callbacks.TrackRideCallback;
@@ -64,7 +62,6 @@ public class BoardingPassStore {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
-                    Log.d("Sos Alert Status", "error " + response.code());
                 } else {
                     statusCallback.onFailure(new Error(String.valueOf(response.code())));
                 }

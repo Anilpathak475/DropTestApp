@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ClientGenerator {
 
     private static Gson gson = new GsonBuilder()
-            .setDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
             .create();
 
 
