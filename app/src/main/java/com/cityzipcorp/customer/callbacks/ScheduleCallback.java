@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface ScheduleCallback {
     void onSuccess(List<Schedule> schedules);
+
     void onFailure(Error error);
 }

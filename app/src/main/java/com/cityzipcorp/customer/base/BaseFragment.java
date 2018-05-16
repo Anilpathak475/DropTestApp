@@ -13,10 +13,10 @@ import com.cityzipcorp.customer.utils.UiUtils;
  * Created by Anil .
  */
 
-public class BaseFragment extends Fragment implements Constants{
+public class BaseFragment extends Fragment implements Constants {
 
-    protected SharedPreferenceManager sharedPreferenceUtils;
     public HomeActivity activity;
+    protected SharedPreferenceManager sharedPreferenceUtils;
     protected UiUtils uiUtils;
 
 

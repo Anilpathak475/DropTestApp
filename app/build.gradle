@@ -23,7 +23,9 @@ android {
             versionCode 1
             versionName '1.0'
             multiDexEnabled true
-            buildConfigField 'String', 'BASE_URL', "\" http://api-preprod.cityzipcorp.in\""
+            buildConfigField 'String', 'BASE_URL', "\"http://api-customer-staging.cityzipcorp.in\""
+            resValue 'string', 'google_maps_api_key', "\"AIzaSyDUj5kX3TqwW3pCStQpK43oswapBCvLc-s\""
+
 
         }
         preprod {
@@ -91,6 +93,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:15.0.0'
     implementation 'com.google.zxing:core:3.3.2'
     implementation 'com.wang.avi:library:1.0.5'
+    implementation 'com.scottyab:aescrypt:0.0.1'
 
     implementation 'com.marlonmafra.android.widget:edittext-password:1.0.0'
     implementation 'com.google.android.gms:play-services-location:15.0.0'

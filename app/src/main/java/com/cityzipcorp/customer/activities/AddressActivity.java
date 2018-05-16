@@ -1,25 +1,31 @@
 package com.cityzipcorp.customer.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.callbacks.AreaCallback;
+import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.model.Address;
 import com.cityzipcorp.customer.model.Area;
+import com.cityzipcorp.customer.model.GeoLocateAddress;
 import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
+import com.cityzipcorp.customer.utils.UiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class AddressActivity extends AppCompatActivity {
 
@@ -41,8 +47,12 @@ public class AddressActivity extends AppCompatActivity {
     @BindView(R.id.txt_pin_code)
     TextView txtPinCode;
 
+    @BindView(R.id.btn_update)
+    Button btnUpdateHomeAddress;
+
     private SharedPreferenceManager sharedPreferenceManager;
     private User user;
+    private Address selectedAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +98,54 @@ public class AddressActivity extends AppCompatActivity {
     }
 
     private void setValues(Address address) {
-        edtSelectedAddress.setText(address.getSociety() + " ," + address.getLocality() + "," + address.getStreetAddress());
+        selectedAddress = address;
+        String selectedAddress = address.getSociety() + " " + address.getLocality() + " " + address.getStreetAddress();
+        selectedAddress = selectedAddress.replace("null", "");
+        selectedAddress = selectedAddress.replace(address.getArea(), "");
+        selectedAddress = selectedAddress.replace(address.getCity(), "");
+        selectedAddress = selectedAddress.replace(address.getCountry(), "");
+        selectedAddress = selectedAddress.replace(address.getPostalCode(), "");
+        edtSelectedAddress.setText(selectedAddress);
         txtCity.setText(address.getCity());
         edtLandmark.setText(address.getLandmark());
         txtState.setText(address.getState());
         txtPinCode.setText(address.getPostalCode());
+    }
+
+
+    @OnClick(R.id.btn_update)
+    void updateHomeAddress() {
+        Address address = new Address();
+        address.setArea(autoCompleteArea.getText().toString());
+        address.setCity(txtCity.getText().toString());
+        address.setSociety(selectedAddress.getSociety());
+        address.setState(selectedAddress.getState());
+        address.setLandmark(edtLandmark.getText().toString());
+        address.setLocality(selectedAddress.getLocality());
+        address.setCountry(selectedAddress.getCountry());
+        User user = new User();
+        user.setId(this.user.getId());
+        GeoLocateAddress geoLocateAddress = new GeoLocateAddress();
+        geoLocateAddress.setAddress(address);
+        geoLocateAddress.setPoint(this.user.getHomeStop().getPoint());
+        user.setHomeStop(geoLocateAddress);
+
+        UserStore.getInstance().updateProfileInfo(sharedPreferenceManager.getAccessToken(), user, new UserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                navigateToProfile();
+            }
+
+            @Override
+            public void onFailure(Error error) {
+                new UiUtils(AddressActivity.this).shortToast(error.getMessage());
+            }
+        });
+    }
+
+    private void navigateToProfile() {
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        this.finish();
     }
 }

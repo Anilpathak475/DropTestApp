@@ -6,6 +6,8 @@ package com.cityzipcorp.customer.callbacks;
 
 public interface ScheduleAdapterChildCallback {
     void inTimeClick(int position);
+
     void outTimeClick(int position);
+
     void onNoTripClick(int position);
 }

@@ -49,6 +49,7 @@ public class GeoJsonPoint implements Parcelable {
     public LatLng getLocation() {
         return new LatLng(coordinates[1], coordinates[0]);
     }
+
     public double[] getCoordinates() {
         return coordinates;
     }

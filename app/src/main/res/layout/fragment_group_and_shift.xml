@@ -44,6 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        style="@style/button_basic"
-        android:text="Update" />
+        android:background="@color/app_theme_red"
+        android:text="Update"
+        android:textColor="@color/white" />
 </LinearLayout>

@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.base.BaseActivity;
 import com.cityzipcorp.customer.callbacks.DialogCallback;
 import com.cityzipcorp.customer.callbacks.ProfileStatusCallback;
@@ -51,14 +52,14 @@ import static com.cityzipcorp.customer.R.string;
 public class HomeActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     public boolean backAllowed = false;
-    public boolean inSchedule = false;
-    public boolean inProfile = false;
+    @BindView(id.btn_back)
+    public Button btnBack;
+    @BindView(id.img_logout)
+    public ImageView imgLogout;
     @BindView(id.navigation)
     BottomNavigationView navigationView;
     @BindView(id.toolbar)
     android.support.v7.widget.Toolbar toolbar;
-    @BindView(id.btn_back)
-    public Button btnBack;
     @BindView(id.txt_title)
     TextView txtTitle;
     @BindView(id.btn_activate_bulk_mode)
@@ -69,16 +70,13 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     Button btnSaveProfile;
     @BindView(id.btn_refresh)
     ImageView imgRefresh;
-    @BindView(id.img_logout)
-    ImageView imgLogout;
     @BindView(id.btn_update_password)
     Button btnUpdatePassword;
-
+    boolean bulkModeActivated = false;
+    SharedPreferenceManager sharedPreferenceManager;
     private int LOCATION_PERMISSION = 101;
     private UiUtils uiUtils;
-    boolean bulkModeActivated = false;
     private LocationUtils locationUtils;
-    SharedPreferenceManager sharedPreferenceManager;
     private GoogleApiClient googleApiClient;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -108,7 +106,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            refreshDuties();
+
         }
     };
 
@@ -151,12 +149,12 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private void validateProfileStatus(ProfileStatus profileStatus) {
         if (!profileStatus.isGenderUpdated()) {
             navigationView.setVisibility(View.GONE);
-            onInCompleteProfile(new EditProfileFragment());
-            onTrackingStart();
+            onInCompleteProfile(new EditProfileFragment(), getString(string.edit_profile));
+            hideNavigationBar();
         } else if (!profileStatus.isShiftUpdated()) {
             navigationView.setVisibility(View.GONE);
-            onInCompleteProfile(new GroupAndShiftFragment());
-            onTrackingStart();
+            onInCompleteProfile(new GroupAndShiftFragment(), getString(string.group_and_shift));
+            hideNavigationBar();
         } else if (!profileStatus.isNodalUpdated() || !profileStatus.isHomeUpdated()) {
             setUpBottomNavigationView(2);
         } else {
@@ -164,11 +162,11 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         }
     }
 
-    private void onInCompleteProfile(Fragment fragment) {
+    private void onInCompleteProfile(Fragment fragment, String title) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.PROFILE_STATUS, Constants.PROFILE_STATUS_IN_COMPLETED);
         fragment.setArguments(bundle);
-        replaceFragment(fragment, getString(string.edit_profile));
+        replaceFragment(fragment, title);
     }
 
     private void initVariables() {
@@ -210,7 +208,6 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
                     locationUtils.requestLocationPermission();
                 }
             }, 1000);
-
         } else {
             if (!locationUtils.isLocationEnabled()) {
                 locationUtils.enableGps(googleApiClient);
@@ -252,16 +249,24 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         boardingPassFragment.getPassDetails();
     }
 
-
-    private void refreshDuties() {
-
+    public void setUpEditProfileView() {
+        btnBack.setVisibility(View.VISIBLE);
+        imgLogout.setVisibility(View.VISIBLE);
+        hideNavigationBar();
     }
 
-    public void onTrackingStart() {
+    public void setUpProfileView() {
+        setTitle("Profile");
+        backAllowed = false;
+        imgLogout.setVisibility(View.VISIBLE);
+        showNavigationBar();
+    }
+
+    public void hideNavigationBar() {
         navigationView.setVisibility(View.GONE);
     }
 
-    public void onTrackingEnd() {
+    public void showNavigationBar() {
         navigationView.setVisibility(View.VISIBLE);
     }
 
@@ -300,11 +305,13 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     public void replaceFragment(Fragment fragment, String tag) {
-        inProfile = false;
-        inSchedule = false;
-        getSupportFragmentManager().beginTransaction().replace(id.fragment_container, fragment, tag).addToBackStack(tag).commit();
-        setUpToolbar(tag);
-        setTitle(tag);
+        try {
+            getSupportFragmentManager().beginTransaction().replace(id.fragment_container, fragment, tag).addToBackStack(tag).commitAllowingStateLoss();
+            setUpToolbar(tag);
+            setTitle(tag);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -347,11 +354,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     private void navigateToLogin() {
-        sharedPreferenceManager.clearAccessToken();
-        sharedPreferenceManager.clearFcmToken();
-        sharedPreferenceManager.clearImageData();
-        sharedPreferenceManager.clearImageStored();
-        sharedPreferenceManager.saveAccessToken("");
+        sharedPreferenceManager.clearUserData();
         Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
@@ -361,13 +364,14 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private void setUpToolbar(String pageName) {
         setDefaultToolbarState();
         if (pageName.equalsIgnoreCase(getString(string.edit_profile))) {
-            btnSaveProfile.setVisibility(View.VISIBLE);
             btnBack.setVisibility(View.VISIBLE);
+            imgLogout.setVisibility(View.VISIBLE);
         }
-        /*if (pageName.equalsIgnoreCase(getString(string.change_password))) {
-            btnSaveProfile.setVisibility(View.VISIBLE);
+
+        if (pageName.equalsIgnoreCase(getString(R.string.change_password))) {
             btnBack.setVisibility(View.VISIBLE);
-        }*/
+            imgLogout.setVisibility(View.VISIBLE);
+        }
 
         if (pageName.equalsIgnoreCase(getString(string.boarding_pass))) {
             imgRefresh.setVisibility(View.VISIBLE);
@@ -376,14 +380,20 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         if (pageName.equalsIgnoreCase(getString(string.profile))) {
             imgLogout.setVisibility(View.VISIBLE);
         }
+        if (pageName.equalsIgnoreCase(getString(string.group_and_shift))) {
+            btnBack.setVisibility(View.VISIBLE);
+            imgLogout.setVisibility(View.VISIBLE);
+        }
 
         if (pageName.equalsIgnoreCase(getString(string.map_fragment))) {
             btnBack.setVisibility(View.VISIBLE);
+            imgLogout.setVisibility(View.VISIBLE);
         }
     }
 
     private void setDefaultToolbarState() {
         btnBack.setVisibility(View.GONE);
+        btnSaveProfile.setVisibility(View.GONE);
         btnActivateBulkMode.setVisibility(View.GONE);
         btnDoneBulkMode.setVisibility(View.GONE);
         btnSaveProfile.setVisibility(View.GONE);
@@ -393,8 +403,6 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     private void logUser() {
-        // TODO: Use the current user's information
-        // You can call any combination of these three methods
         Crashlytics.setUserIdentifier("12345");
         Crashlytics.setUserEmail("anil@theprocedure.in");
         Crashlytics.setUserName("Anil Pathak");

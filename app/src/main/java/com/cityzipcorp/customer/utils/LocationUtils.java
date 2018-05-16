@@ -23,8 +23,8 @@ import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 public class LocationUtils {
-    private Activity activity;
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
+    private Activity activity;
 
     public LocationUtils(Activity activity) {
         this.activity = activity;

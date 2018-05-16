@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_profile"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="7dp"
@@ -71,7 +71,9 @@
                         android:id="@+id/edt_first_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Anil" />
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:maxLines="1" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -91,7 +93,9 @@
                         android:id="@+id/edt_last_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Pathak" />
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:maxLines="1" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -108,7 +112,9 @@
                 android:id="@+id/edt_email_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="anilpathak475@gmail.com" />
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:maxLines="1" />
 
 
             <LinearLayout
@@ -127,14 +133,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/mobile_number"
+
                         android:textColor="@color/disabel_date" />
 
                     <EditText
                         android:id="@+id/edt_mobile_no"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ems="10"
+                        android:imeOptions="actionNext"
                         android:inputType="number"
+                        android:maxLength="10"
+                        android:maxLines="1"
                         android:text="" />
                 </LinearLayout>
 
@@ -155,6 +164,9 @@
                         android:id="@+id/edt_employee_id"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:maxLines="1"
                         android:text="130347" />
                 </LinearLayout>
 
@@ -198,24 +210,17 @@
                 android:id="@+id/edt_alternative_email_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="anilpathak475@gmail.com" />
+                android:imeOptions="actionDone"
+                android:maxLines="1" />
 
-            <LinearLayout
-                android:id="@+id/layout_change_password"
+
+            <Button
+                android:id="@+id/btn_update_profile"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="10dp"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Change Password"
-                    android:textColor="#FF6969"
-                    android:textSize="@dimen/ts_large" />
-            </LinearLayout>
-
+                android:layout_height="wrap_content"
+                android:background="@color/app_theme_red"
+                android:text="Update"
+                android:textColor="@color/white" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

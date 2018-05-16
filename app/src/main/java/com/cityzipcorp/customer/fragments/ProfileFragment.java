@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.activities.MapsActivity;
 import com.cityzipcorp.customer.base.BaseFragment;
+import com.cityzipcorp.customer.callbacks.DialogCallback;
 import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.model.Address;
 import com.cityzipcorp.customer.model.User;
@@ -47,6 +48,9 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @BindView(R.id.card_nodal_address)
     CardView cardNodal;
+
+    @BindView(R.id.card_change_password)
+    CardView cardChangePassword;
 
     @BindView(R.id.img_profile)
     ImageView imgProfile;
@@ -82,33 +86,19 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
-
-    User user;
-
     boolean isAllowedToCLickOnGroup = false;
     int ADDRESS_CODE_HOME = 101;
     int ADDRESS_CODE_NODAL = 102;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private User user;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, view);
-        activity.backAllowed = false;
-        activity.inProfile = true;
         init();
+        activity.setUpProfileView();
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //   if (getActivity() != null) getActivity().setTitle(getString(R.string.profile));
     }
 
     private void init() {
@@ -126,28 +116,34 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @OnClick(R.id.img_edit_profile)
     void editProfileClick() {
         EditProfileFragment updateProfileFragment = new EditProfileFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("user", user);
+        Bundle bundle = getUserBundle();
         updateProfileFragment.setArguments(bundle);
         activity.replaceFragment(updateProfileFragment, activity.getString(R.string.edit_profile));
         activity.backAllowed = true;
     }
 
-    @OnClick(R.id.card_home_address)
-    void onClickHome() {
+    @NonNull
+    private Bundle getUserBundle() {
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", user);
-        bundle.putInt("address", 0);
-        Intent intent = new Intent(activity, MapsActivity.class);
-        intent.putExtras(bundle);
-        activity.startActivityForResult(intent, ADDRESS_CODE_HOME);
+        return bundle;
+    }
+
+    @OnClick(R.id.card_home_address)
+    void onClickHome() {
+        if (user != null) {
+            Bundle bundle = getUserBundle();
+            bundle.putInt("address", 0);
+            Intent intent = new Intent(activity, MapsActivity.class);
+            intent.putExtras(bundle);
+            activity.startActivityForResult(intent, ADDRESS_CODE_HOME);
+        }
     }
 
     @OnClick(R.id.card_group_shifts)
     void onClickGroupAndShifts() {
         GroupAndShiftFragment groupAndShiftFragment = new GroupAndShiftFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("user", user);
+        Bundle bundle = getUserBundle();
         groupAndShiftFragment.setArguments(bundle);
         activity.replaceFragment(groupAndShiftFragment, activity.getString(R.string.group_and_shift));
         activity.backAllowed = true;
@@ -155,15 +151,16 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @OnClick(R.id.card_nodal_address)
     void onClickNodal() {
-        if (user.getHomeStop() != null) {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("user", user);
-            bundle.putInt("address", 1);
-            Intent intent = new Intent(activity, MapsActivity.class);
-            intent.putExtras(bundle);
-            activity.startActivityForResult(intent, ADDRESS_CODE_NODAL);
-        } else {
-            uiUtils.shortToast("Please set home stop first");
+        if (user != null) {
+            if (user.getHomeStop() != null) {
+                Bundle bundle = getUserBundle();
+                bundle.putInt("address", 1);
+                Intent intent = new Intent(activity, MapsActivity.class);
+                intent.putExtras(bundle);
+                activity.startActivityForResult(intent, ADDRESS_CODE_NODAL);
+            } else {
+                uiUtils.shortToast("Please set home stop first");
+            }
         }
     }
 
@@ -172,8 +169,6 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         if (user.getFirstName() != null && user.getLastName() != null) {
             if (activity != null)
                 activity.setTitle(user.getFirstName() + " " + user.getLastName());
-        } else {
-            if (activity != null) activity.setTitle("Profile");
         }
         if (user.getHomeStop() != null && user.getAddress() != null) {
             Address address = user.getAddress();
@@ -213,11 +208,25 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             imgProfile.setImageBitmap(decodedByte);
         }
+        if (user.getHomeStop() == null) {
+            uiUtils.getAlertDialogWithMessage("Please set home stop", new DialogCallback() {
+                @Override
+                public void onYes() {
+                    onClickHome();
+                }
+            });
+        } else if (user.getNodalStop() == null) {
+            uiUtils.getAlertDialogWithMessage("Please set nodal stop", new DialogCallback() {
+                @Override
+                public void onYes() {
+                    onClickNodal();
+                }
+            });
+        }
 
     }
 
     private void getProfileInfo() {
-        uiUtils.showProgressDialog();
         UserStore.getInstance().getProfileInfo(sharedPreferenceUtils.getAccessToken(), new UserCallback() {
             @Override
             public void onSuccess(User user) {
@@ -231,6 +240,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                     } catch (Exception e) {
                         e.printStackTrace();
                         swipeRefreshLayout.setRefreshing(false);
+                        uiUtils.dismissDialog();
                     }
                 }
             }
@@ -244,11 +254,19 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         });
     }
 
+    @OnClick(R.id.card_change_password)
+    void onClickPasswordChange() {
+        ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
+        activity.replaceFragment(changePasswordFragment, activity.getString(R.string.change_password));
+        activity.backAllowed = true;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADDRESS_CODE_HOME || requestCode == ADDRESS_CODE_NODAL) {
             if (resultCode == RESULT_OK) {
+                uiUtils.showProgressDialog();
                 getProfileInfo();
             }
         }

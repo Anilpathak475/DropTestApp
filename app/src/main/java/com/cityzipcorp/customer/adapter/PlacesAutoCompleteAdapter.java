@@ -41,11 +41,11 @@ import java.util.concurrent.TimeUnit;
 public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCompleteAdapter.AddressViewHolder> implements Filterable {
 
     private static final String TAG = "PlacesAutoCompleteAdapter";
+    private static final CharacterStyle STYLE_BOLD = new StyleSpan(Typeface.BOLD);
     private List<PlaceAutocomplete> placeAutocompleteList;
     private GoogleApiClient googleApiClient;
     private LatLngBounds bounds;
     private AutocompleteFilter autocompleteFilter;
-    private static final CharacterStyle STYLE_BOLD = new StyleSpan(Typeface.BOLD);
     private Context context;
     private int layout;
 
@@ -156,11 +156,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
         PlaceAutocomplete placeAutocomplete = placeAutocompleteList.get(position);
         try {
             addressViewHolder.txtPrimary.setText(placeAutocomplete.primaryText);
-           String completeAddress= "";
-            String [] addressDescriptionArray = placeAutocomplete.toString().split(",");
+            String completeAddress = "";
+            String[] addressDescriptionArray = placeAutocomplete.toString().split(",");
 
-            for(int i =1; i< addressDescriptionArray.length; i++) {
-                completeAddress = completeAddress + " " +addressDescriptionArray[i];
+            for (int i = 1; i < addressDescriptionArray.length; i++) {
+                completeAddress = completeAddress + " " + addressDescriptionArray[i];
             }
             addressViewHolder.txtFullAddress.setText(completeAddress);
             if (position == placeAutocompleteList.size() - 1) {

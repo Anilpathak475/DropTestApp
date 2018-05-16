@@ -22,6 +22,12 @@ public class MsgService extends FirebaseMessagingService {
 
     private static final String TAG = "DriverFCMService";
 
+    static void updateMyActivity(Context context, String message) {
+        Intent intent = new Intent("fcm_data");
+        intent.putExtra("message", message);
+        context.sendBroadcast(intent);
+    }
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //Log data to Log Cat
@@ -40,32 +46,26 @@ public class MsgService extends FirebaseMessagingService {
         }
     }
 
-    private void createNotification( String messageBody) {
-        Intent intent = new Intent( this , HomeActivity. class );
+    private void createNotification(String messageBody) {
+        Intent intent = new Intent(this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent resultIntent = PendingIntent.getActivity( this , 0, intent,
-        PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent resultIntent = PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT);
 
         Uri notificationSoundURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder( this)
+        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.default_thumb)
-                        .setContentTitle("Driver App")
-                        .setContentText(messageBody)
-                        .setAutoCancel( true )
-                        .setSound(notificationSoundURI)
-                        .setContentIntent(resultIntent);
+                .setContentTitle("Driver App")
+                .setContentText(messageBody)
+                .setAutoCancel(true)
+                .setSound(notificationSoundURI)
+                .setContentIntent(resultIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, mNotificationBuilder.build());
         updateMyActivity(this, messageBody);
-    }
-
-    static void updateMyActivity(Context context, String message) {
-        Intent intent = new Intent("fcm_data");
-        intent.putExtra("message", message);
-        context.sendBroadcast(intent);
     }
 }
 

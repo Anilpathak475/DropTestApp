@@ -46,6 +46,7 @@
                     android:layout_height="50dp"
                     android:layout_marginStart="15dp"
                     android:background="@color/ninty_percent_transparency_black"
+                    android:fontFamily="@font/roboto_slab"
                     android:hint="@string/email_id"
                     android:imeOptions="actionNext"
                     android:inputType="textEmailAddress"
@@ -93,6 +94,7 @@
                     android:layout_height="50dp"
                     android:layout_marginStart="15dp"
                     android:background="@color/ninty_percent_transparency_black"
+                    android:fontFamily="@font/roboto_slab"
                     android:hint="Password"
                     android:inputType="textPassword"
                     android:padding="5dp"
@@ -102,7 +104,6 @@
                     app:hidePasswordIcon="@drawable/ic_hide_password"
                     app:iconPosition="right"
                     app:showPasswordIcon="@drawable/ic_show_password" />
-
             </LinearLayout>
 
             <!--  <ImageButton
@@ -133,6 +134,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_weight="1"
                     android:elevation="10dp"
+                    android:fontFamily="@font/roboto_slab"
                     android:gravity="end"
                     android:text="@string/register"
                     android:textAlignment="viewStart"
@@ -145,8 +147,9 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="20dp"
                     android:layout_weight="1"
+                    android:fontFamily="@font/roboto_slab"
                     android:gravity="start"
-                    android:text="Forgot Password?*"
+                    android:text="Forgot Password?"
                     android:textAlignment="viewEnd"
                     android:textColor="@color/white" />
             </LinearLayout>
@@ -158,6 +161,7 @@
                 android:layout_below="@id/txt_forgot_password"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_slab"
                 android:text="@string/new_account"
                 android:textColor="@color/white" />
 
@@ -170,6 +174,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginTop="20dp"
             android:background="@color/app_yellow"
+            android:fontFamily="@font/roboto_slab"
             android:text="@string/login"
             android:textColor="@color/black" />
     </RelativeLayout>

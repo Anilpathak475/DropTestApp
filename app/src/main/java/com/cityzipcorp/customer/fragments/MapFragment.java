@@ -91,10 +91,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     private Runnable locationRequestRunnable = new Runnable() {
         @Override
         public void run() {
-            //Do Something
             requestLatestTrackLocations();
             handler.postDelayed(this, 10000);
-
         }
     };
 

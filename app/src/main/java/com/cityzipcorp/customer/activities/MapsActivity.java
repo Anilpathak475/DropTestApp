@@ -26,7 +26,6 @@ import android.widget.Toast;
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.callbacks.NodalStopCallback;
 import com.cityzipcorp.customer.callbacks.StatusCallback;
-import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.model.GeoJsonPoint;
 import com.cityzipcorp.customer.model.GeoLocateAddress;
 import com.cityzipcorp.customer.model.NodalStop;
@@ -235,24 +234,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geoLocateAddress.setAddress(address);
         geoLocateAddress.setPoint(geoJsonPoint);
         user.setHomeStop(geoLocateAddress);
-       /* Bundle bundle = new Bundle();
+        Bundle bundle = new Bundle();
         bundle.putParcelable("user", user);
         Intent intent = new Intent(MapsActivity.this, AddressActivity.class);
         intent.putExtras(bundle);
-        startActivityForResult(intent, Constants.REQUEST_CODE_ADDRESS_INTENT);*/
-
-
-        UserStore.getInstance().updateProfileInfo(sharedPreferenceManager.getAccessToken(), user, new UserCallback() {
-            @Override
-            public void onSuccess(User user) {
-                navigateToProfile();
-            }
-
-            @Override
-            public void onFailure(Error error) {
-                uiUtils.shortToast(error.getMessage());
-            }
-        });
+        startActivityForResult(intent, Constants.REQUEST_CODE_ADDRESS_INTENT);
     }
 
     private void navigateToProfile() {
@@ -513,6 +499,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String replaceNull(String value) {
         if (value == null) {
             return "";
+        } else if (value.contains("null")) {
+            value = value.replace("null", "");
         }
         return value;
     }
@@ -523,44 +511,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         finish();
     }
 
-    class FetchAddress extends AsyncTask<LatLng, Void, android.location.Address> {
-        android.location.Address coreAddress;
-
-        @Override
-        protected Address doInBackground(LatLng... latLngs) {
-            Log.d("Log is", "" + latLng);
-            Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
-            try {
-                List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                if (addressList.size() > 0) {
-                    coreAddress = addressList.get(0);
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "Unable connxxxxect to Geocoder", e);
-            }
-
-            return coreAddress;
-        }
-
-        @Override
-        protected void onPostExecute(Address coreAddress) {
-            super.onPostExecute(coreAddress);
-            if (coreAddress != null) {
-                txtAddressHome.setText(replaceNull(coreAddress.getAddressLine(0) + coreAddress.getAddressLine(1)));
-                address.setPostalCode(replaceNull(coreAddress.getPostalCode()));
-                address.setCity(replaceNull(coreAddress.getLocality()));
-                address.setLocality(replaceNull(coreAddress.getFeatureName() + coreAddress.getThoroughfare() + coreAddress.getSubThoroughfare() + coreAddress.getLocality() + coreAddress.getPremises() + coreAddress.getSubLocality()));
-                address.setSociety(replaceNull(coreAddress.getFeatureName()));
-                address.setState(replaceNull(coreAddress.getAdminArea()));
-                address.setLandmark(replaceNull(coreAddress.getLocality() + " , " + coreAddress.getSubLocality()));
-                address.setCountry(replaceNull(coreAddress.getCountryName()));
-                geoJsonPoint = new GeoJsonPoint(coreAddress.getLongitude(), coreAddress.getLatitude());
-            } else {
-                txtAddressHome.setText("Unable to fetch address");
-            }
-        }
-    }
-
     public LatLngBounds toBounds(LatLng center, double radiusInMeters) {
         double distanceFromCenterToCorner = radiusInMeters * Math.sqrt(2.0);
         LatLng southwestCorner =
@@ -569,7 +519,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 SphericalUtil.computeOffset(center, distanceFromCenterToCorner, 45.0);
         return new LatLngBounds(southwestCorner, northeastCorner);
     }
-
 
     private void addTickMarkTextLabels() {
         int tickMarkCount = discreteSlider.getTickMarkCount();
@@ -606,6 +555,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             tv.setLayoutParams(layoutParams);
 
             tickMarkLabelsRelativeLayout.addView(tv);
+        }
+    }
+
+    class FetchAddress extends AsyncTask<LatLng, Void, android.location.Address> {
+        android.location.Address coreAddress;
+
+        @Override
+        protected Address doInBackground(LatLng... latLngs) {
+            Log.d("Log is", "" + latLng);
+            Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
+            try {
+                List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                if (addressList.size() > 0) {
+                    coreAddress = addressList.get(0);
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Unable connxxxxect to Geocoder", e);
+            }
+
+            return coreAddress;
+        }
+
+        @Override
+        protected void onPostExecute(Address coreAddress) {
+            super.onPostExecute(coreAddress);
+            if (coreAddress != null) {
+                txtAddressHome.setText(replaceNull(coreAddress.getAddressLine(0) + " " + coreAddress.getAddressLine(1)));
+                address.setPostalCode(replaceNull(coreAddress.getPostalCode()));
+                address.setCity(replaceNull(coreAddress.getLocality()));
+                address.setLocality(replaceNull(coreAddress.getFeatureName() + coreAddress.getThoroughfare() + coreAddress.getSubThoroughfare() + coreAddress.getLocality() + coreAddress.getPremises() + coreAddress.getSubLocality()));
+                address.setSociety(replaceNull(coreAddress.getFeatureName()));
+                address.setState(replaceNull(coreAddress.getAdminArea()));
+                address.setLandmark(replaceNull(coreAddress.getLocality() + " , " + coreAddress.getSubLocality()));
+                address.setCountry(replaceNull(coreAddress.getCountryName()));
+                geoJsonPoint = new GeoJsonPoint(coreAddress.getLongitude(), coreAddress.getLatitude());
+            } else {
+                txtAddressHome.setText("Unable to fetch address");
+            }
         }
     }
 }

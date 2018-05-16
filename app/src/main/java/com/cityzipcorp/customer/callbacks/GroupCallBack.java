@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface GroupCallBack {
     void onSuccess(List<Group> group);
+
     void onFailure(Error error);
 }

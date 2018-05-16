@@ -13,11 +13,11 @@ import com.cityzipcorp.customer.utils.SharedPreferenceManager;
  * Created by anilpathak on 17/11/17.
  */
 
-public abstract class BaseActivity extends AppCompatActivity  implements Constants{
+public abstract class BaseActivity extends AppCompatActivity implements Constants {
 
 
-    protected Activity activity;
     public SharedPreferenceManager sharedPreferenceManager;
+    protected Activity activity;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {

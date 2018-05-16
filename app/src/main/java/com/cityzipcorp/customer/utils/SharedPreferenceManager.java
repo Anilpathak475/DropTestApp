@@ -43,9 +43,11 @@ public class SharedPreferenceManager {
     }
 
     public void saveImageData(String imageData) {
+
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.putString(IMAGE_DATA, imageData);
         editor.apply();
+        isImageStored(true);
     }
 
     public Boolean getImageStatus() {
@@ -74,6 +76,13 @@ public class SharedPreferenceManager {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.remove(IMAGE_STORED);
         editor.apply();
+    }
+
+    public void clearUserData() {
+        clearImageData();
+        clearImageStored();
+        clearFcmToken();
+        clearAccessToken();
     }
 
     public String getFcmToken() {

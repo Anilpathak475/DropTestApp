@@ -38,10 +38,8 @@ import butterknife.OnClick;
 
 public class AutocompletePlaceActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
-    protected GoogleApiClient googleApiClient;
-
     private static final LatLngBounds BOUNDS_INDIA = new LatLngBounds(new LatLng(-0, 0), new LatLng(0, 0));
-
+    protected GoogleApiClient googleApiClient;
     @BindView(R.id.edt_search)
     EditText mAutocompleteView;
 
@@ -207,13 +205,8 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
     }
 
     private static class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
-        private OnItemClickListener mListener;
-
-        public interface OnItemClickListener {
-            void onItemClick(View view, int position);
-        }
-
         GestureDetector mGestureDetector;
+        private OnItemClickListener mListener;
 
         public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
             mListener = listener;
@@ -242,6 +235,10 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
+        }
+
+        public interface OnItemClickListener {
+            void onItemClick(View view, int position);
         }
     }
 }

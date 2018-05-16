@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface ReasonCallback {
     void onSuccess(List<Reason> reasonList);
+
     void onFailure(Error error);
 }

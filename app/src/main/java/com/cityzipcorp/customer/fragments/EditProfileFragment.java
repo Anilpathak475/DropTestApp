@@ -18,9 +18,9 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -45,9 +45,6 @@ import butterknife.OnClick;
 
 public class EditProfileFragment extends BaseFragment {
 
-    private static final int CAMERA_REQUEST = 1888;
-    private static final int GALLERY_PICTURE_REQUEST = 1889;
-    private String picture_directory = "/picture/";
     @BindView(R.id.img_profile)
     ImageView imgProfile;
     @BindView(R.id.txt_upload)
@@ -66,19 +63,15 @@ public class EditProfileFragment extends BaseFragment {
     EditText edtMobileNo;
     @BindView(R.id.rd_grp_gender)
     RadioGroup radioGroupGender;
-    @BindView(R.id.layout_change_password)
-    LinearLayout layoutChangePassword;
     @BindView(R.id.rd_male)
     RadioButton rdMale;
     @BindView(R.id.rd_female)
     RadioButton rdFemale;
+    @BindView(R.id.btn_update_profile)
+    Button btnUpdateProfile;
     private String gender;
     private String userId;
     private User user;
-    private String imgPath;
-    private Bitmap bitmap;
-    private String selectedImagePath;
-
     private ChoosePhoto choosePhoto = null;
 
     @Nullable
@@ -86,6 +79,7 @@ public class EditProfileFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_profile, container, false);
         ButterKnife.bind(this, view);
+        activity.setUpEditProfileView();
         radioGroupGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -140,6 +134,7 @@ public class EditProfileFragment extends BaseFragment {
         if (activity != null) activity.setTitle(getString(R.string.update_profile));
     }
 
+    @OnClick(R.id.btn_update_profile)
     public void onSave() {
         String firstName = edtFirstName.getText().toString();
         String lastName = edtLastName.getText().toString();
@@ -160,17 +155,9 @@ public class EditProfileFragment extends BaseFragment {
         }
     }
 
-    @OnClick(R.id.layout_change_password)
-    void onClickPasswordChange() {
-        ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("password", user.getPassword());
-        changePasswordFragment.setArguments(bundle);
-        activity.replaceFragment(changePasswordFragment, activity.getString(R.string.change_password));
-        activity.backAllowed = true;
-    }
 
     private void setValues(User user) {
+        this.user = user;
         edtFirstName.setText(Utils.replaceNull(user.getFirstName()));
         edtLastName.setText(Utils.replaceNull(user.getLastName()));
         edtEmailId.setText(Utils.replaceNull(user.getEmail()));
@@ -205,15 +192,8 @@ public class EditProfileFragment extends BaseFragment {
             @Override
             public void onSuccess(User user) {
                 uiUtils.dismissDialog();
-                sharedPreferenceUtils.isImageStored(true);
                 sharedPreferenceUtils.saveImageData(getImageUri());
-                if (user.getShift() == null) {
-                    GroupAndShiftFragment groupAndShiftFragment = new GroupAndShiftFragment();
-                    activity.backAllowed = false;
-                    activity.replaceFragment(groupAndShiftFragment, getString(R.string.group_and_shift));
-                } else {
-                    activity.onBackPressed();
-                }
+                checkProfileStatus();
             }
 
             @Override
@@ -222,6 +202,16 @@ public class EditProfileFragment extends BaseFragment {
                 uiUtils.shortToast("Unable to update profile!");
             }
         });
+    }
+
+    private void checkProfileStatus() {
+        if (user.getShift() == null) {
+            activity.backAllowed = false;
+            GroupAndShiftFragment groupAndShiftFragment = new GroupAndShiftFragment();
+            activity.replaceFragment(groupAndShiftFragment, getString(R.string.group_and_shift));
+        } else {
+            activity.onBackPressed();
+        }
     }
 
     private String getImageUri() {
@@ -264,12 +254,14 @@ public class EditProfileFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == ChoosePhoto.CHOOSE_PHOTO_INTENT) {
+                uiUtils.showProgressDialog();
                 if (data != null && data.getData() != null) {
                     choosePhoto.handleGalleryResult(data);
                 } else {
                     choosePhoto.handleCameraResult(choosePhoto.getCameraUri());
                 }
             } else if (requestCode == ChoosePhoto.SELECTED_IMG_CROP) {
+                uiUtils.dismissDialog();
                 imgProfile.setImageURI(choosePhoto.getCropImageUrl());
                 user.setProfilePicUri(getImageUri());
             }
@@ -304,12 +296,16 @@ public class EditProfileFragment extends BaseFragment {
             return false;
         }
 
-        if (phoneNo.length() != 10)
-            if (TextUtils.isEmpty(employeeId)) {
-                uiUtils.shortToast("Please Enter Employee Id");
-                radioGroupGender.requestFocus();
-                return false;
-            }
+        if (phoneNo.length() != 10) {
+            uiUtils.shortToast("Please provide a 10 digit mobile number, without adding any prefix!");
+            edtMobileNo.requestFocus();
+            return false;
+        }
+        if (TextUtils.isEmpty(employeeId)) {
+            uiUtils.shortToast("Please Enter Employee Id");
+            radioGroupGender.requestFocus();
+            return false;
+        }
         return true;
     }
 }

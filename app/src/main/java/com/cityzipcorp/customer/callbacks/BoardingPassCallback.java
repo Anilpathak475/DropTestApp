@@ -8,5 +8,6 @@ import com.cityzipcorp.customer.model.BoardingPass;
 
 public interface BoardingPassCallback {
     void onSuccess(BoardingPass boardingPass);
+
     void onFailure(Error error);
 }

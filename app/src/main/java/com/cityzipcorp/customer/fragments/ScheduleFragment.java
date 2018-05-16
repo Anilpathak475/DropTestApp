@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.activities.EditEventActivity;
-import com.cityzipcorp.customer.activities.HomeActivity;
 import com.cityzipcorp.customer.adapter.ScheduleAdapter;
 import com.cityzipcorp.customer.base.BaseFragment;
 import com.cityzipcorp.customer.callbacks.ScheduleAdapterChildCallback;
@@ -60,13 +59,12 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChildCallback {
 
 
+    public static boolean isBulkModeActive = false;
+    private static String TAG = ScheduleFragment.class.getCanonicalName();
     @BindView(R.id.table_layout)
     TableLayout tableLayout;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-
-    public static boolean isBulkModeActive = false;
-    private static String TAG = ScheduleFragment.class.getCanonicalName();
     private LayoutInflater layoutInflater;
     private RelativeLayout previousClickedLayout;
     private String previousDate = null;
@@ -96,9 +94,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     }
 
     private void init() {
-        assert (getActivity()) != null;
-        ((HomeActivity) getActivity()).backAllowed = false;
-        ((HomeActivity) getActivity()).inSchedule = true;
+        activity.backAllowed = false;
         c = Calendar.getInstance();
         layoutInflater = (LayoutInflater) activity.getSystemService(LAYOUT_INFLATER_SERVICE);
 
@@ -106,12 +102,6 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         currentBackgroundColor = new ColorDrawable(activity.getResources().getColor(R.color.current_date_background));
         cancelledBackgroundColor = new ColorDrawable(activity.getResources().getColor(R.color.cancelled_bg));
         recyclerView.addItemDecoration(new RecyclerSectionItemDecoration(33, true, getSectionCallback()));
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //    if (getActivity() != null) getActivity().setTitle(getString(R.string.schedule));
     }
 
     private void getSchedule() {

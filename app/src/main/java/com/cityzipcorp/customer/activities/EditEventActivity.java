@@ -353,9 +353,11 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
             uiUtils.shortToast("Please Select Time");
             return false;
         }
-        if (spnInTime.getSelectedItem().toString().equalsIgnoreCase(CalenderUtil.getTime(schedule.getInTimeUpdate().getTimestamp()))) {
-            uiUtils.shortToast("Please Select Time");
-            return false;
+        if (spnInTime.getSelectedItem().toString().equalsIgnoreCase(CalenderUtil.get24hrsTime(schedule.getInTimeUpdate().getTimestamp()))) {
+            if (!chkCancelInTime.isChecked()) {
+                uiUtils.shortToast("Please select different time to update event");
+                return false;
+            }
         }
         if (spnCancelReasonInTime.getSelectedItem().toString().
                 equalsIgnoreCase("Select Reason")) {
@@ -370,9 +372,11 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
             uiUtils.shortToast("Please Select Time");
             return false;
         }
-        if (spnOutTime.getSelectedItem().toString().equalsIgnoreCase(CalenderUtil.getTime(schedule.getOutTimeUpdate().getTimestamp()))) {
-            uiUtils.shortToast("Please Select Time");
-            return false;
+        if (spnOutTime.getSelectedItem().toString().equalsIgnoreCase(CalenderUtil.get24hrsTime(schedule.getOutTimeUpdate().getTimestamp()))) {
+            if (!chkCancelOutTime.isChecked()) {
+                uiUtils.shortToast("Please select different time to update event");
+                return false;
+            }
         }
         if (spnCancelReasonOutTime.getSelectedItem().toString()
                 .equalsIgnoreCase("Select Reason")) {

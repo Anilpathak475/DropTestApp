@@ -66,7 +66,6 @@ public class GroupAndShiftFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         initListeners();
         getGroupsAndShifts();
-
         return view;
     }
 
@@ -74,20 +73,30 @@ public class GroupAndShiftFragment extends BaseFragment {
         spnGroup.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedIndexOfGroup = i;
-                setAdapter(spnShift, groupList.get(i).getStringShifts());
-                if (isiInit) {
-                    setAdapter(spnShift, getShiftFromGroupList(groupList.get(i)));
-                    List<Shift> shiftList = groupList.get(i).getShifts();
-                    for (int j = 0; j < shiftList.size(); j++) {
-                        Shift shiftFromList = shiftList.get(j);
-                        if (userFromProfile != null && userFromProfile.getShift() != null)
-                            if (shiftFromList.getId().equalsIgnoreCase(userFromProfile.getShift().getId())) {
-                                spnShift.setSelection(j);
-
-                            }
+                if (i > 0) {
+                    selectedIndexOfGroup = i - 1;
+                    if (groupList.get(selectedIndexOfGroup).getShifts().size() > 0) {
+                        setAdapter(spnShift, groupList.get(selectedIndexOfGroup).getStringShifts());
+                    } else {
+                        uiUtils.shortToast("No shifts available in this group");
                     }
-                    isiInit = false;
+                    if (isiInit) {
+                        setAdapter(spnShift, getShiftFromGroupList(groupList.get(selectedIndexOfGroup)));
+                        List<Shift> shiftList = groupList.get(selectedIndexOfGroup).getShifts();
+
+                        for (int j = 0; j < shiftList.size(); j++) {
+                            Shift shiftFromList = shiftList.get(j);
+                            if (userFromProfile != null && userFromProfile.getShift() != null)
+                                if (shiftFromList.getId().equalsIgnoreCase(userFromProfile.getShift().getId())) {
+                                    spnShift.setSelection(j + 1);
+                                }
+                        }
+                        isiInit = false;
+                    }
+                } else {
+                    List<String> deafults = new ArrayList<>();
+                    deafults.add("Select");
+                    setAdapter(spnShift, deafults);
                 }
             }
 
@@ -100,7 +109,9 @@ public class GroupAndShiftFragment extends BaseFragment {
         spnShift.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedIndexOfShift = i;
+                if (i > 0) {
+                    selectedIndexOfShift = i - 1;
+                }
             }
 
             @Override
@@ -118,6 +129,9 @@ public class GroupAndShiftFragment extends BaseFragment {
                 if (userFromProfile != null) {
                     setValues(userFromProfile);
                 }
+            } else {
+                setAdapter(spnGroup, getGroupsFromGroupList(groupList));
+                getProfileInfo();
             }
         } else {
             setAdapter(spnGroup, getGroupsFromGroupList(groupList));
@@ -137,7 +151,7 @@ public class GroupAndShiftFragment extends BaseFragment {
             for (int i = 0; i < groupList.size(); i++) {
                 Group groupFromList = groupList.get(i);
                 if (groupFromList.getId().equalsIgnoreCase(group.getId())) {
-                    spnGroup.setSelection(i);
+                    spnGroup.setSelection(i + 1);
                 }
             }
         }
@@ -151,6 +165,7 @@ public class GroupAndShiftFragment extends BaseFragment {
             public void onSuccess(User user) {
                 if (user != null) {
                     userFromProfile = user;
+                    setValues(user);
                 }
                 uiUtils.dismissDialog();
             }
@@ -165,7 +180,23 @@ public class GroupAndShiftFragment extends BaseFragment {
 
     @OnClick(R.id.btn_update)
     void onUpdate() {
-        updateGroupAndShift();
+        if (validate()) {
+            updateGroupAndShift();
+        } else {
+            uiUtils.shortToast("Please select shift");
+        }
+    }
+
+    private boolean validate() {
+        if (spnGroup.getSelectedItem().toString().equalsIgnoreCase("Select")) {
+            uiUtils.shortToast("Please select group");
+            return false;
+        }
+        if (spnShift.getSelectedItem().toString().equalsIgnoreCase("Select")) {
+            uiUtils.shortToast("Please select shift");
+            return false;
+        }
+        return true;
     }
 
     private void setAdapter(Spinner spinner, List<String> objectList) {
@@ -199,7 +230,7 @@ public class GroupAndShiftFragment extends BaseFragment {
 
     private void updateGroupAndShift() {
         uiUtils.showProgressDialog();
-        User user = new User();
+        final User user = new User();
         user.setId(userFromProfile.getId());
         Group group = groupList.get(selectedIndexOfGroup);
         Shift shift = group.getShifts().get(selectedIndexOfShift);
@@ -207,9 +238,9 @@ public class GroupAndShiftFragment extends BaseFragment {
         user.setShiftId(shift.getId());
         UserStore.getInstance().updateProfileInfo(sharedPreferenceUtils.getAccessToken(), user, new UserCallback() {
             @Override
-            public void onSuccess(User user) {
+            public void onSuccess(User u) {
                 uiUtils.dismissDialog();
-                if (user.getHomeStop() == null || user.getNodalStop() == null) {
+                if (userFromProfile.getHomeStop() == null || userFromProfile.getNodalStop() == null) {
                     activity.setUpBottomNavigationView(2);
                 } else {
                     activity.onBackPressed();
@@ -226,6 +257,7 @@ public class GroupAndShiftFragment extends BaseFragment {
 
     private List<String> getGroupsFromGroupList(List<Group> groups) {
         List<String> groupList = new ArrayList<>();
+        groupList.add("Select");
         for (Group group : groups) {
             groupList.add(group.getName());
         }
@@ -235,6 +267,7 @@ public class GroupAndShiftFragment extends BaseFragment {
 
     private List<String> getShiftFromGroupList(Group groups) {
         List<String> shiftList = new ArrayList<>();
+        shiftList.add("Select");
         for (Shift shift : groups.getShifts()) {
             shiftList.add(shift.getName());
         }

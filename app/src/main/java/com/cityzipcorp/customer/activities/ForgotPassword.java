@@ -22,9 +22,9 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
     EditText edtEmail;
     @BindView(R.id.btn_submit)
     Button btnSubmit;
+    String action;
     private UiUtils uiUtils;
     private ForgotPasswordPresenter forgotPasswordPresenter;
-    String action;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -60,4 +60,12 @@
         android:layout_margin="10dp"
         android:paddingStart="15dp"
         android:textSize="23sp" />
+
+    <Button
+        android:id="@+id/btn_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/app_theme_red"
+        android:text="Update"
+        android:textColor="@color/white" />
 </LinearLayout>

@@ -75,6 +75,7 @@ public class Group implements Parcelable {
 
     public List<String> getStringShifts() {
         List<String> shiftList = new ArrayList<>();
+        shiftList.add("Select");
         for (Shift shift : shifts) {
             shiftList.add(shift.getName());
         }

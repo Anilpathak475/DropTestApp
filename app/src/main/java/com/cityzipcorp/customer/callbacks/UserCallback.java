@@ -8,5 +8,6 @@ import com.cityzipcorp.customer.model.User;
 
 public interface UserCallback {
     void onSuccess(User user);
+
     void onFailure(Error error);
 }

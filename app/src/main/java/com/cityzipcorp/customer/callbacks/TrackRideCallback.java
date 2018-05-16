@@ -8,5 +8,6 @@ import com.cityzipcorp.customer.model.TrackRide;
 
 public interface TrackRideCallback {
     void onSuccess(TrackRide trackRide);
+
     void onFailure(Error error);
 }

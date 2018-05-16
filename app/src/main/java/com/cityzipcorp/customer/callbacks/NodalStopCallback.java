@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface NodalStopCallback {
     void onSuccess(List<NodalStop> nodalStopList);
+
     void onFailure(Error error);
 }

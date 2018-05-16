@@ -5,6 +5,7 @@ package com.cityzipcorp.customer.callbacks;
  */
 
 public interface StatusCallback {
-    void  onSuccess();
+    void onSuccess();
+
     void onFailure(Error error);
 }

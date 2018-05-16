@@ -34,6 +34,7 @@ public interface BoardingPassInteractor {
 
     interface TrackMyRideCallback {
         void showTrackError(String error);
+
         void onSuccess(TrackRide trackRide);
     }
 

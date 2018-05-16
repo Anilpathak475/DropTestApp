@@ -32,6 +32,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.DayEve
     private Activity context;
     private ScheduleAdapterChildCallback scheduleAdapterChildCallback;
     private UiUtils uiUtils;
+
     public ScheduleAdapter(Activity context, List<Schedule> dayEventList, ScheduleAdapterChildCallback scheduleAdapterChildCallback) {
         this.dayEventList = dayEventList;
         this.context = context;
@@ -77,26 +78,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.DayEve
         return dayEventList.size();
     }
 
-    public class DayEventViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.txt_start_time)
-        TextView startTime;
-        @BindView(R.id.txt_end_time)
-        TextView endTime;
-        @BindView(R.id.layout_in_time)
-        LinearLayout inTimeLayout;
-        @BindView(R.id.layout_out_time)
-        LinearLayout outTimeLayout;
-        @BindView(R.id.layout_data)
-        LinearLayout layoutData;
-        @BindView(R.id.layout_no_data)
-        RelativeLayout layoutNoData;
-
-        private DayEventViewHolder(View view) {
-            super(view);
-            ButterKnife.bind(this, view);
-        }
-    }
-
     private void setValues(DayEventViewHolder holder, Schedule schedule) {
         // DateTime eventDate = schedule.getDate();
         if (schedule.getInTimeUpdate() == null && schedule.getOutTimeUpdate() == null) {
@@ -108,7 +89,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.DayEve
             holder.layoutNoData.setVisibility(View.GONE);
             if (schedule.getInTimeUpdate() != null) {
                 setInTimeValue(holder, schedule);
-            } else  {
+            } else {
                 holder.startTime.setText("--:--");
             }
             if (schedule.getOutTimeUpdate() != null) {
@@ -145,5 +126,25 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.DayEve
 
     private int getColor(int colorId) {
         return context.getResources().getColor(colorId);
+    }
+
+    public class DayEventViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.txt_start_time)
+        TextView startTime;
+        @BindView(R.id.txt_end_time)
+        TextView endTime;
+        @BindView(R.id.layout_in_time)
+        LinearLayout inTimeLayout;
+        @BindView(R.id.layout_out_time)
+        LinearLayout outTimeLayout;
+        @BindView(R.id.layout_data)
+        LinearLayout layoutData;
+        @BindView(R.id.layout_no_data)
+        RelativeLayout layoutNoData;
+
+        private DayEventViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
     }
 }

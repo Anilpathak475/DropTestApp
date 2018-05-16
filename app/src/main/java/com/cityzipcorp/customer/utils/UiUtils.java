@@ -28,9 +28,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
  */
 
 public class UiUtils {
-    private ProgressDialog progress;
     public Activity activity;
     AVLoadingIndicatorDialog avLoadingIndicatorDialog;
+    private ProgressDialog progress;
 
     public UiUtils(Activity activity) {
         this.activity = activity;

@@ -8,5 +8,6 @@ import com.cityzipcorp.customer.model.ShiftTiming;
 
 public interface ShiftCallback {
     void onSuccess(ShiftTiming shiftTiming);
+
     void onFailure(Error error);
 }
