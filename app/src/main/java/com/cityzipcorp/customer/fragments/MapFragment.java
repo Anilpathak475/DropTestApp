@@ -233,7 +233,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                         }
                     });
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 

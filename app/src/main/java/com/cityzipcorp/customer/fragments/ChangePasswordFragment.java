@@ -81,7 +81,7 @@ public class ChangePasswordFragment extends BaseFragment {
                 });
             }
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 

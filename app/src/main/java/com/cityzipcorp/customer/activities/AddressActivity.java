@@ -87,7 +87,7 @@ public class AddressActivity extends AppCompatActivity {
                 }
             });
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 
@@ -153,7 +153,7 @@ public class AddressActivity extends AppCompatActivity {
                 }
             });
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
 
     }

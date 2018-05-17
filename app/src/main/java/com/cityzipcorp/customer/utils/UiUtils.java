@@ -1,9 +1,11 @@
 package com.cityzipcorp.customer.utils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -129,5 +131,24 @@ public class UiUtils {
             }
         });
         dialog.show();
+    }
+
+
+    public void noInternetDialog() {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("No Internet Connection");
+        builder.setMessage("You need to have Mobile Data or wifi to access this. Press ok to Exit");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+
     }
 }

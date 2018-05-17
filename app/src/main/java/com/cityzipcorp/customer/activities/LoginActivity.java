@@ -76,7 +76,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
         if (NetworkUtils.isNetworkAvailable(this)) {
             loginPresenter.validate(email, password);
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 

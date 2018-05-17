@@ -228,7 +228,7 @@ public class GroupAndShiftFragment extends BaseFragment {
                 }
             });
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 
@@ -260,7 +260,7 @@ public class GroupAndShiftFragment extends BaseFragment {
                 }
             });
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 

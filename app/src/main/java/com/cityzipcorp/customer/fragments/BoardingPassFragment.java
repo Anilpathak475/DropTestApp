@@ -173,7 +173,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
                 locationUtils.requestLocationPermission();
             }
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 
@@ -191,7 +191,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
             swipeRefreshLayout.setRefreshing(true);
             boardingPassPresenter.getBoardingPass(sharedPreferenceUtils.getAccessToken());
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 
@@ -258,7 +258,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
             }
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 
@@ -271,7 +271,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
         if (NetworkUtils.isNetworkAvailable(activity)) {
             boardingPassPresenter.sendSos(location, boardingPass.getId(), sharedPreferenceUtils.getAccessToken());
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 
@@ -297,7 +297,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
         if (NetworkUtils.isNetworkAvailable(activity)) {
             boardingPassPresenter.markAttendance(location, boardingPass.getId(), sharedPreferenceUtils.getAccessToken());
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
 
     }

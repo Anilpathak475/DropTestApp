@@ -147,7 +147,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
                 }
             });
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 

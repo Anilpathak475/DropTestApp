@@ -98,7 +98,7 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
                         mRecyclerView.setVisibility(View.GONE);
                     }
                 } else {
-                    uiUtils.shortToast("No Internet!");
+                    uiUtils.noInternetDialog();
                 }
 
             }

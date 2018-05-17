@@ -255,7 +255,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                 }
             });
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
             uiUtils.dismissDialog();
             swipeRefreshLayout.setRefreshing(false);
         }

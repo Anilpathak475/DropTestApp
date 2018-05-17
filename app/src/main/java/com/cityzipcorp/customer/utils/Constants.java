@@ -6,6 +6,11 @@ package com.cityzipcorp.customer.utils;
 
 public interface Constants {
     String HEADER_AUTHORIZATION_KEY = "Authorization";
+    String HEADER_MOBILE_OS = "mob_os";
+    String HEADER_MOBILE_OS_VERSION = "mob_os_version";
+    String HEADER_MOBILE_MANUFACTURER = "mob_manufacturer";
+    String HEADER_MOBILE_MANUFACTURER_MODEL = "mob_manufacturer_model";
+    String HEADER_MOBILE_APP_VERSION = "mob_app_version";
     String HEADER_TIMEZONE_KEY = "Timezone";
     String HEADER_AUTHORIZATION_VALUE_PREFIX = "JWT ";
     String EDIT_INTENT_EXTRA_DATA = "data ";

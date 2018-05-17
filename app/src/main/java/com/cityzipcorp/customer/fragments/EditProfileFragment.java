@@ -129,7 +129,7 @@ public class EditProfileFragment extends BaseFragment {
                 }
             });
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 
@@ -160,7 +160,7 @@ public class EditProfileFragment extends BaseFragment {
                 updateProfile(user);
             }
         } else {
-            uiUtils.shortToast("No Internet!");
+            uiUtils.noInternetDialog();
         }
     }
 
