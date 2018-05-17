@@ -19,6 +19,7 @@ import com.cityzipcorp.customer.model.Group;
 import com.cityzipcorp.customer.model.Shift;
 import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,54 +206,62 @@ public class GroupAndShiftFragment extends BaseFragment {
     }
 
     private void getGroupsAndShifts() {
-        uiUtils.showProgressDialog();
-        UserStore.getInstance().getShiftByGroup(sharedPreferenceUtils.getAccessToken(), new GroupCallBack() {
-            @Override
-            public void onSuccess(List<Group> groups) {
-                uiUtils.dismissDialog();
-                if (groups.isEmpty()) {
-                    activity.onBackPressed();
-                    uiUtils.shortToast("No groups and shift");
-                } else {
-                    groupList = groups;
-                    getBundleExtra();
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            uiUtils.showProgressDialog();
+            UserStore.getInstance().getShiftByGroup(sharedPreferenceUtils.getAccessToken(), new GroupCallBack() {
+                @Override
+                public void onSuccess(List<Group> groups) {
+                    uiUtils.dismissDialog();
+                    if (groups.isEmpty()) {
+                        activity.onBackPressed();
+                        uiUtils.shortToast("No groups and shift");
+                    } else {
+                        groupList = groups;
+                        getBundleExtra();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Error error) {
-                uiUtils.dismissDialog();
-                uiUtils.shortToast("No groups and shift");
-            }
-        });
+                @Override
+                public void onFailure(Error error) {
+                    uiUtils.dismissDialog();
+                    uiUtils.shortToast("No groups and shift");
+                }
+            });
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
 
     private void updateGroupAndShift() {
-        uiUtils.showProgressDialog();
-        final User user = new User();
-        user.setId(userFromProfile.getId());
-        Group group = groupList.get(selectedIndexOfGroup);
-        Shift shift = group.getShifts().get(selectedIndexOfShift);
-        user.setGroupId(group.getId());
-        user.setShiftId(shift.getId());
-        UserStore.getInstance().updateProfileInfo(sharedPreferenceUtils.getAccessToken(), user, new UserCallback() {
-            @Override
-            public void onSuccess(User u) {
-                uiUtils.dismissDialog();
-                if (userFromProfile.getHomeStop() == null || userFromProfile.getNodalStop() == null) {
-                    activity.setUpBottomNavigationView(2);
-                } else {
-                    activity.onBackPressed();
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            uiUtils.showProgressDialog();
+            final User user = new User();
+            user.setId(userFromProfile.getId());
+            Group group = groupList.get(selectedIndexOfGroup);
+            Shift shift = group.getShifts().get(selectedIndexOfShift);
+            user.setGroupId(group.getId());
+            user.setShiftId(shift.getId());
+            UserStore.getInstance().updateProfileInfo(sharedPreferenceUtils.getAccessToken(), user, new UserCallback() {
+                @Override
+                public void onSuccess(User u) {
+                    uiUtils.dismissDialog();
+                    if (userFromProfile.getHomeStop() == null || userFromProfile.getNodalStop() == null) {
+                        activity.setUpBottomNavigationView(2);
+                    } else {
+                        activity.onBackPressed();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Error error) {
-                uiUtils.dismissDialog();
-                uiUtils.shortToast("Unable to update details");
-            }
-        });
+                @Override
+                public void onFailure(Error error) {
+                    uiUtils.dismissDialog();
+                    uiUtils.shortToast("Unable to update details");
+                }
+            });
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
     private List<String> getGroupsFromGroupList(List<Group> groups) {

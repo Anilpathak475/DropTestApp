@@ -129,6 +129,8 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                     uiUtils.dismissDialog();
                 }
             });
+        } else {
+            uiUtils.shortToast("No Internet!");
         }
     }
 

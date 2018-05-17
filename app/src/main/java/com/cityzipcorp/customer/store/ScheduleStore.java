@@ -15,6 +15,8 @@ import com.cityzipcorp.customer.model.Schedule;
 import com.cityzipcorp.customer.model.ShiftTiming;
 import com.cityzipcorp.customer.network.ClientGenerator;
 import com.cityzipcorp.customer.utils.Constants;
+import com.cityzipcorp.customer.utils.NetworkUtils;
+import com.cityzipcorp.customer.utils.UiUtils;
 import com.cityzipcorp.customer.utils.Utils;
 
 import java.util.List;
@@ -85,30 +87,35 @@ public class ScheduleStore {
     }
 
     public void updateSchedule(final Activity activity, Schedule schedule, String authToken) {
-        ScheduleClient scheduleClient = ClientGenerator.createClient(ScheduleClient.class);
-        Call<ResponseBody> call;
-        if (!TextUtils.isEmpty(schedule.getId())) {
-            call = scheduleClient.updateSchedule(Constants.HEADER_AUTHORIZATION_VALUE_PREFIX + authToken, schedule.getId(), schedule);
-        } else {
-            call = scheduleClient.createSchedule(Constants.HEADER_AUTHORIZATION_VALUE_PREFIX + authToken, schedule);
-        }
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 200) {
-                    activity.setResult(Activity.RESULT_OK, new Intent().putExtra("status", "success"));
-                    activity.finish();
-                } else {
+        UiUtils uiUtils = new UiUtils(activity);
+        if (NetworkUtils.isNetworkAvailable(activity)) {
 
-                    Toast.makeText(activity, "Error code is " + response.code(), Toast.LENGTH_LONG).show();
+            ScheduleClient scheduleClient = ClientGenerator.createClient(ScheduleClient.class);
+            Call<ResponseBody> call;
+            if (!TextUtils.isEmpty(schedule.getId())) {
+                call = scheduleClient.updateSchedule(Constants.HEADER_AUTHORIZATION_VALUE_PREFIX + authToken, schedule.getId(), schedule);
+            } else {
+                call = scheduleClient.createSchedule(Constants.HEADER_AUTHORIZATION_VALUE_PREFIX + authToken, schedule);
+            }
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        activity.setResult(Activity.RESULT_OK, new Intent().putExtra("status", "success"));
+                        activity.finish();
+                    } else {
+                        Toast.makeText(activity, "Error code is " + response.code(), Toast.LENGTH_LONG).show();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(activity, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(activity, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
 

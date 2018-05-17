@@ -34,6 +34,7 @@ import com.cityzipcorp.customer.model.ProfileStatus;
 import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.LocationUtils;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.UiUtils;
 import com.crashlytics.android.Crashlytics;
@@ -129,21 +130,25 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     private void checkProfileStatus() {
-        uiUtils.showProgressDialog();
-        UserStore.getInstance().getProfileStatus(sharedPreferenceManager.getAccessToken(), new ProfileStatusCallback() {
-            @Override
-            public void onSuccess(ProfileStatus profileStatus) {
-                uiUtils.dismissDialog();
-                validateProfileStatus(profileStatus);
-            }
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            uiUtils.showProgressDialog();
+            UserStore.getInstance().getProfileStatus(sharedPreferenceManager.getAccessToken(), new ProfileStatusCallback() {
+                @Override
+                public void onSuccess(ProfileStatus profileStatus) {
+                    uiUtils.dismissDialog();
+                    validateProfileStatus(profileStatus);
+                }
 
-            @Override
-            public void onFailure(Error error) {
-                uiUtils.dismissDialog();
-                setUpBottomNavigationView(0);
-                replaceFragment(new BoardingPassFragment(), getString(string.boarding_pass));
-            }
-        });
+                @Override
+                public void onFailure(Error error) {
+                    uiUtils.dismissDialog();
+                    setUpBottomNavigationView(0);
+                    replaceFragment(new BoardingPassFragment(), getString(string.boarding_pass));
+                }
+            });
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
     private void validateProfileStatus(ProfileStatus profileStatus) {

@@ -14,6 +14,7 @@ import com.cityzipcorp.customer.base.BaseFragment;
 import com.cityzipcorp.customer.callbacks.StatusCallback;
 import com.cityzipcorp.customer.model.ChangePassword;
 import com.cityzipcorp.customer.store.UserStore;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.marlonmafra.android.widget.EditTextPassword;
 
 import butterknife.BindView;
@@ -58,25 +59,29 @@ public class ChangePasswordFragment extends BaseFragment {
 
     @OnClick(R.id.btn_submit)
     public void onUpdatePassword() {
-        if (validate()) {
-            uiUtils.showProgressDialog();
-            ChangePassword changePassword = new ChangePassword();
-            changePassword.setCurrentPassword(edtCurrentPassword.getText().toString());
-            changePassword.setNewPassword(edtNewPassword.getText().toString());
-            UserStore.getInstance().changePassword(changePassword, sharedPreferenceUtils.getAccessToken(), new StatusCallback() {
-                @Override
-                public void onSuccess() {
-                    uiUtils.dismissDialog();
-                    uiUtils.shortToast("Password changed successfully");
-                    activity.onBackPressed();
-                }
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            if (validate()) {
+                uiUtils.showProgressDialog();
+                ChangePassword changePassword = new ChangePassword();
+                changePassword.setCurrentPassword(edtCurrentPassword.getText().toString());
+                changePassword.setNewPassword(edtNewPassword.getText().toString());
+                UserStore.getInstance().changePassword(changePassword, sharedPreferenceUtils.getAccessToken(), new StatusCallback() {
+                    @Override
+                    public void onSuccess() {
+                        uiUtils.dismissDialog();
+                        uiUtils.shortToast("Password changed successfully");
+                        activity.onBackPressed();
+                    }
 
-                @Override
-                public void onFailure(Error error) {
-                    uiUtils.dismissDialog();
-                    uiUtils.shortToast(error.getMessage());
-                }
-            });
+                    @Override
+                    public void onFailure(Error error) {
+                        uiUtils.dismissDialog();
+                        uiUtils.shortToast(error.getMessage());
+                    }
+                });
+            }
+        } else {
+            uiUtils.shortToast("No Internet!");
         }
     }
 

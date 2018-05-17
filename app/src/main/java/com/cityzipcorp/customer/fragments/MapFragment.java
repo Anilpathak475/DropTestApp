@@ -33,6 +33,7 @@ import com.cityzipcorp.customer.model.TrackRide;
 import com.cityzipcorp.customer.store.BoardingPassStore;
 import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.LocationUtils;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -214,22 +215,26 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     }
 
     private void fetchTripDetailsOnMap(Location location) {
-        BoardingPassStore.getInstance().trackMyRide(boardingPass.getId(), String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), sharedPreferenceUtils.getAccessToken(),
-                new TrackRideCallback() {
-                    @Override
-                    public void onSuccess(TrackRide trackRide) {
-                        uiUtils.dismissDialog();
-                        if (trackRide != null) {
-                            drawTripDetailsOnMap(trackRide);
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            BoardingPassStore.getInstance().trackMyRide(boardingPass.getId(), String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), sharedPreferenceUtils.getAccessToken(),
+                    new TrackRideCallback() {
+                        @Override
+                        public void onSuccess(TrackRide trackRide) {
+                            uiUtils.dismissDialog();
+                            if (trackRide != null) {
+                                drawTripDetailsOnMap(trackRide);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Error error) {
-                        uiUtils.dismissDialog();
-                        uiUtils.shortToast(error.getLocalizedMessage());
-                    }
-                });
+                        @Override
+                        public void onFailure(Error error) {
+                            uiUtils.dismissDialog();
+                            uiUtils.shortToast(error.getLocalizedMessage());
+                        }
+                    });
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
     private void trackMyRide() {

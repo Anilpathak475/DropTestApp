@@ -17,6 +17,7 @@ import com.cityzipcorp.customer.model.Area;
 import com.cityzipcorp.customer.model.GeoLocateAddress;
 import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.UiUtils;
 
@@ -53,32 +54,41 @@ public class AddressActivity extends AppCompatActivity {
     private SharedPreferenceManager sharedPreferenceManager;
     private User user;
     private Address selectedAddress;
+    private UiUtils uiUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
         ButterKnife.bind(this);
+        uiUtils = new UiUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         getAreas();
     }
 
     private void getAreas() {
-        UserStore.getInstance().getAreas(sharedPreferenceManager.getAccessToken(), new AreaCallback() {
-            @Override
-            public void onSuccess(List<Area> areas) {
-                List<String> areaNames = new ArrayList<>();
-                for (Area area : areas) {
-                    areaNames.add(area.getAreaName());
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            uiUtils.showProgressDialog();
+            UserStore.getInstance().getAreas(sharedPreferenceManager.getAccessToken(), new AreaCallback() {
+                @Override
+                public void onSuccess(List<Area> areas) {
+                    List<String> areaNames = new ArrayList<>();
+                    for (Area area : areas) {
+                        areaNames.add(area.getAreaName());
+                    }
+                    setAdapter(areaNames);
+                    uiUtils.dismissDialog();
                 }
-                setAdapter(areaNames);
-            }
 
-            @Override
-            public void onFailure(Error error) {
-
-            }
-        });
+                @Override
+                public void onFailure(Error error) {
+                    uiUtils.dismissDialog();
+                    uiUtils.shortToast("Unable to fetch Areas");
+                }
+            });
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
     private void setAdapter(List<String> areaNames) {
@@ -115,32 +125,37 @@ public class AddressActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_update)
     void updateHomeAddress() {
-        Address address = new Address();
-        address.setArea(autoCompleteArea.getText().toString());
-        address.setCity(txtCity.getText().toString());
-        address.setSociety(selectedAddress.getSociety());
-        address.setState(selectedAddress.getState());
-        address.setLandmark(edtLandmark.getText().toString());
-        address.setLocality(selectedAddress.getLocality());
-        address.setCountry(selectedAddress.getCountry());
-        User user = new User();
-        user.setId(this.user.getId());
-        GeoLocateAddress geoLocateAddress = new GeoLocateAddress();
-        geoLocateAddress.setAddress(address);
-        geoLocateAddress.setPoint(this.user.getHomeStop().getPoint());
-        user.setHomeStop(geoLocateAddress);
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            Address address = new Address();
+            address.setArea(autoCompleteArea.getText().toString());
+            address.setCity(txtCity.getText().toString());
+            address.setSociety(selectedAddress.getSociety());
+            address.setState(selectedAddress.getState());
+            address.setLandmark(edtLandmark.getText().toString());
+            address.setLocality(selectedAddress.getLocality());
+            address.setCountry(selectedAddress.getCountry());
+            User user = new User();
+            user.setId(this.user.getId());
+            GeoLocateAddress geoLocateAddress = new GeoLocateAddress();
+            geoLocateAddress.setAddress(address);
+            geoLocateAddress.setPoint(this.user.getHomeStop().getPoint());
+            user.setHomeStop(geoLocateAddress);
 
-        UserStore.getInstance().updateProfileInfo(sharedPreferenceManager.getAccessToken(), user, new UserCallback() {
-            @Override
-            public void onSuccess(User user) {
-                navigateToProfile();
-            }
+            UserStore.getInstance().updateProfileInfo(sharedPreferenceManager.getAccessToken(), user, new UserCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    navigateToProfile();
+                }
 
-            @Override
-            public void onFailure(Error error) {
-                new UiUtils(AddressActivity.this).shortToast(error.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Error error) {
+                    new UiUtils(AddressActivity.this).shortToast(error.getMessage());
+                }
+            });
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
+
     }
 
     private void navigateToProfile() {

@@ -25,7 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cityzipcorp.customer.R;
-import com.cityzipcorp.customer.activities.HomeActivity;
 import com.cityzipcorp.customer.base.BaseFragment;
 import com.cityzipcorp.customer.model.BoardingPass;
 import com.cityzipcorp.customer.model.GeoJsonPoint;
@@ -36,6 +35,7 @@ import com.cityzipcorp.customer.mvp.boardingpass.BoardingPassView;
 import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.LocationUtils;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -159,17 +159,21 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     @OnClick(R.id.btn_track_my_ride)
     void trackMyRide() {
-        if (locationUtils.checkLocationPermission()) {
-            if (locationUtils.isLocationEnabled()) {
-                Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-                getRideDetails(location);
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            if (locationUtils.checkLocationPermission()) {
+                if (locationUtils.isLocationEnabled()) {
+                    Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+                    getRideDetails(location);
 
 
+                } else {
+                    locationUtils.enableGps(googleApiClient);
+                }
             } else {
-                locationUtils.enableGps(googleApiClient);
+                locationUtils.requestLocationPermission();
             }
         } else {
-            locationUtils.requestLocationPermission();
+            uiUtils.shortToast("No Internet!");
         }
     }
 
@@ -183,8 +187,12 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     }
 
     public void getPassDetails() {
-        swipeRefreshLayout.setRefreshing(true);
-        boardingPassPresenter.getBoardingPass(sharedPreferenceUtils.getAccessToken());
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            swipeRefreshLayout.setRefreshing(true);
+            boardingPassPresenter.getBoardingPass(sharedPreferenceUtils.getAccessToken());
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
     private void setPassDetails(BoardingPass boardingPass) {
@@ -235,18 +243,22 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     @OnClick(R.id.layout_pickup_address)
     void onLayoutAddressClick() {
-        if (boardingPass.getTripType().equalsIgnoreCase(Constants.TRIP_TYPE_PICK_UP)) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    GeoJsonPoint geoJsonPoint = boardingPass.getStopLocation();
-                    Uri intentUri = Uri.parse(getString(R.string.maps_navigation) + geoJsonPoint.getCoordinates()[1] + "," + geoJsonPoint.getCoordinates()[0] + getString(R.string.maps_mode));
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, intentUri);
-                    mapIntent.setPackage(getString(R.string.map_package));
-                    startActivity(mapIntent);
-                }
-            }, 1000);
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            if (boardingPass.getTripType().equalsIgnoreCase(Constants.TRIP_TYPE_PICK_UP)) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        GeoJsonPoint geoJsonPoint = boardingPass.getStopLocation();
+                        Uri intentUri = Uri.parse(getString(R.string.maps_navigation) + geoJsonPoint.getCoordinates()[1] + "," + geoJsonPoint.getCoordinates()[0] + getString(R.string.maps_mode));
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, intentUri);
+                        mapIntent.setPackage(getString(R.string.map_package));
+                        startActivity(mapIntent);
+                    }
+                }, 1000);
 
+            }
+        } else {
+            uiUtils.shortToast("No Internet!");
         }
     }
 
@@ -256,7 +268,11 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
             return;
         }
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        boardingPassPresenter.sendSos(location, boardingPass.getId(), sharedPreferenceUtils.getAccessToken());
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            boardingPassPresenter.sendSos(location, boardingPass.getId(), sharedPreferenceUtils.getAccessToken());
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
     @Override
@@ -278,7 +294,11 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
             return;
         }
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        boardingPassPresenter.markAttendance(location, boardingPass.getId(), sharedPreferenceUtils.getAccessToken());
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            boardingPassPresenter.markAttendance(location, boardingPass.getId(), sharedPreferenceUtils.getAccessToken());
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
 
     }
 
@@ -324,8 +344,8 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
         bundle.putParcelable("boardingPass", boardingPass);
         MapFragment mapFragment = new MapFragment();
         mapFragment.setArguments(bundle);
-        ((HomeActivity) getActivity()).replaceFragment(mapFragment, getString(R.string.map_fragment));
-        ((HomeActivity) getActivity()).backAllowed = true;
+        activity.replaceFragment(mapFragment, getString(R.string.map_fragment));
+        activity.backAllowed = true;
     }
 
     @Override

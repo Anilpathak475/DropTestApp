@@ -24,6 +24,7 @@ import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.model.Address;
 import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -227,31 +228,37 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     }
 
     private void getProfileInfo() {
-        UserStore.getInstance().getProfileInfo(sharedPreferenceUtils.getAccessToken(), new UserCallback() {
-            @Override
-            public void onSuccess(User user) {
-                if (user != null) {
-                    try {
-                        uiUtils.dismissDialog();
-                        setValues(user);
-                        noDataLayout.setVisibility(View.GONE);
-                        layoutMain.setVisibility(View.VISIBLE);
-                        swipeRefreshLayout.setRefreshing(false);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        swipeRefreshLayout.setRefreshing(false);
-                        uiUtils.dismissDialog();
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            UserStore.getInstance().getProfileInfo(sharedPreferenceUtils.getAccessToken(), new UserCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    if (user != null) {
+                        try {
+                            uiUtils.dismissDialog();
+                            setValues(user);
+                            noDataLayout.setVisibility(View.GONE);
+                            layoutMain.setVisibility(View.VISIBLE);
+                            swipeRefreshLayout.setRefreshing(false);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            swipeRefreshLayout.setRefreshing(false);
+                            uiUtils.dismissDialog();
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Error error) {
-                swipeRefreshLayout.setRefreshing(false);
-                uiUtils.dismissDialog();
-                uiUtils.shortToast("Unable to fetch profile details!");
-            }
-        });
+                @Override
+                public void onFailure(Error error) {
+                    swipeRefreshLayout.setRefreshing(false);
+                    uiUtils.dismissDialog();
+                    uiUtils.shortToast("Unable to fetch profile details!");
+                }
+            });
+        } else {
+            uiUtils.shortToast("No Internet!");
+            uiUtils.dismissDialog();
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     @OnClick(R.id.card_change_password)

@@ -12,6 +12,7 @@ import com.cityzipcorp.customer.mvp.setpassword.SetNewPasswordPresenter;
 import com.cityzipcorp.customer.mvp.setpassword.SetNewPasswordPresenterImpl;
 import com.cityzipcorp.customer.mvp.setpassword.SetNewPasswordView;
 import com.cityzipcorp.customer.utils.Constants;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.UiUtils;
 import com.marlonmafra.android.widget.EditTextPassword;
 
@@ -60,12 +61,16 @@ public class NewUserPassword extends AppCompatActivity implements SetNewPassword
 
     @OnClick(R.id.btn_submit)
     void onSubmitPassword() {
-        SetNewPassword setNewPassword = new SetNewPassword();
-        setNewPassword.setResetId(resetId);
-        setNewPassword.setNewPassword(edtNewPassword.getText().toString());
-        setNewPassword.setConfirmPassword(edtConfirmPassword.getText().toString());
-        setNewPassword.setEmail(emailId);
-        presenter.validatePassword(setNewPassword, Constants.NEW_USER_PASSWORD_CHANGE_URL);
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            SetNewPassword setNewPassword = new SetNewPassword();
+            setNewPassword.setResetId(resetId);
+            setNewPassword.setNewPassword(edtNewPassword.getText().toString());
+            setNewPassword.setConfirmPassword(edtConfirmPassword.getText().toString());
+            setNewPassword.setEmail(emailId);
+            presenter.validatePassword(setNewPassword, Constants.NEW_USER_PASSWORD_CHANGE_URL);
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
 

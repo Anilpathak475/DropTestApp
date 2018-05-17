@@ -22,6 +22,8 @@ import android.widget.Toast;
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.adapter.PlacesAutoCompleteAdapter;
 import com.cityzipcorp.customer.utils.Constants;
+import com.cityzipcorp.customer.utils.NetworkUtils;
+import com.cityzipcorp.customer.utils.UiUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -50,15 +52,15 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
     @BindView(R.id.img_back)
     ImageView imgBack;
 
-    private LinearLayoutManager mLinearLayoutManager;
     private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
-
+    private UiUtils uiUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autocomplete_place);
         ButterKnife.bind(this);
+        uiUtils = new UiUtils(this);
         buildGoogleApiClient();
         initializeView();
     }
@@ -67,7 +69,7 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
 
         mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(this, R.layout.autocomplete_list_item, googleApiClient, BOUNDS_INDIA, null);
         mAutoCompleteAdapter.setBounds(BOUNDS_INDIA);
-        mLinearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
 
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.setAdapter(mAutoCompleteAdapter);
@@ -85,14 +87,18 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
 
             @SuppressLint("LongLogTag")
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!s.toString().equals("") && googleApiClient.isConnected()) {
-                    mRecyclerView.setVisibility(View.VISIBLE);
-                    mAutoCompleteAdapter.getFilter().filter(s.toString());
-                } else if (!googleApiClient.isConnected()) {
-                    Toast.makeText(getApplicationContext(), Constants.API_NOT_CONNECTED, Toast.LENGTH_SHORT).show();
-                    Log.e(Constants.PlacesTag, Constants.API_NOT_CONNECTED);
-                } else if (count == 0) {
-                    mRecyclerView.setVisibility(View.GONE);
+                if (NetworkUtils.isNetworkAvailable(AutocompletePlaceActivity.this)) {
+                    if (!s.toString().equals("") && googleApiClient.isConnected()) {
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                        mAutoCompleteAdapter.getFilter().filter(s.toString());
+                    } else if (!googleApiClient.isConnected()) {
+                        Toast.makeText(getApplicationContext(), Constants.API_NOT_CONNECTED, Toast.LENGTH_SHORT).show();
+                        Log.e(Constants.PlacesTag, Constants.API_NOT_CONNECTED);
+                    } else if (count == 0) {
+                        mRecyclerView.setVisibility(View.GONE);
+                    }
+                } else {
+                    uiUtils.shortToast("No Internet!");
                 }
 
             }

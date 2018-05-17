@@ -35,6 +35,7 @@ import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.CustomClusterRenderer;
 import com.cityzipcorp.customer.utils.LocationUtils;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.UiUtils;
 import com.etiennelawlor.discreteslider.library.ui.DiscreteSlider;
@@ -195,27 +196,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void getNodalStopsList(final int distance) {
-        uiUtils.showProgressDialog();
-        LatLngBounds latLngBoundsForApi = toBounds(latLng, distance);
-        String boundingBounds = String.valueOf(latLngBoundsForApi.southwest.longitude + "," + latLngBoundsForApi.southwest.latitude + "," + latLngBoundsForApi.northeast.longitude + "," + latLngBoundsForApi.northeast.latitude);
-        UserStore.getInstance().getNodalStopList(boundingBounds, sharedPreferenceManager.getAccessToken(), new NodalStopCallback() {
-            @Override
-            public void onSuccess(List<NodalStop> nodalStopList) {
-                if (nodalStopList != null) {
-                    addNodalMarkersOnMap(nodalStopList);
-                    LatLngBounds latLngBounds = toBounds(latLng, distance + 300);
-                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(latLngBounds, 20);
-                    googleMap.animateCamera(cu);
-                    uiUtils.dismissDialog();
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            uiUtils.showProgressDialog();
+            LatLngBounds latLngBoundsForApi = toBounds(latLng, distance);
+            String boundingBounds = String.valueOf(latLngBoundsForApi.southwest.longitude + "," + latLngBoundsForApi.southwest.latitude + "," + latLngBoundsForApi.northeast.longitude + "," + latLngBoundsForApi.northeast.latitude);
+            UserStore.getInstance().getNodalStopList(boundingBounds, sharedPreferenceManager.getAccessToken(), new NodalStopCallback() {
+                @Override
+                public void onSuccess(List<NodalStop> nodalStopList) {
+                    if (nodalStopList != null) {
+                        addNodalMarkersOnMap(nodalStopList);
+                        LatLngBounds latLngBounds = toBounds(latLng, distance + 300);
+                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(latLngBounds, 20);
+                        googleMap.animateCamera(cu);
+                        uiUtils.dismissDialog();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Error error) {
-                uiUtils.dismissDialog();
-                uiUtils.shortToast("Unable to fetch nodal stops");
-            }
-        });
+                @Override
+                public void onFailure(Error error) {
+                    uiUtils.dismissDialog();
+                    uiUtils.shortToast("Unable to fetch nodal stops");
+                }
+            });
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
     @OnClick(R.id.btn_set_home)

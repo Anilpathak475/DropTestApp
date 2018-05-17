@@ -31,6 +31,7 @@ import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.ChoosePhoto;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.Utils;
 
 import java.io.ByteArrayOutputStream;
@@ -105,27 +106,31 @@ public class EditProfileFragment extends BaseFragment {
     }
 
     private void getProfileInfo() {
-        uiUtils.showProgressDialog();
-        UserStore.getInstance().getProfileInfo(sharedPreferenceUtils.getAccessToken(), new UserCallback() {
-            @Override
-            public void onSuccess(User user) {
-                if (user != null) {
-                    try {
-                        uiUtils.dismissDialog();
-                        setValues(user);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            uiUtils.showProgressDialog();
+            UserStore.getInstance().getProfileInfo(sharedPreferenceUtils.getAccessToken(), new UserCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    if (user != null) {
+                        try {
+                            uiUtils.dismissDialog();
+                            setValues(user);
+                        } catch (Exception e) {
+                            e.printStackTrace();
 
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Error error) {
-                uiUtils.dismissDialog();
-                uiUtils.shortToast("Unable to fetch profile details!");
-            }
-        });
+                @Override
+                public void onFailure(Error error) {
+                    uiUtils.dismissDialog();
+                    uiUtils.shortToast("Unable to fetch profile details!");
+                }
+            });
+        } else {
+            uiUtils.shortToast("No Internet!");
+        }
     }
 
     @Override
@@ -136,22 +141,26 @@ public class EditProfileFragment extends BaseFragment {
 
     @OnClick(R.id.btn_update_profile)
     public void onSave() {
-        String firstName = edtFirstName.getText().toString();
-        String lastName = edtLastName.getText().toString();
-        String email = edtEmailId.getText().toString();
-        String alternateEmail = edtAlternativeEmailId.getText().toString();
-        String phone = edtMobileNo.getText().toString();
-        String employeeId = edtEmployeeId.getText().toString();
-        if (validate(email, firstName, lastName, gender, phone, alternateEmail, employeeId)) {
-            User user = new User();
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setAlternateEmail(alternateEmail);
-            user.setPhoneNumber("+91" + phone);
-            user.setGender(gender);
-            user.setId(userId);
-            user.setEmployeeId(employeeId);
-            updateProfile(user);
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            String firstName = edtFirstName.getText().toString();
+            String lastName = edtLastName.getText().toString();
+            String email = edtEmailId.getText().toString();
+            String alternateEmail = edtAlternativeEmailId.getText().toString();
+            String phone = edtMobileNo.getText().toString();
+            String employeeId = edtEmployeeId.getText().toString();
+            if (validate(email, firstName, lastName, gender, phone, alternateEmail, employeeId)) {
+                User user = new User();
+                user.setFirstName(firstName);
+                user.setLastName(lastName);
+                user.setAlternateEmail(alternateEmail);
+                user.setPhoneNumber("+91" + phone);
+                user.setGender(gender);
+                user.setId(userId);
+                user.setEmployeeId(employeeId);
+                updateProfile(user);
+            }
+        } else {
+            uiUtils.shortToast("No Internet!");
         }
     }
 

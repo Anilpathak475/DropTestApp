@@ -10,6 +10,7 @@ import com.cityzipcorp.customer.mvp.forgotpassword.ForgotPasswordPresenter;
 import com.cityzipcorp.customer.mvp.forgotpassword.ForgotPasswordPresenterImpl;
 import com.cityzipcorp.customer.mvp.forgotpassword.ForgotPasswordView;
 import com.cityzipcorp.customer.utils.Constants;
+import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.UiUtils;
 
 import butterknife.BindView;
@@ -52,7 +53,11 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
         } else {
             url = Constants.NEW_USER_URL;
         }
-        forgotPasswordPresenter.validateEmail(edtEmail.getText().toString(), url);
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            forgotPasswordPresenter.validateEmail(edtEmail.getText().toString(), url);
+        } else {
+            setEmailError("No Internet!");
+        }
     }
 
     @Override
