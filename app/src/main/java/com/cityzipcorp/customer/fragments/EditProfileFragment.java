@@ -195,6 +195,7 @@ public class EditProfileFragment extends BaseFragment {
     }
 
     private void updateProfile(User user) {
+
         uiUtils.showProgressDialog();
         user.setId(userId);
         UserStore.getInstance().updateProfileInfo(sharedPreferenceUtils.getAccessToken(), user, new UserCallback() {
@@ -317,4 +318,6 @@ public class EditProfileFragment extends BaseFragment {
         }
         return true;
     }
+
+
 }

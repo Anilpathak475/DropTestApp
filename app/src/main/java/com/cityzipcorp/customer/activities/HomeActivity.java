@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -47,7 +48,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.cityzipcorp.customer.R.id;
-import static com.cityzipcorp.customer.R.layout;
 import static com.cityzipcorp.customer.R.string;
 
 public class HomeActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
@@ -67,12 +67,12 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     Button btnActivateBulkMode;
     @BindView(id.btn_done_bulk_mode)
     Button btnDoneBulkMode;
-    @BindView(id.btn_save_profile)
-    Button btnSaveProfile;
     @BindView(id.btn_refresh)
     ImageView imgRefresh;
     @BindView(id.btn_update_password)
     Button btnUpdatePassword;
+    @BindView(id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
     boolean bulkModeActivated = false;
     SharedPreferenceManager sharedPreferenceManager;
     private int LOCATION_PERMISSION = 101;
@@ -111,6 +111,24 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         }
     };
 
+    private BroadcastReceiver dataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (NetworkUtils.isNetworkAvailable(context)) {
+                networkStateChanged();
+            } else {
+                if (uiUtils != null) {
+                    uiUtils.noInternetDialog();
+                }
+            }
+        }
+    };
+
+
+    private void networkStateChanged() {
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +137,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private void init() {
         logUser();
-        setContentView(layout.activity_home);
+        setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         buildGoogleApiClient();
@@ -178,7 +196,14 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         locationUtils = new LocationUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         uiUtils = new UiUtils(this);
-        registerReceiver(mMessageReceiver, new IntentFilter("fcm_data"));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+                onSwipeRefresh();
+            }
+        });
+
     }
 
     public void setUpBottomNavigationView(int index) {
@@ -255,12 +280,14 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     public void setUpEditProfileView() {
+        swipeRefreshLayout.setEnabled(false);
         btnBack.setVisibility(View.VISIBLE);
         imgLogout.setVisibility(View.VISIBLE);
         hideNavigationBar();
     }
 
     public void setUpProfileView() {
+        swipeRefreshLayout.setEnabled(true);
         setTitle("Profile");
         backAllowed = false;
         imgLogout.setVisibility(View.VISIBLE);
@@ -273,12 +300,6 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     public void showNavigationBar() {
         navigationView.setVisibility(View.VISIBLE);
-    }
-
-    @OnClick(id.btn_save_profile)
-    void onProfileUpdate() {
-        EditProfileFragment editProfileFragment = (EditProfileFragment) getSupportFragmentManager().findFragmentById(id.fragment_container);
-        editProfileFragment.onSave();
     }
 
     @OnClick(id.btn_update_password)
@@ -301,6 +322,15 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     @Override
     protected void onResume() {
         super.onResume();
+        registerReceiver(dataReceiver, new IntentFilter(getString(R.string.connectivity_change)));
+        registerReceiver(mMessageReceiver, new IntentFilter("fcm_data"));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mMessageReceiver);
+        unregisterReceiver(dataReceiver);
     }
 
     public String getFragmentTag() {
@@ -369,28 +399,34 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private void setUpToolbar(String pageName) {
         setDefaultToolbarState();
         if (pageName.equalsIgnoreCase(getString(string.edit_profile))) {
+            swipeRefreshLayout.setEnabled(false);
             btnBack.setVisibility(View.VISIBLE);
             imgLogout.setVisibility(View.VISIBLE);
         }
 
         if (pageName.equalsIgnoreCase(getString(R.string.change_password))) {
+            swipeRefreshLayout.setEnabled(false);
             btnBack.setVisibility(View.VISIBLE);
             imgLogout.setVisibility(View.VISIBLE);
         }
 
         if (pageName.equalsIgnoreCase(getString(string.boarding_pass))) {
+            swipeRefreshLayout.setEnabled(true);
             imgRefresh.setVisibility(View.VISIBLE);
         }
 
         if (pageName.equalsIgnoreCase(getString(string.profile))) {
+            swipeRefreshLayout.setEnabled(true);
             imgLogout.setVisibility(View.VISIBLE);
         }
         if (pageName.equalsIgnoreCase(getString(string.group_and_shift))) {
+            swipeRefreshLayout.setEnabled(true);
             btnBack.setVisibility(View.VISIBLE);
             imgLogout.setVisibility(View.VISIBLE);
         }
 
         if (pageName.equalsIgnoreCase(getString(string.map_fragment))) {
+            swipeRefreshLayout.setEnabled(false);
             btnBack.setVisibility(View.VISIBLE);
             imgLogout.setVisibility(View.VISIBLE);
         }
@@ -398,10 +434,8 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private void setDefaultToolbarState() {
         btnBack.setVisibility(View.GONE);
-        btnSaveProfile.setVisibility(View.GONE);
         btnActivateBulkMode.setVisibility(View.GONE);
         btnDoneBulkMode.setVisibility(View.GONE);
-        btnSaveProfile.setVisibility(View.GONE);
         btnUpdatePassword.setVisibility(View.GONE);
         imgRefresh.setVisibility(View.GONE);
         imgLogout.setVisibility(View.GONE);
@@ -445,5 +479,22 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         fcmRegistrationToken.setDeviceId("");
         fcmRegistrationToken.setApplicationId("");
         UserStore.getInstance().registerFcmToken(fcmRegistrationToken, sharedPreferenceManager.getAccessToken());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(dataReceiver);
+        unregisterReceiver(mMessageReceiver);
+    }
+
+    private void onSwipeRefresh() {
+        try {
+            swipeRefreshLayout.setRefreshing(false);
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(getFragmentTag());
+            fragment.onConfigurationChanged(null);
+        } catch (Exception e) {
+            checkProfileStatus();
+        }
     }
 }

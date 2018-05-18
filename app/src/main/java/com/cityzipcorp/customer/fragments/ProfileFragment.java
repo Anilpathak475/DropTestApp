@@ -1,6 +1,7 @@
 package com.cityzipcorp.customer.fragments;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -116,6 +117,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @OnClick(R.id.img_edit_profile)
     void editProfileClick() {
+        if (!NetworkUtils.isNetworkAvailable(activity)) {
+            uiUtils.noInternetDialog();
+            return;
+        }
         EditProfileFragment updateProfileFragment = new EditProfileFragment();
         Bundle bundle = getUserBundle();
         updateProfileFragment.setArguments(bundle);
@@ -132,6 +137,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @OnClick(R.id.card_home_address)
     void onClickHome() {
+        if (!NetworkUtils.isNetworkAvailable(activity)) {
+            uiUtils.noInternetDialog();
+            return;
+        }
         if (user != null) {
             Bundle bundle = getUserBundle();
             bundle.putInt("address", 0);
@@ -143,6 +152,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @OnClick(R.id.card_group_shifts)
     void onClickGroupAndShifts() {
+        if (!NetworkUtils.isNetworkAvailable(activity)) {
+            uiUtils.noInternetDialog();
+            return;
+        }
         GroupAndShiftFragment groupAndShiftFragment = new GroupAndShiftFragment();
         Bundle bundle = getUserBundle();
         groupAndShiftFragment.setArguments(bundle);
@@ -152,6 +165,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @OnClick(R.id.card_nodal_address)
     void onClickNodal() {
+        if (!NetworkUtils.isNetworkAvailable(activity)) {
+            uiUtils.noInternetDialog();
+            return;
+        }
         if (user != null) {
             if (user.getHomeStop() != null) {
                 Bundle bundle = getUserBundle();
@@ -263,6 +280,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @OnClick(R.id.card_change_password)
     void onClickPasswordChange() {
+        if (!NetworkUtils.isNetworkAvailable(activity)) {
+            uiUtils.noInternetDialog();
+            return;
+        }
         ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
         activity.replaceFragment(changePasswordFragment, activity.getString(R.string.change_password));
         activity.backAllowed = true;
@@ -282,6 +303,12 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
+        getProfileInfo();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
         getProfileInfo();
     }
 }

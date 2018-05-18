@@ -1,5 +1,6 @@
 package com.cityzipcorp.customer.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -281,5 +282,11 @@ public class GroupAndShiftFragment extends BaseFragment {
             shiftList.add(shift.getName());
         }
         return shiftList;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        getGroupsAndShifts();
     }
 }

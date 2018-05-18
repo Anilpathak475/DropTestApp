@@ -406,4 +406,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             }
         });
     }
+
+
 }

@@ -2,6 +2,7 @@ package com.cityzipcorp.customer.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
@@ -234,6 +235,10 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     }
 
     private void startEditActivity(int position, String timeValue) {
+        if (!NetworkUtils.isNetworkAvailable(activity)) {
+            uiUtils.noInternetDialog();
+            return;
+        }
         Log.d(TAG, String.valueOf(position));
         Schedule schedule = scheduleList.get(position);
         Intent intent = new Intent(activity, EditEventActivity.class);
@@ -587,5 +592,11 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
             view.measure(childWidth, childHeight);
             view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        getSchedule();
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -96,9 +100,6 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     @BindView(R.id.btn_sos)
     Button btnSOS;
 
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
-
     private GoogleApiClient googleApiClient;
     private BoardingPass boardingPass;
     private BoardingPassPresenter boardingPassPresenter;
@@ -134,14 +135,16 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     private void init() {
         boardingPassPresenter = new BoardingPassPresenterImpl(this);
-        swipeRefreshLayout.setOnRefreshListener(this);
+      /* swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.post(new Runnable() {
                                     @Override
                                     public void run() {
                                         getPassDetails();
                                     }
                                 }
-        );
+        );*/
+        getPassDetails();
+
         activity.registerReceiver(mMessageReceiver, new IntentFilter("fcm_data"));
     }
 
@@ -188,9 +191,10 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     public void getPassDetails() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            swipeRefreshLayout.setRefreshing(true);
+            //   swipeRefreshLayout.setRefreshing(true);
             boardingPassPresenter.getBoardingPass(sharedPreferenceUtils.getAccessToken());
         } else {
+            // swipeRefreshLayout.setRefreshing(false);
             uiUtils.noInternetDialog();
         }
     }
@@ -215,7 +219,8 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
             txtStartTime.setText(CalenderUtil.getTime(boardingPass.getStopTimestamp()));
             cardBoardingPass.setVisibility(View.VISIBLE);
             scanLayout.setVisibility(View.VISIBLE);
-            swipeRefreshLayout.setRefreshing(false);
+            startAnimation();
+            //  swipeRefreshLayout.setRefreshing(false);
             if (boardingPass.getAttendedAt() != null) {
                 attendanceSuccess();
             }
@@ -314,7 +319,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     @Override
     public void setPassError(String error) {
-        swipeRefreshLayout.setRefreshing(false);
+        //  swipeRefreshLayout.setRefreshing(false);
         cardBoardingPass.setVisibility(View.GONE);
         scanLayout.setVisibility(View.GONE);
         txtNoBoardingPass.setVisibility(View.VISIBLE);
@@ -333,8 +338,14 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     @Override
     public void passDetailSuccess(BoardingPass boardingPass) {
-        swipeRefreshLayout.setRefreshing(false);
+        //  swipeRefreshLayout.setRefreshing(false);
         setPassDetails(boardingPass);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        getPassDetails();
     }
 
     @Override
@@ -375,5 +386,13 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
             isAllowed = false;
         }
         return isAllowed;
+    }
+
+    private void startAnimation() {
+        RotateAnimation rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(5000);
+        rotate.setInterpolator(new LinearInterpolator());
+        rotate.setRepeatCount(Animation.INFINITE); //Repeat animation indefinitely
+        imgVehicle.startAnimation(rotate);
     }
 }
