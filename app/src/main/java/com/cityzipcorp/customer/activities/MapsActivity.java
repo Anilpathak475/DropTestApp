@@ -586,13 +586,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         protected void onPostExecute(Address coreAddress) {
             super.onPostExecute(coreAddress);
             if (coreAddress != null) {
-                txtAddressHome.setText(replaceNull(coreAddress.getAddressLine(0) + " " + coreAddress.getAddressLine(1)));
+                txtAddressHome.setText(replaceNull(coreAddress.getAddressLine(0)));
                 address.setPostalCode(replaceNull(coreAddress.getPostalCode()));
                 address.setCity(replaceNull(coreAddress.getLocality()));
-                address.setLocality(replaceNull(coreAddress.getFeatureName() + coreAddress.getThoroughfare() + coreAddress.getSubThoroughfare() + coreAddress.getLocality() + coreAddress.getPremises() + coreAddress.getSubLocality()));
-                address.setSociety(replaceNull(coreAddress.getFeatureName()));
+                address.setLocality(replaceNull(coreAddress.getThoroughfare() + ", " + coreAddress.getFeatureName() + ", " + coreAddress.getSubThoroughfare() + ", " + coreAddress.getPremises()));
                 address.setState(replaceNull(coreAddress.getAdminArea()));
-                address.setLandmark(replaceNull(coreAddress.getLocality() + " , " + coreAddress.getSubLocality()));
+                address.setLandmark(replaceNull(coreAddress.getThoroughfare()));
                 address.setCountry(replaceNull(coreAddress.getCountryName()));
                 geoJsonPoint = new GeoJsonPoint(coreAddress.getLongitude(), coreAddress.getLatitude());
             } else {

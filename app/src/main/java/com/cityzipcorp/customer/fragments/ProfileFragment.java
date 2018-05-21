@@ -190,8 +190,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         }
         if (user.getHomeStop() != null && user.getAddress() != null) {
             Address address = user.getAddress();
-            String addressFromObj = address.getArea() + " " + address.getLocality() + " " + address.getLandmark() + ", " + address.getPostalCode();
-            txtHomeAddress.setText("");
+            String addressFromObj = address.getLocality() + ", "
+                    + address.getLandmark() + ", "
+                    + address.getArea() + ", "
+                    + address.getPostalCode();
             txtHomeAddress.setText(addressFromObj);
         }
         if (user.getCompanyName() != null) {

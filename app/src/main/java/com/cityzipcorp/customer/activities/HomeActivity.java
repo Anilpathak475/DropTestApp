@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -71,9 +70,9 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     ImageView imgRefresh;
     @BindView(id.btn_update_password)
     Button btnUpdatePassword;
-    @BindView(id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+
     boolean bulkModeActivated = false;
+    boolean isInitialLoad = false;
     SharedPreferenceManager sharedPreferenceManager;
     private int LOCATION_PERMISSION = 101;
     private UiUtils uiUtils;
@@ -126,7 +125,8 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
 
     private void networkStateChanged() {
-
+        if (!isInitialLoad)
+            onSwipeRefresh();
     }
 
     @Override
@@ -149,22 +149,26 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private void checkProfileStatus() {
         if (NetworkUtils.isNetworkAvailable(this)) {
+            isInitialLoad = true;
             uiUtils.showProgressDialog();
             UserStore.getInstance().getProfileStatus(sharedPreferenceManager.getAccessToken(), new ProfileStatusCallback() {
                 @Override
                 public void onSuccess(ProfileStatus profileStatus) {
+                    isInitialLoad = false;
                     uiUtils.dismissDialog();
                     validateProfileStatus(profileStatus);
                 }
 
                 @Override
                 public void onFailure(Error error) {
+                    isInitialLoad = false;
                     uiUtils.dismissDialog();
                     setUpBottomNavigationView(0);
                     replaceFragment(new BoardingPassFragment(), getString(string.boarding_pass));
                 }
             });
         } else {
+            isInitialLoad = false;
             uiUtils.noInternetDialog();
         }
     }
@@ -196,13 +200,13 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         locationUtils = new LocationUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         uiUtils = new UiUtils(this);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+       /* swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(false);
                 onSwipeRefresh();
             }
-        });
+        });*/
 
     }
 
@@ -280,14 +284,14 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     public void setUpEditProfileView() {
-        swipeRefreshLayout.setEnabled(false);
+        //    swipeRefreshLayout.setEnabled(false);
         btnBack.setVisibility(View.VISIBLE);
         imgLogout.setVisibility(View.VISIBLE);
         hideNavigationBar();
     }
 
     public void setUpProfileView() {
-        swipeRefreshLayout.setEnabled(true);
+        //  swipeRefreshLayout.setEnabled(false);
         setTitle("Profile");
         backAllowed = false;
         imgLogout.setVisibility(View.VISIBLE);
@@ -329,8 +333,16 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mMessageReceiver);
-        unregisterReceiver(dataReceiver);
+        unRegisterReceivers();
+    }
+
+    private void unRegisterReceivers() {
+        try {
+            unregisterReceiver(mMessageReceiver);
+            unregisterReceiver(dataReceiver);
+        } catch (Exception e) {
+
+        }
     }
 
     public String getFragmentTag() {
@@ -399,34 +411,34 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private void setUpToolbar(String pageName) {
         setDefaultToolbarState();
         if (pageName.equalsIgnoreCase(getString(string.edit_profile))) {
-            swipeRefreshLayout.setEnabled(false);
+
             btnBack.setVisibility(View.VISIBLE);
             imgLogout.setVisibility(View.VISIBLE);
         }
 
         if (pageName.equalsIgnoreCase(getString(R.string.change_password))) {
-            swipeRefreshLayout.setEnabled(false);
+
             btnBack.setVisibility(View.VISIBLE);
             imgLogout.setVisibility(View.VISIBLE);
         }
 
         if (pageName.equalsIgnoreCase(getString(string.boarding_pass))) {
-            swipeRefreshLayout.setEnabled(true);
+
             imgRefresh.setVisibility(View.VISIBLE);
         }
 
         if (pageName.equalsIgnoreCase(getString(string.profile))) {
-            swipeRefreshLayout.setEnabled(true);
+
             imgLogout.setVisibility(View.VISIBLE);
         }
         if (pageName.equalsIgnoreCase(getString(string.group_and_shift))) {
-            swipeRefreshLayout.setEnabled(true);
+
             btnBack.setVisibility(View.VISIBLE);
             imgLogout.setVisibility(View.VISIBLE);
         }
 
         if (pageName.equalsIgnoreCase(getString(string.map_fragment))) {
-            swipeRefreshLayout.setEnabled(false);
+
             btnBack.setVisibility(View.VISIBLE);
             imgLogout.setVisibility(View.VISIBLE);
         }
@@ -484,13 +496,11 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(dataReceiver);
-        unregisterReceiver(mMessageReceiver);
+        unRegisterReceivers();
     }
 
     private void onSwipeRefresh() {
         try {
-            swipeRefreshLayout.setRefreshing(false);
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(getFragmentTag());
             fragment.onConfigurationChanged(null);
         } catch (Exception e) {

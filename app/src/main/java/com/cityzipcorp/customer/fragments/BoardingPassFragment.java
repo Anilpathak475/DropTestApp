@@ -100,6 +100,9 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     @BindView(R.id.btn_sos)
     Button btnSOS;
 
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+
     private GoogleApiClient googleApiClient;
     private BoardingPass boardingPass;
     private BoardingPassPresenter boardingPassPresenter;
@@ -135,16 +138,14 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     private void init() {
         boardingPassPresenter = new BoardingPassPresenterImpl(this);
-      /* swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.post(new Runnable() {
                                     @Override
                                     public void run() {
                                         getPassDetails();
                                     }
                                 }
-        );*/
-        getPassDetails();
-
+        );
         activity.registerReceiver(mMessageReceiver, new IntentFilter("fcm_data"));
     }
 
@@ -191,17 +192,16 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     public void getPassDetails() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            //   swipeRefreshLayout.setRefreshing(true);
+            swipeRefreshLayout.setRefreshing(true);
             boardingPassPresenter.getBoardingPass(sharedPreferenceUtils.getAccessToken());
         } else {
-            // swipeRefreshLayout.setRefreshing(false);
             uiUtils.noInternetDialog();
         }
     }
 
     private void setPassDetails(BoardingPass boardingPass) {
         try {
-
+            swipeRefreshLayout.setRefreshing(false);
             this.boardingPass = boardingPass;
             if (activity != null)
                 activity.setTitle("Pass ID :#" + boardingPass.getId().substring(0, 8).toUpperCase());
@@ -220,7 +220,6 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
             cardBoardingPass.setVisibility(View.VISIBLE);
             scanLayout.setVisibility(View.VISIBLE);
             startAnimation();
-            //  swipeRefreshLayout.setRefreshing(false);
             if (boardingPass.getAttendedAt() != null) {
                 attendanceSuccess();
             }
@@ -319,7 +318,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     @Override
     public void setPassError(String error) {
-        //  swipeRefreshLayout.setRefreshing(false);
+        swipeRefreshLayout.setRefreshing(false);
         cardBoardingPass.setVisibility(View.GONE);
         scanLayout.setVisibility(View.GONE);
         txtNoBoardingPass.setVisibility(View.VISIBLE);
@@ -338,7 +337,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     @Override
     public void passDetailSuccess(BoardingPass boardingPass) {
-        //  swipeRefreshLayout.setRefreshing(false);
+        swipeRefreshLayout.setRefreshing(false);
         setPassDetails(boardingPass);
     }
 
@@ -390,7 +389,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     private void startAnimation() {
         RotateAnimation rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        rotate.setDuration(5000);
+        rotate.setDuration(3000);
         rotate.setInterpolator(new LinearInterpolator());
         rotate.setRepeatCount(Animation.INFINITE); //Repeat animation indefinitely
         imgVehicle.startAnimation(rotate);

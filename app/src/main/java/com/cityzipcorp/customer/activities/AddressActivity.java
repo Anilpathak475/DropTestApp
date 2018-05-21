@@ -63,6 +63,7 @@ public class AddressActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
+        getBundleExtra();
         getAreas();
     }
 
@@ -73,10 +74,14 @@ public class AddressActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(List<Area> areas) {
                     List<String> areaNames = new ArrayList<>();
+                    int selectedIndex = -1;
                     for (Area area : areas) {
                         areaNames.add(area.getAreaName());
+                        if (selectedAddress.getArea().equalsIgnoreCase(area.getAreaName())) {
+                            selectedIndex = areaNames.indexOf(area.getAreaName());
+                        }
                     }
-                    setAdapter(areaNames);
+                    setAdapter(areaNames, selectedIndex);
                     uiUtils.dismissDialog();
                 }
 
@@ -91,9 +96,11 @@ public class AddressActivity extends AppCompatActivity {
         }
     }
 
-    private void setAdapter(List<String> areaNames) {
+    private void setAdapter(List<String> areaNames, int selectedIndex) {
         autoCompleteArea.setAdapter(new ArrayAdapter<>(this, R.layout.spinner_item, areaNames));
-        getBundleExtra();
+        if (selectedIndex > 0) {
+            autoCompleteArea.setSelection(selectedIndex);
+        }
     }
 
     private void getBundleExtra() {
@@ -115,6 +122,8 @@ public class AddressActivity extends AppCompatActivity {
         selectedAddress = selectedAddress.replace(address.getCity(), "");
         selectedAddress = selectedAddress.replace(address.getCountry(), "");
         selectedAddress = selectedAddress.replace(address.getPostalCode(), "");
+        selectedAddress = selectedAddress.replace(address.getLandmark(), "");
+        selectedAddress = selectedAddress.replace(address.getArea(), "");
         edtSelectedAddress.setText(selectedAddress);
         txtCity.setText(address.getCity());
         edtLandmark.setText(address.getLandmark());
@@ -125,37 +134,58 @@ public class AddressActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_update)
     void updateHomeAddress() {
-        if (NetworkUtils.isNetworkAvailable(this)) {
-            Address address = new Address();
-            address.setArea(autoCompleteArea.getText().toString());
-            address.setCity(txtCity.getText().toString());
-            address.setSociety(selectedAddress.getSociety());
-            address.setState(selectedAddress.getState());
-            address.setLandmark(edtLandmark.getText().toString());
-            address.setLocality(selectedAddress.getLocality());
-            address.setCountry(selectedAddress.getCountry());
-            User user = new User();
-            user.setId(this.user.getId());
-            GeoLocateAddress geoLocateAddress = new GeoLocateAddress();
-            geoLocateAddress.setAddress(address);
-            geoLocateAddress.setPoint(this.user.getHomeStop().getPoint());
-            user.setHomeStop(geoLocateAddress);
+        if (validateAddress()) {
+            if (NetworkUtils.isNetworkAvailable(this)) {
+                Address address = new Address();
+                address.setArea(autoCompleteArea.getText().toString());
+                address.setCity(txtCity.getText().toString());
+                address.setSociety(selectedAddress.getSociety());
+                address.setState(selectedAddress.getState());
+                address.setLandmark(edtLandmark.getText().toString());
+                address.setLocality(selectedAddress.getLocality());
+                address.setCountry(selectedAddress.getCountry());
+                User user = new User();
+                user.setId(this.user.getId());
+                GeoLocateAddress geoLocateAddress = new GeoLocateAddress();
+                geoLocateAddress.setAddress(address);
+                geoLocateAddress.setPoint(this.user.getHomeStop().getPoint());
+                user.setHomeStop(geoLocateAddress);
 
-            UserStore.getInstance().updateProfileInfo(sharedPreferenceManager.getAccessToken(), user, new UserCallback() {
-                @Override
-                public void onSuccess(User user) {
-                    navigateToProfile();
-                }
+                UserStore.getInstance().updateProfileInfo(sharedPreferenceManager.getAccessToken(), user, new UserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        navigateToProfile();
+                    }
 
-                @Override
-                public void onFailure(Error error) {
-                    new UiUtils(AddressActivity.this).shortToast(error.getMessage());
-                }
-            });
-        } else {
-            uiUtils.noInternetDialog();
+                    @Override
+                    public void onFailure(Error error) {
+                        new UiUtils(AddressActivity.this).shortToast(error.getMessage());
+                    }
+                });
+            } else {
+                uiUtils.noInternetDialog();
+            }
         }
 
+    }
+
+
+    private boolean validateAddress() {
+        if (autoCompleteArea.getText().toString().equalsIgnoreCase("Select Area")) {
+            uiUtils.shortToast("Please select area");
+            return false;
+        }
+        if (edtSelectedAddress.getText().toString().equalsIgnoreCase("")) {
+            uiUtils.shortToast("Please enter address");
+            return false;
+        }
+
+        if (edtLandmark.getText().toString().equalsIgnoreCase("")) {
+            uiUtils.shortToast("Please enter landmark");
+            return false;
+        }
+
+        return true;
     }
 
     private void navigateToProfile() {

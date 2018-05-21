@@ -354,7 +354,12 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
             return false;
         }
         if (spnInTime.getSelectedItem().toString().equalsIgnoreCase(CalenderUtil.get24hrsTime(schedule.getInTimeUpdate().getTimestamp()))) {
-            if (!chkCancelInTime.isChecked()) {
+            if (schedule.getInTimeUpdate().isCancelled()) {
+                if (chkCancelInTime.isChecked()) {
+                    uiUtils.shortToast("Please select different time to update event");
+                    return false;
+                }
+            } else if (!chkCancelInTime.isChecked()) {
                 uiUtils.shortToast("Please select different time to update event");
                 return false;
             }
