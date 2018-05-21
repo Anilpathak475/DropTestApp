@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
 import com.cityzipcorp.customer.R;
+import com.cityzipcorp.customer.callbacks.DialogCallback;
 import com.cityzipcorp.customer.model.SetNewPassword;
 import com.cityzipcorp.customer.mvp.setpassword.SetNewPasswordPresenter;
 import com.cityzipcorp.customer.mvp.setpassword.SetNewPasswordPresenterImpl;
@@ -91,10 +92,15 @@ public class NewUserPassword extends AppCompatActivity implements SetNewPassword
 
     @Override
     public void navigateToLogin() {
-        Intent intent = new Intent(NewUserPassword.this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
+        uiUtils.getAlertDialogForNotify("Password has been set successfully. click ok login!", new DialogCallback() {
+            @Override
+            public void onYes() {
+                Intent intent = new Intent(NewUserPassword.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     @Override

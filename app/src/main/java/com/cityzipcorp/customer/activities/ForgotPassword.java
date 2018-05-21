@@ -1,11 +1,13 @@
 package com.cityzipcorp.customer.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.cityzipcorp.customer.R;
+import com.cityzipcorp.customer.callbacks.DialogCallback;
 import com.cityzipcorp.customer.mvp.forgotpassword.ForgotPasswordPresenter;
 import com.cityzipcorp.customer.mvp.forgotpassword.ForgotPasswordPresenterImpl;
 import com.cityzipcorp.customer.mvp.forgotpassword.ForgotPasswordView;
@@ -77,6 +79,14 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
 
     @Override
     public void success() {
-        uiUtils.shortToast("Email has been sent to you!");
+        uiUtils.getAlertDialogForNotify("Conformation email has benn sent to your email : " + edtEmail.getText().toString(), new DialogCallback() {
+            @Override
+            public void onYes() {
+                Intent intent = new Intent(ForgotPassword.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }

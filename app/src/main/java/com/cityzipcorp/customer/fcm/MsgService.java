@@ -14,8 +14,7 @@ import com.cityzipcorp.customer.activities.HomeActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.Map;
 
 
 public class MsgService extends FirebaseMessagingService {
@@ -32,18 +31,15 @@ public class MsgService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //Log data to Log Cat
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-        Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
-        try {
-            JSONObject jsonObject = new JSONObject(remoteMessage.getNotification().getBody());
-            String body = jsonObject.getString("t");
-            if (body.equalsIgnoreCase("nbp")) {
-                createNotification("New BoardingPass ");
-            } else if (body.equalsIgnoreCase("am")) {
-                createNotification("Attendance Marked");
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        Log.d(TAG, "Notification Message Body: " + remoteMessage.getData());
+        Map<String, String> map = remoteMessage.getData();
+        String body = map.get("t");
+        if (body.equalsIgnoreCase("nbp")) {
+            createNotification("New BoardingPass ");
+        } else if (body.equalsIgnoreCase("am")) {
+            createNotification("Attendance Marked");
         }
+        updateMyActivity(this, body);
     }
 
     private void createNotification(String messageBody) {
@@ -64,8 +60,9 @@ public class MsgService extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0, mNotificationBuilder.build());
-        updateMyActivity(this, messageBody);
+        if (notificationManager != null) {
+            notificationManager.notify(0, mNotificationBuilder.build());
+        }
     }
 }
 

@@ -102,16 +102,11 @@ public class UiUtils {
     }
 
     public void getAlertDialogWithMessage(String message, final DialogCallback dialogCallback) {
-
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.layout_conformation_pop_up);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
-        /*lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.gravity = Gravity.CENTER;
-        dialog.getWindow().setAttributes(lp);*/
         Button btnOk = dialog.findViewById(R.id.btn_ok);
         TextView textView = dialog.findViewById(R.id.txt_message);
         textView.setText(message);
@@ -133,6 +128,25 @@ public class UiUtils {
         dialog.show();
     }
 
+
+    public void getAlertDialogForNotify(String message, final DialogCallback dialogCallback) {
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.layout_notify_pop_up);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        Button btnOk = dialog.findViewById(R.id.btn_ok);
+        TextView textView = dialog.findViewById(R.id.txt_message);
+        textView.setText(message);
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                dialogCallback.onYes();
+            }
+        });
+        dialog.show();
+    }
 
     public void noInternetDialog() {
 
