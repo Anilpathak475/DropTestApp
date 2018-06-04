@@ -11,11 +11,11 @@ public class ForgotPasswordPresenterImpl implements ForgotPasswordPresenter, For
     }
 
     @Override
-    public void validateEmail(String email, String action) {
+    public void validateEmail(String baseUrl, String email, String action) {
         if (forgotPasswordView != null) {
             forgotPasswordView.showProgress();
         }
-        forgotPasswordInteractor.submit(email, action, this);
+        forgotPasswordInteractor.submit(baseUrl, email, action, this);
     }
 
     @Override

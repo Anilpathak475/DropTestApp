@@ -19,6 +19,7 @@ import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
 
 import java.util.ArrayList;
@@ -70,27 +71,28 @@ public class AddressActivity extends AppCompatActivity {
     private void getAreas() {
         if (NetworkUtils.isNetworkAvailable(this)) {
             uiUtils.showProgressDialog();
-            UserStore.getInstance().getAreas(sharedPreferenceManager.getAccessToken(), new AreaCallback() {
-                @Override
-                public void onSuccess(List<Area> areas) {
-                    List<String> areaNames = new ArrayList<>();
-                    int selectedIndex = -1;
-                    for (Area area : areas) {
-                        areaNames.add(area.getAreaName());
-                        if (selectedAddress.getArea().equalsIgnoreCase(area.getAreaName())) {
-                            selectedIndex = areaNames.indexOf(area.getAreaName());
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    getAreas(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new AreaCallback() {
+                        @Override
+                        public void onSuccess(List<Area> areas) {
+                            List<String> areaNames = new ArrayList<>();
+                            int selectedIndex = -1;
+                            for (Area area : areas) {
+                                areaNames.add(area.getAreaName());
+                                if (selectedAddress.getArea().equalsIgnoreCase(area.getAreaName())) {
+                                    selectedIndex = areaNames.indexOf(area.getAreaName());
+                                }
+                            }
+                            setAdapter(areaNames, selectedIndex);
+                            uiUtils.dismissDialog();
                         }
-                    }
-                    setAdapter(areaNames, selectedIndex);
-                    uiUtils.dismissDialog();
-                }
 
-                @Override
-                public void onFailure(Error error) {
-                    uiUtils.dismissDialog();
-                    uiUtils.shortToast("Unable to fetch Areas");
-                }
-            });
+                        @Override
+                        public void onFailure(Error error) {
+                            uiUtils.dismissDialog();
+                            uiUtils.shortToast("Unable to fetch Areas");
+                        }
+                    });
         } else {
             uiUtils.noInternetDialog();
         }
@@ -151,17 +153,19 @@ public class AddressActivity extends AppCompatActivity {
                 geoLocateAddress.setPoint(this.user.getHomeStop().getPoint());
                 user.setHomeStop(geoLocateAddress);
 
-                UserStore.getInstance().updateProfileInfo(sharedPreferenceManager.getAccessToken(), user, new UserCallback() {
-                    @Override
-                    public void onSuccess(User user) {
-                        navigateToProfile();
-                    }
+                UserStore.getInstance(sharedPreferenceManager.
+                        getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                        updateProfileInfo(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
+                            @Override
+                            public void onSuccess(User user) {
+                                navigateToProfile();
+                            }
 
-                    @Override
-                    public void onFailure(Error error) {
-                        new UiUtils(AddressActivity.this).shortToast(error.getMessage());
-                    }
-                });
+                            @Override
+                            public void onFailure(Error error) {
+                                new UiUtils(AddressActivity.this).shortToast(error.getMessage());
+                            }
+                        });
             } else {
                 uiUtils.noInternetDialog();
             }

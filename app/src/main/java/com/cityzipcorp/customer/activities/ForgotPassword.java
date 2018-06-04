@@ -56,7 +56,7 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
             url = Constants.NEW_USER_URL;
         }
         if (NetworkUtils.isNetworkAvailable(this)) {
-            forgotPasswordPresenter.validateEmail(edtEmail.getText().toString(), url);
+            forgotPasswordPresenter.validateEmail("", edtEmail.getText().toString(), url);
         } else {
             setEmailError("No Internet!");
         }

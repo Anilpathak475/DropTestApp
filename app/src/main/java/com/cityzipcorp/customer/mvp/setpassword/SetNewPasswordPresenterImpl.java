@@ -28,9 +28,9 @@ public class SetNewPasswordPresenterImpl implements SetNewPasswordPresenter, Set
 
 
     @Override
-    public void validatePassword(SetNewPassword setNewPassword, String url) {
+    public void validatePassword(String baseUrl, SetNewPassword setNewPassword, String url) {
         setNewPasswordView.showProgress();
-        setNewPasswordInteractor.submitPassword(setNewPassword, url, this);
+        setNewPasswordInteractor.submitPassword(baseUrl, setNewPassword, url, this);
     }
 
     @Override

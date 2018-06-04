@@ -25,6 +25,7 @@ import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
 
 import java.text.ParseException;
@@ -97,6 +98,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     private TimeUpdate inTimeUpdate;
     private TimeUpdate outTimeUpdate;
     private UiUtils uiUtils;
+    private ScheduleStore scheduleStore;
 
 
     @Override
@@ -118,7 +120,8 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     }
 
     private void getShiftTimings() {
-        ScheduleStore.getInstance().getShiftTimings(sharedPreferenceManager.getAccessToken(), new ShiftCallback() {
+        ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                getShiftTimings(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new ShiftCallback() {
             @Override
             public void onSuccess(ShiftTiming shiftTiming) {
                 inTimes.addAll(shiftTiming.getInTimes());
@@ -138,7 +141,8 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     private void getReason() {
         if (NetworkUtils.isNetworkAvailable(this)) {
             uiUtils.showProgressDialog();
-            ScheduleStore.getInstance().getReason(sharedPreferenceManager.getAccessToken(), new ReasonCallback() {
+            ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    getReason(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new ReasonCallback() {
                 @Override
                 public void onSuccess(List<Reason> reasons) {
                     reasonList.add("Select Reason");
@@ -288,7 +292,8 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     }
 
     private void updateSchedule(Schedule schedule) {
-        ScheduleStore.getInstance().updateSchedule(this, schedule, sharedPreferenceManager.getAccessToken());
+        ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                updateSchedule(this, schedule, sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
     }
 
     private void setInTimeValues() {

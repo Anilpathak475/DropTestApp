@@ -20,6 +20,7 @@ import com.cityzipcorp.customer.model.Shift;
 import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.NetworkUtils;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,8 @@ public class GroupAndShiftFragment extends BaseFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group_and_shift, container, false);
         ButterKnife.bind(this, view);
         initListeners();
@@ -161,22 +163,23 @@ public class GroupAndShiftFragment extends BaseFragment {
 
     private void getProfileInfo() {
         uiUtils.showProgressDialog();
-        UserStore.getInstance().getProfileInfo(sharedPreferenceUtils.getAccessToken(), new UserCallback() {
-            @Override
-            public void onSuccess(User user) {
-                if (user != null) {
-                    userFromProfile = user;
-                    setValues(user);
-                }
-                uiUtils.dismissDialog();
-            }
+        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new UserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        if (user != null) {
+                            userFromProfile = user;
+                            setValues(user);
+                        }
+                        uiUtils.dismissDialog();
+                    }
 
-            @Override
-            public void onFailure(Error error) {
-                uiUtils.dismissDialog();
-                uiUtils.shortToast("Unable to fetch profile details!");
-            }
-        });
+                    @Override
+                    public void onFailure(Error error) {
+                        uiUtils.dismissDialog();
+                        uiUtils.shortToast("Unable to fetch profile details!");
+                    }
+                });
     }
 
     @OnClick(R.id.btn_update)
@@ -208,25 +211,27 @@ public class GroupAndShiftFragment extends BaseFragment {
     private void getGroupsAndShifts() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
             uiUtils.showProgressDialog();
-            UserStore.getInstance().getShiftByGroup(sharedPreferenceUtils.getAccessToken(), new GroupCallBack() {
-                @Override
-                public void onSuccess(List<Group> groups) {
-                    uiUtils.dismissDialog();
-                    if (groups.isEmpty()) {
-                        activity.onBackPressed();
-                        uiUtils.shortToast("No groups and shift");
-                    } else {
-                        groupList = groups;
-                        getBundleExtra();
-                    }
-                }
+            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    getShiftByGroup(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
+                            new GroupCallBack() {
+                                @Override
+                                public void onSuccess(List<Group> groups) {
+                                    uiUtils.dismissDialog();
+                                    if (groups.isEmpty()) {
+                                        activity.onBackPressed();
+                                        uiUtils.shortToast("No groups and shift");
+                                    } else {
+                                        groupList = groups;
+                                        getBundleExtra();
+                                    }
+                                }
 
-                @Override
-                public void onFailure(Error error) {
-                    uiUtils.dismissDialog();
-                    uiUtils.shortToast("No groups and shift");
-                }
-            });
+                                @Override
+                                public void onFailure(Error error) {
+                                    uiUtils.dismissDialog();
+                                    uiUtils.shortToast("No groups and shift");
+                                }
+                            });
         } else {
             uiUtils.noInternetDialog();
         }
@@ -242,23 +247,25 @@ public class GroupAndShiftFragment extends BaseFragment {
             Shift shift = group.getShifts().get(selectedIndexOfShift);
             user.setGroupId(group.getId());
             user.setShiftId(shift.getId());
-            UserStore.getInstance().updateProfileInfo(sharedPreferenceUtils.getAccessToken(), user, new UserCallback() {
-                @Override
-                public void onSuccess(User u) {
-                    uiUtils.dismissDialog();
-                    if (userFromProfile.getHomeStop() == null || userFromProfile.getNodalStop() == null) {
-                        activity.setUpBottomNavigationView(2);
-                    } else {
-                        activity.onBackPressed();
-                    }
-                }
+            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
+                            user, new UserCallback() {
+                                @Override
+                                public void onSuccess(User u) {
+                                    uiUtils.dismissDialog();
+                                    if (userFromProfile.getHomeStop() == null || userFromProfile.getNodalStop() == null) {
+                                        activity.setUpBottomNavigationView(2);
+                                    } else {
+                                        activity.onBackPressed();
+                                    }
+                                }
 
-                @Override
-                public void onFailure(Error error) {
-                    uiUtils.dismissDialog();
-                    uiUtils.shortToast("Unable to update details");
-                }
-            });
+                                @Override
+                                public void onFailure(Error error) {
+                                    uiUtils.dismissDialog();
+                                    uiUtils.shortToast("Unable to update details");
+                                }
+                            });
         } else {
             uiUtils.noInternetDialog();
         }

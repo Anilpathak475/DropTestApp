@@ -1,0 +1,11 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <!-- Default screen margins, per the Android Design guidelines. -->
+
+
+    <dimen name="ts_small">14sp</dimen>
+    <dimen name="ts_regular">16sp</dimen>
+    <dimen name="ts_x_large">20sp</dimen>
+    <dimen name="ts_xx_large">22sp</dimen>
+
+</resources>

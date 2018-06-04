@@ -22,20 +22,19 @@ import retrofit2.Response;
 
 public class BoardingPassStore {
     private static BoardingPassStore instance = null;
+    private ClientGenerator clientGenerator;
 
-    private BoardingPassStore() {
+    private BoardingPassStore(String baseUrl) {
+        clientGenerator = new ClientGenerator(baseUrl);
     }
 
-    public static BoardingPassStore getInstance() {
-        if (instance == null) {
-            instance = new BoardingPassStore();
-        }
-
+    public static BoardingPassStore getInstance(String baseUrl) {
+        instance = new BoardingPassStore(baseUrl);
         return instance;
     }
 
     public void getBoardingPass(String authToken, final BoardingPassCallback boardingPassCallback) {
-        BoardingPassClient boardingPassClient = ClientGenerator.createClient(BoardingPassClient.class);
+        BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
         Call<BoardingPass> call = boardingPassClient.getBoardingPass(Utils.getHeader(authToken));
         call.enqueue(new Callback<BoardingPass>() {
             @Override
@@ -55,7 +54,7 @@ public class BoardingPassStore {
     }
 
     public void sosAlert(GeoJsonPoint geoJsonPoint, String boardingPassId, String accessToken, final StatusCallback statusCallback) {
-        BoardingPassClient boardingPassClient = ClientGenerator.createClient(BoardingPassClient.class);
+        BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
         Call<ResponseBody> call = boardingPassClient.sosAlert(geoJsonPoint, boardingPassId, Utils.getHeader(accessToken));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -75,7 +74,7 @@ public class BoardingPassStore {
     }
 
     public void markAttendance(Attendance attendance, String boardingPassId, String accessToken, final StatusCallback statusCallback) {
-        BoardingPassClient boardingPassClient = ClientGenerator.createClient(BoardingPassClient.class);
+        BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
         Call<ResponseBody> call = boardingPassClient.markAttendance(attendance, boardingPassId, Utils.getHeader(accessToken));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -95,7 +94,7 @@ public class BoardingPassStore {
     }
 
     public void trackMyRide(String boardingPassId, String lat, String lng, String accessToken, final TrackRideCallback trackRideCallback) {
-        BoardingPassClient boardingPassClient = ClientGenerator.createClient(BoardingPassClient.class);
+        BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
         Call<TrackRide> call = boardingPassClient.trackMyRide(boardingPassId, lat, lng, Utils.getHeader(accessToken));
         call.enqueue(new Callback<TrackRide>() {
             @Override

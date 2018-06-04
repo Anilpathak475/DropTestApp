@@ -34,6 +34,7 @@ import com.cityzipcorp.customer.store.BoardingPassStore;
 import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.LocationUtils;
 import com.cityzipcorp.customer.utils.NetworkUtils;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -210,13 +211,16 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     }
 
     protected synchronized void buildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(activity).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
+        googleApiClient = new GoogleApiClient.Builder(activity).addConnectionCallbacks(this).
+                addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
         googleApiClient.connect();
     }
 
     private void fetchTripDetailsOnMap(Location location) {
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            BoardingPassStore.getInstance().trackMyRide(boardingPass.getId(), String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), sharedPreferenceUtils.getAccessToken(),
+            BoardingPassStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    trackMyRide(boardingPass.getId(), String.valueOf(location.getLatitude()),
+                            String.valueOf(location.getLongitude()), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                     new TrackRideCallback() {
                         @Override
                         public void onSuccess(TrackRide trackRide) {
@@ -343,16 +347,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        if (userLocationMarker == null) {
-            userLocationMarker = googleMap.addMarker(new MarkerOptions().
-                    position(latLng).
-                    title("Service Location").icon(BitmapDescriptorFactory.
-                    fromBitmap(getBitmapBySize(R.drawable.home_location_pin, 80, 120))));
 
-        } else {
-            animateMarker(userLocationMarker, latLng, false);
-        }
     }
 
 

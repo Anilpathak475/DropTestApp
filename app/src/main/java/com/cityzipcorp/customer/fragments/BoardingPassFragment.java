@@ -40,6 +40,7 @@ import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.LocationUtils;
 import com.cityzipcorp.customer.utils.NetworkUtils;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -182,7 +183,8 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     }
 
     private void getRideDetails(Location location) {
-        boardingPassPresenter.getRideDetails(location, boardingPass.getId(), sharedPreferenceUtils.getAccessToken());
+        boardingPassPresenter.getRideDetails(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                location, boardingPass.getId(), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -193,7 +195,7 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     public void getPassDetails() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
             swipeRefreshLayout.setRefreshing(true);
-            boardingPassPresenter.getBoardingPass(sharedPreferenceUtils.getAccessToken());
+            boardingPassPresenter.getBoardingPass(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
         } else {
             uiUtils.noInternetDialog();
         }
@@ -268,12 +270,16 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     @OnClick(R.id.btn_sos)
     void onClickSos() {
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(activity,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            boardingPassPresenter.sendSos(location, boardingPass.getId(), sharedPreferenceUtils.getAccessToken());
+            boardingPassPresenter.sendSos(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                    location, boardingPass.getId(), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
         } else {
             uiUtils.noInternetDialog();
         }
@@ -294,12 +300,17 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     }
 
     private void markAttendance() {
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(activity,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            boardingPassPresenter.markAttendance(location, boardingPass.getId(), sharedPreferenceUtils.getAccessToken());
+            boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                    location, boardingPass.getId(),
+                    sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
         } else {
             uiUtils.noInternetDialog();
         }

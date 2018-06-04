@@ -37,6 +37,7 @@ import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.LinearLayoutManagerWithSmoothScroller;
 import com.cityzipcorp.customer.utils.NetworkUtils;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -106,29 +107,30 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
 
     private void getSchedule() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            String authToken = sharedPreferenceUtils.getAccessToken();
             uiUtils.showProgressDialog();
-            ScheduleStore.getInstance().getSchedule(authToken, new ScheduleCallback() {
-                @Override
-                public void onSuccess(List<Schedule> schedules) {
-                    if (schedules.size() > 0) {
-                        scheduleList.clear();
-                        createEventListForAdapter(schedules);
-                        uiUtils.dismissDialog();
-                    } else {
-                        setDefaultSchedule();
-                        uiUtils.dismissDialog();
-                    }
+            ScheduleStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    getSchedule(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
+                            new ScheduleCallback() {
+                                @Override
+                                public void onSuccess(List<Schedule> schedules) {
+                                    if (schedules.size() > 0) {
+                                        scheduleList.clear();
+                                        createEventListForAdapter(schedules);
+                                        uiUtils.dismissDialog();
+                                    } else {
+                                        setDefaultSchedule();
+                                        uiUtils.dismissDialog();
+                                    }
 
-                }
+                                }
 
-                @Override
-                public void onFailure(Error error) {
-                    Log.d("Logger ", error.getLocalizedMessage());
-                    setDefaultSchedule();
-                    uiUtils.dismissDialog();
-                }
-            });
+                                @Override
+                                public void onFailure(Error error) {
+                                    Log.d("Logger ", error.getLocalizedMessage());
+                                    setDefaultSchedule();
+                                    uiUtils.dismissDialog();
+                                }
+                            });
         } else {
             uiUtils.noInternetDialog();
         }

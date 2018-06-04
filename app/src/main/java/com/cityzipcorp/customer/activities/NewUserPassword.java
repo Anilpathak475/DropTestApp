@@ -68,7 +68,7 @@ public class NewUserPassword extends AppCompatActivity implements SetNewPassword
             setNewPassword.setNewPassword(edtNewPassword.getText().toString());
             setNewPassword.setConfirmPassword(edtConfirmPassword.getText().toString());
             setNewPassword.setEmail(emailId);
-            presenter.validatePassword(setNewPassword, Constants.NEW_USER_PASSWORD_CHANGE_URL);
+            presenter.validatePassword("", setNewPassword, Constants.NEW_USER_PASSWORD_CHANGE_URL);
         } else {
             uiUtils.shortToast("No Internet!");
         }

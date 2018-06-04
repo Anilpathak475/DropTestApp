@@ -4,6 +4,7 @@ package com.cityzipcorp.customer.fcm;
 import android.util.Log;
 
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
@@ -25,6 +26,6 @@ public class InstanceRegistrationIdService extends FirebaseInstanceIdService {
 
     private void sendRegistrationToServer(String token) {
         SharedPreferenceManager sharedPreferenceManager = new SharedPreferenceManager(InstanceRegistrationIdService.this);
-        sharedPreferenceManager.saveFcmToken(token);
+        sharedPreferenceManager.saveValue(SharedPreferenceManagerConstant.FCM_TOKEN, token);
     }
 }

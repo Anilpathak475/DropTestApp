@@ -9,14 +9,9 @@ import com.cityzipcorp.customer.store.UserStore;
 
 public class LoginInteractorImpl implements LoginInteractor {
     @Override
-    public void submit(String userName, String password, final OnUserNotFound listener) {
-        if (validate(userName, password)) {
-
-            UserCredential userCredential = new UserCredential();
-            userCredential.setEmail(userName);
-            userCredential.setPassword(password);
-
-            UserStore.getInstance().login(userCredential, new UserCallback() {
+    public void submit(String baseUrl, UserCredential userCredential, final OnUserNotFound listener) {
+        if (validate(userCredential.getEmail(), userCredential.getPassword())) {
+            UserStore.getInstance(baseUrl).login(userCredential, new UserCallback() {
                 @Override
                 public void onSuccess(User user) {
                     listener.onSuccess(user);

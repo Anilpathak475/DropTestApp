@@ -15,6 +15,7 @@ import com.cityzipcorp.customer.callbacks.StatusCallback;
 import com.cityzipcorp.customer.model.ChangePassword;
 import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.NetworkUtils;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.marlonmafra.android.widget.EditTextPassword;
 
 import butterknife.BindView;
@@ -43,12 +44,6 @@ public class ChangePasswordFragment extends BaseFragment {
         return new ChangePasswordFragment();
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //    if (getActivity() != null) getActivity().setTitle(getString(R.string.change_password));
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,7 +60,7 @@ public class ChangePasswordFragment extends BaseFragment {
                 ChangePassword changePassword = new ChangePassword();
                 changePassword.setCurrentPassword(edtCurrentPassword.getText().toString());
                 changePassword.setNewPassword(edtNewPassword.getText().toString());
-                UserStore.getInstance().changePassword(changePassword, sharedPreferenceUtils.getAccessToken(), new StatusCallback() {
+                UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).changePassword(changePassword, sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new StatusCallback() {
                     @Override
                     public void onSuccess() {
                         uiUtils.dismissDialog();

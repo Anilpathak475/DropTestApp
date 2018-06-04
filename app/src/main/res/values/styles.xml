@@ -35,6 +35,12 @@
 
     </style>
 
+
+    <style name="Widget.App.Spinner" parent="@style/Widget.AppCompat.Spinner.Underlined">
+        <item name="overlapAnchor">true</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
     <style name="Theme.AppTheme.Dialog.Alert" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorPrimary">@color/blue500</item>
         <item name="colorAccent">@color/greenA700</item>

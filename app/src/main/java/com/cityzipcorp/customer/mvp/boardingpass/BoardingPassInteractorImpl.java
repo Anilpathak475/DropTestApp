@@ -17,12 +17,12 @@ import java.util.Calendar;
 public class BoardingPassInteractorImpl implements BoardingPassInteractor {
 
     @Override
-    public void sendSos(Location location, String passId, String accessToken, final BoardingPassCommonCallback listener) {
+    public void sendSos(String baseUrl, Location location, String passId, String accessToken, final BoardingPassCommonCallback listener) {
         GeoJsonPoint geoJsonPoint = new GeoJsonPoint(location.getLongitude(), location.getLatitude());
         SosBody sosBody = new SosBody();
         sosBody.setBoardingPassId(passId);
         sosBody.setGeoJsonPoint(geoJsonPoint);
-        BoardingPassStore.getInstance().sosAlert(sosBody.getGeoJsonPoint(), sosBody.getBoardingPassId(), accessToken, new StatusCallback() {
+        BoardingPassStore.getInstance(baseUrl).sosAlert(sosBody.getGeoJsonPoint(), sosBody.getBoardingPassId(), accessToken, new StatusCallback() {
             @Override
             public void onSuccess() {
                 listener.onSosSuccess();
@@ -36,8 +36,8 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
     }
 
     @Override
-    public void getBoardingPass(String accessToken, final BoardingPassDetailsCallback boardingPassDetailsCallback) {
-        BoardingPassStore.getInstance().getBoardingPass(accessToken, new BoardingPassCallback() {
+    public void getBoardingPass(String baseUrl, String accessToken, final BoardingPassDetailsCallback boardingPassDetailsCallback) {
+        BoardingPassStore.getInstance(baseUrl).getBoardingPass(accessToken, new BoardingPassCallback() {
             @Override
             public void onSuccess(BoardingPass boardingPass) {
                 if (boardingPass != null) {
@@ -55,7 +55,7 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
     }
 
     @Override
-    public void getRideDetails(Location location, String passId, String accessToken, final TrackMyRideCallback trackMyRideCallback) {
+    public void getRideDetails(String baseUrl, Location location, String passId, String accessToken, final TrackMyRideCallback trackMyRideCallback) {
         String lat;
         String lng;
         if (null == location) {
@@ -65,7 +65,7 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
             lat = String.valueOf(location.getLatitude());
             lng = String.valueOf(location.getLatitude());
         }
-        BoardingPassStore.getInstance().trackMyRide(passId, lat, lng, accessToken,
+        BoardingPassStore.getInstance(baseUrl).trackMyRide(passId, lat, lng, accessToken,
                 new TrackRideCallback() {
                     @Override
                     public void onSuccess(TrackRide trackRide) {
@@ -84,13 +84,13 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
     }
 
     @Override
-    public void markAttendance(Location location, String passId, String accessToken, final BoardingPassAttendanceCallback boardingPassCommonCallback) {
+    public void markAttendance(String baseUrl, Location location, String passId, String accessToken, final BoardingPassAttendanceCallback boardingPassCommonCallback) {
         GeoJsonPoint geoJsonPoint = new GeoJsonPoint(location.getLongitude(), location.getLatitude());
         Attendance attendance = new Attendance();
         attendance.setAttendedAt(Calendar.getInstance().getTime());
         attendance.setAttended(true);
         attendance.setGeoJsonPoint(geoJsonPoint);
-        BoardingPassStore.getInstance().markAttendance(attendance, passId, accessToken, new StatusCallback() {
+        BoardingPassStore.getInstance(baseUrl).markAttendance(attendance, passId, accessToken, new StatusCallback() {
             @Override
             public void onSuccess() {
                 boardingPassCommonCallback.onAttendanceSuccess();

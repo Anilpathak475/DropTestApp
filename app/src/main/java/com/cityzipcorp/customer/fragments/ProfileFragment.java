@@ -26,6 +26,7 @@ import com.cityzipcorp.customer.model.Address;
 import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.NetworkUtils;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -108,8 +109,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         swipeRefreshLayout.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        swipeRefreshLayout.setRefreshing(true);
-                                        getProfileInfo();
+                                        onRefresh();
                                     }
                                 }
         );
@@ -220,9 +220,9 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             isAllowedToCLickOnGroup = true;
         }
 
-        boolean imageStatus = sharedPreferenceUtils.getImageStatus();
-        if (imageStatus && !sharedPreferenceUtils.getImageData().equalsIgnoreCase("")) {
-            user.setProfilePicUri(sharedPreferenceUtils.getImageData());
+
+        if (!sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA).equalsIgnoreCase("")) {
+            user.setProfilePicUri(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA));
             String encodedImage = user.getProfilePicUri();
             byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -248,31 +248,33 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     private void getProfileInfo() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            UserStore.getInstance().getProfileInfo(sharedPreferenceUtils.getAccessToken(), new UserCallback() {
-                @Override
-                public void onSuccess(User user) {
-                    if (user != null) {
-                        try {
-                            uiUtils.dismissDialog();
-                            setValues(user);
-                            noDataLayout.setVisibility(View.GONE);
-                            layoutMain.setVisibility(View.VISIBLE);
-                            swipeRefreshLayout.setRefreshing(false);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            swipeRefreshLayout.setRefreshing(false);
-                            uiUtils.dismissDialog();
-                        }
-                    }
-                }
+            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
+                            new UserCallback() {
+                                @Override
+                                public void onSuccess(User user) {
+                                    if (user != null) {
+                                        try {
+                                            uiUtils.dismissDialog();
+                                            setValues(user);
+                                            noDataLayout.setVisibility(View.GONE);
+                                            layoutMain.setVisibility(View.VISIBLE);
+                                            swipeRefreshLayout.setRefreshing(false);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            swipeRefreshLayout.setRefreshing(false);
+                                            uiUtils.dismissDialog();
+                                        }
+                                    }
+                                }
 
-                @Override
-                public void onFailure(Error error) {
-                    swipeRefreshLayout.setRefreshing(false);
-                    uiUtils.dismissDialog();
-                    uiUtils.shortToast("Unable to fetch profile details!");
-                }
-            });
+                                @Override
+                                public void onFailure(Error error) {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                    uiUtils.dismissDialog();
+                                    uiUtils.shortToast("Unable to fetch profile details!");
+                                }
+                            });
         } else {
             uiUtils.noInternetDialog();
             uiUtils.dismissDialog();

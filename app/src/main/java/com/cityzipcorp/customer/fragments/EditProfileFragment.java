@@ -32,6 +32,7 @@ import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.ChoosePhoto;
 import com.cityzipcorp.customer.utils.NetworkUtils;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.Utils;
 
 import java.io.ByteArrayOutputStream;
@@ -108,26 +109,28 @@ public class EditProfileFragment extends BaseFragment {
     private void getProfileInfo() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
             uiUtils.showProgressDialog();
-            UserStore.getInstance().getProfileInfo(sharedPreferenceUtils.getAccessToken(), new UserCallback() {
-                @Override
-                public void onSuccess(User user) {
-                    if (user != null) {
-                        try {
-                            uiUtils.dismissDialog();
-                            setValues(user);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN)
+                            , new UserCallback() {
+                                @Override
+                                public void onSuccess(User user) {
+                                    if (user != null) {
+                                        try {
+                                            uiUtils.dismissDialog();
+                                            setValues(user);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
 
-                        }
-                    }
-                }
+                                        }
+                                    }
+                                }
 
-                @Override
-                public void onFailure(Error error) {
-                    uiUtils.dismissDialog();
-                    uiUtils.shortToast("Unable to fetch profile details!");
-                }
-            });
+                                @Override
+                                public void onFailure(Error error) {
+                                    uiUtils.dismissDialog();
+                                    uiUtils.shortToast("Unable to fetch profile details!");
+                                }
+                            });
         } else {
             uiUtils.noInternetDialog();
         }
@@ -198,20 +201,21 @@ public class EditProfileFragment extends BaseFragment {
 
         uiUtils.showProgressDialog();
         user.setId(userId);
-        UserStore.getInstance().updateProfileInfo(sharedPreferenceUtils.getAccessToken(), user, new UserCallback() {
-            @Override
-            public void onSuccess(User user) {
-                uiUtils.dismissDialog();
-                sharedPreferenceUtils.saveImageData(getImageUri());
-                checkProfileStatus();
-            }
+        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        uiUtils.dismissDialog();
+                        sharedPreferenceUtils.saveValue(SharedPreferenceManagerConstant.IMAGE_DATA, getImageUri());
+                        checkProfileStatus();
+                    }
 
-            @Override
-            public void onFailure(Error error) {
-                uiUtils.dismissDialog();
-                uiUtils.shortToast("Unable to update profile!");
-            }
-        });
+                    @Override
+                    public void onFailure(Error error) {
+                        uiUtils.dismissDialog();
+                        uiUtils.shortToast("Unable to update profile!");
+                    }
+                });
     }
 
     private void checkProfileStatus() {

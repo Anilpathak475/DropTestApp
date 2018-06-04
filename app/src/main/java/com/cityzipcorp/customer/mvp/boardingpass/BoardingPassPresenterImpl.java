@@ -50,26 +50,26 @@ public class BoardingPassPresenterImpl implements BoardingPassPresenter, Boardin
     }
 
     @Override
-    public void sendSos(Location location, String passId, String accessToken) {
+    public void sendSos(String baseUrl, Location location, String passId, String accessToken) {
         boardingPassView.showProgress();
-        boardingPassInteractor.sendSos(location, passId, accessToken, this);
+        boardingPassInteractor.sendSos(baseUrl, location, passId, accessToken, this);
     }
 
     @Override
-    public void getBoardingPass(String accessToken) {
-        boardingPassInteractor.getBoardingPass(accessToken, this);
+    public void getBoardingPass(String baseUrl, String accessToken) {
+        boardingPassInteractor.getBoardingPass(baseUrl, accessToken, this);
     }
 
     @Override
-    public void getRideDetails(Location location, String passId, String accessToken) {
+    public void getRideDetails(String baseUrl, Location location, String passId, String accessToken) {
         boardingPassView.showProgress();
-        boardingPassInteractor.getRideDetails(location, passId, accessToken, this);
+        boardingPassInteractor.getRideDetails(baseUrl, location, passId, accessToken, this);
     }
 
     @Override
-    public void markAttendance(Location location, String passId, String accessToken) {
+    public void markAttendance(String baseUrl, Location location, String passId, String accessToken) {
         boardingPassView.showProgress();
-        boardingPassInteractor.markAttendance(location, passId, accessToken, this);
+        boardingPassInteractor.markAttendance(baseUrl, location, passId, accessToken, this);
     }
 
     @Override

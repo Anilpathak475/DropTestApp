@@ -4,18 +4,18 @@
 
     <item
         android:id="@+id/action_bulk_mode"
+        android:orderInCategory="0"
         android:title="@string/bulk"
-        app:showAsAction="always"
-        android:orderInCategory="0"/>
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_bulk_mode_done"
+        android:orderInCategory="0"
         android:title="Done"
-        app:showAsAction="always"
-        android:orderInCategory="0"/>
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_logout"
-        android:title="@string/logout"
-        app:showAsAction="always"
         android:icon="@drawable/ic_power_button"
-        android:orderInCategory="0"/>
+        android:orderInCategory="0"
+        android:title="@string/logout"
+        app:showAsAction="always" />
 </menu>

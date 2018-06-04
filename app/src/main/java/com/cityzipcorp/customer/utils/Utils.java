@@ -26,6 +26,17 @@ public class Utils {
         return headerMap;
     }
 
+    public static Map<String, String> getDefaultHeaders() {
+        Field[] fields = Build.VERSION_CODES.class.getFields();
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put(Constants.HEADER_MOBILE_OS, fields[Build.VERSION.SDK_INT + 1].getName());
+        headerMap.put(Constants.HEADER_MOBILE_APP_VERSION, BuildConfig.VERSION_NAME);
+        headerMap.put(Constants.HEADER_MOBILE_OS_VERSION, String.valueOf(android.os.Build.VERSION.SDK_INT));
+        headerMap.put(Constants.HEADER_MOBILE_MANUFACTURER, Build.MANUFACTURER);
+        headerMap.put(Constants.HEADER_MOBILE_MANUFACTURER_MODEL, Build.MODEL);
+        return headerMap;
+    }
+
     public static String replaceNull(String value) {
         if (value != null) {
             if (value.contains("null")) {

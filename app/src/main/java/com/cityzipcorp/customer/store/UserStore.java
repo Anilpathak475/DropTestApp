@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.cityzipcorp.customer.callbacks.AreaCallback;
+import com.cityzipcorp.customer.callbacks.ContractCallback;
 import com.cityzipcorp.customer.callbacks.GroupCallBack;
 import com.cityzipcorp.customer.callbacks.NodalStopCallback;
 import com.cityzipcorp.customer.callbacks.ProfileStatusCallback;
@@ -13,6 +14,7 @@ import com.cityzipcorp.customer.clients.LoginClient;
 import com.cityzipcorp.customer.clients.UserClient;
 import com.cityzipcorp.customer.model.Area;
 import com.cityzipcorp.customer.model.ChangePassword;
+import com.cityzipcorp.customer.model.Contract;
 import com.cityzipcorp.customer.model.FcmRegistrationToken;
 import com.cityzipcorp.customer.model.Group;
 import com.cityzipcorp.customer.model.NodalStop;
@@ -36,22 +38,19 @@ import retrofit2.Response;
 
 public class UserStore {
 
-    private static UserStore instance = null;
+    private ClientGenerator clientGenerator;
 
-    private UserStore() {
+    private UserStore(String baseUrl) {
+        clientGenerator = new ClientGenerator(baseUrl);
     }
 
-    public static UserStore getInstance() {
-        if (instance == null) {
-            instance = new UserStore();
-        }
-
-        return instance;
+    public static UserStore getInstance(String baseUrl) {
+        return new UserStore(baseUrl);
     }
 
     public void login(UserCredential userCredential, final UserCallback userCallback) {
-        LoginClient loginClient = ClientGenerator.createClient(LoginClient.class);
-        Call<User> call = loginClient.login(userCredential);
+        LoginClient loginClient = clientGenerator.createClient(LoginClient.class);
+        Call<User> call = loginClient.login(userCredential, Utils.getDefaultHeaders());
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -74,7 +73,7 @@ public class UserStore {
 
     public void getProfileInfo(String authToken, final UserCallback userCallback) {
         Log.d("Auth token", authToken);
-        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<User> call = userClient.profile(Utils.getHeader(authToken));
         call.enqueue(new Callback<User>() {
             @Override
@@ -94,7 +93,7 @@ public class UserStore {
     }
 
     public void updateProfileInfo(String authToken, User user, final UserCallback userCallback) {
-        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<User> call = userClient.updateProfile(Utils.getHeader(authToken), user.getId(), user);
 
         call.enqueue(new Callback<User>() {
@@ -115,7 +114,7 @@ public class UserStore {
     }
 
     public void logout(String autToken, final StatusCallback statusCallback) {
-        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<ResponseBody> call = userClient.logout(Utils.getHeader(autToken));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -135,7 +134,7 @@ public class UserStore {
     }
 
     public void getNodalStopList(String boundingBoxString, String authToken, final NodalStopCallback nodalStopCallback) {
-        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<List<NodalStop>> call = userClient.getNodalStopList(boundingBoxString, Utils.getHeader(authToken));
         call.enqueue(new Callback<List<NodalStop>>() {
             @Override
@@ -155,7 +154,7 @@ public class UserStore {
     }
 
     public void updateNodalStop(String authToken, String id, NodalStopBody nodalStopBody, final StatusCallback statusCallback) {
-        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
         User user = new User(nodalStopBody);
         Call<User> call = userClient.updateNodalPoint(Utils.getHeader(authToken), id, user);
 
@@ -178,7 +177,7 @@ public class UserStore {
 
 
     public void getShiftByGroup(String authToken, final GroupCallBack groupCallBack) {
-        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<List<Group>> call = userClient.getAllGroups(Utils.getHeader(authToken));
         call.enqueue(new Callback<List<Group>>() {
             @Override
@@ -198,7 +197,7 @@ public class UserStore {
     }
 
     public void getProfileStatus(String accessToken, final ProfileStatusCallback profileStatusCallback) {
-        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<ProfileStatus> call = userClient.getProfileStatus(Utils.getHeader(accessToken));
         call.enqueue(new Callback<ProfileStatus>() {
             @Override
@@ -221,7 +220,7 @@ public class UserStore {
 
 
     public void registerFcmToken(FcmRegistrationToken fcmRegistrationToken, String accessToken) {
-        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<ResponseBody> call = userClient.registerDeviceToFcm(fcmRegistrationToken, Utils.getHeader(accessToken));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -239,7 +238,7 @@ public class UserStore {
     }
 
     public void changePassword(ChangePassword changePassword, String accessToken, final StatusCallback statusCallback) {
-        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<ResponseBody> call = userClient.changePassword(changePassword, Utils.getHeader(accessToken));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -262,7 +261,7 @@ public class UserStore {
 
 
     public void getAreas(String accessToken, final AreaCallback areaCallback) {
-        UserClient userClient = ClientGenerator.createClient(UserClient.class);
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<List<Area>> call = userClient.getAreas(Utils.getHeader(accessToken));
         call.enqueue(new Callback<List<Area>>() {
             @Override
@@ -277,6 +276,26 @@ public class UserStore {
             @Override
             public void onFailure(Call<List<Area>> call, Throwable t) {
                 areaCallback.onFailure(new Error("Unable to get Areas"));
+            }
+        });
+    }
+
+    public void getContracts(final ContractCallback contractCallback) {
+        LoginClient loginClient = clientGenerator.createClient(LoginClient.class);
+        Call<List<Contract>> call = loginClient.contract(Utils.getDefaultHeaders());
+        call.enqueue(new Callback<List<Contract>>() {
+            @Override
+            public void onResponse(Call<List<Contract>> call, Response<List<Contract>> response) {
+                if (response.isSuccessful()) {
+                    contractCallback.onSuccess(response.body());
+                } else {
+                    contractCallback.onFailure(new Error("Unable to fetch contracts"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Contract>> call, Throwable t) {
+                contractCallback.onFailure(new Error("Unable to fetch contracts"));
             }
         });
     }

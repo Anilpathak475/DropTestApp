@@ -6,13 +6,13 @@ import com.cityzipcorp.customer.model.BoardingPass;
 import com.cityzipcorp.customer.model.TrackRide;
 
 public interface BoardingPassInteractor {
-    void sendSos(Location location, String passId, String accessToken, BoardingPassCommonCallback listener);
+    void sendSos(String baseUrl, Location location, String passId, String accessToken, BoardingPassCommonCallback listener);
 
-    void getBoardingPass(String accessToken, BoardingPassDetailsCallback boardingPassDetailsCallback);
+    void getBoardingPass(String baseUrl, String accessToken, BoardingPassDetailsCallback boardingPassDetailsCallback);
 
-    void getRideDetails(Location location, String passId, String accessToken, TrackMyRideCallback trackMyRideCallback);
+    void getRideDetails(String baseUrl, Location location, String passId, String accessToken, TrackMyRideCallback trackMyRideCallback);
 
-    void markAttendance(Location location, String passId, String accessToken, BoardingPassAttendanceCallback boardingPassCommonCallback);
+    void markAttendance(String baseUrl, Location location, String passId, String accessToken, BoardingPassAttendanceCallback boardingPassCommonCallback);
 
     interface BoardingPassCommonCallback {
         void setError(String error);

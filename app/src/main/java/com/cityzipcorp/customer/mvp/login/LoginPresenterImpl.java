@@ -1,6 +1,7 @@
 package com.cityzipcorp.customer.mvp.login;
 
 import com.cityzipcorp.customer.model.User;
+import com.cityzipcorp.customer.model.UserCredential;
 
 public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUserNotFound {
     private LoginView loginView;
@@ -12,9 +13,9 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUse
     }
 
     @Override
-    public void validate(String email, String password) {
+    public void validate(String baseUrl, UserCredential userCredential) {
         loginView.showProgress();
-        loginPresenter.submit(email, password, this);
+        loginPresenter.submit(baseUrl, userCredential, this);
     }
 
     @Override

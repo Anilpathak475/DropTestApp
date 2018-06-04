@@ -2,20 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="20dp">
 
     <TextView
+        style="?android:attr/dropDownItemStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Group"
-        style="?android:attr/dropDownItemStyle"
-        android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
-        android:singleLine="true"
-        android:textStyle="normal"
         android:ellipsize="marquee"
-        />
+        android:singleLine="true"
+        android:text="Group"
+        android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
+        android:textStyle="normal" />
 
     <Spinner
         android:id="@+id/spn_group"
@@ -24,14 +23,14 @@
         android:layout_marginTop="10dp" />
 
     <TextView
+        style="?android:attr/dropDownItemStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        style="?android:attr/dropDownItemStyle"
-        android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
-        android:textStyle="normal"
         android:ellipsize="marquee"
-        android:text="Shift" />
+        android:text="Shift"
+        android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
+        android:textStyle="normal" />
 
     <Spinner
         android:id="@+id/spn_shift"

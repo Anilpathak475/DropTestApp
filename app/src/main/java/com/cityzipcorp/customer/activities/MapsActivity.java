@@ -37,6 +37,7 @@ import com.cityzipcorp.customer.utils.CustomClusterRenderer;
 import com.cityzipcorp.customer.utils.LocationUtils;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
 import com.etiennelawlor.discreteslider.library.ui.DiscreteSlider;
 import com.etiennelawlor.discreteslider.library.utilities.DisplayUtility;
@@ -200,7 +201,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             uiUtils.showProgressDialog();
             LatLngBounds latLngBoundsForApi = toBounds(latLng, distance);
             String boundingBounds = String.valueOf(latLngBoundsForApi.southwest.longitude + "," + latLngBoundsForApi.southwest.latitude + "," + latLngBoundsForApi.northeast.longitude + "," + latLngBoundsForApi.northeast.latitude);
-            UserStore.getInstance().getNodalStopList(boundingBounds, sharedPreferenceManager.getAccessToken(), new NodalStopCallback() {
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    getNodalStopList(boundingBounds, sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new NodalStopCallback() {
                 @Override
                 public void onSuccess(List<NodalStop> nodalStopList) {
                     if (nodalStopList != null) {
@@ -283,7 +285,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateNodalPoint() {
         if (nodalStop != null) {
             final NodalStopBody nodalStopBody = new NodalStopBody.Builder().setExternalStopId(nodalStop.getId()).setName(nodalStop.getStop().getName()).setCoordinates(nodalStop.getStop().getLocationA().getGeoJsonPoint()).build();
-            UserStore.getInstance().updateNodalStop(sharedPreferenceManager.getAccessToken(), user.getId(), nodalStopBody, new StatusCallback() {
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    updateNodalStop(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
+                            user.getId(), nodalStopBody, new StatusCallback() {
                 @Override
                 public void onSuccess() {
                     navigateToProfile();

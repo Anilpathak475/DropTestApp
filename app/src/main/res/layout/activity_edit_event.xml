@@ -95,9 +95,9 @@
                 android:textStyle="normal" />
 
             <Spinner
+                android:id="@+id/spn_in_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spn_in_time"
                 android:layout_marginTop="10dp"
 
                 />
@@ -151,13 +151,13 @@
                 android:textSize="20dp"
                 android:textStyle="normal" />
 
-           <Spinner
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:id="@+id/spn_out_time"
-               android:layout_marginTop="10dp"
+            <Spinner
+                android:id="@+id/spn_out_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
 
-               />
+                />
 
 
             <TextView

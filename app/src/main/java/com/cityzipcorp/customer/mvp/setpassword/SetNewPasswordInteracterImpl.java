@@ -9,9 +9,9 @@ import com.cityzipcorp.customer.store.ForgotPasswordStore;
 public class SetNewPasswordInteracterImpl implements SetNewPasswordInteractor {
 
     @Override
-    public void submitPassword(SetNewPassword setNewPassword, String url, final OnPasswordMatchFailedListener listener) {
+    public void submitPassword(String baseUrl, SetNewPassword setNewPassword, String url, final OnPasswordMatchFailedListener listener) {
         if (validate(setNewPassword.getNewPassword(), setNewPassword.getConfirmPassword(), listener)) {
-            ForgotPasswordStore.getInstance().setNewPassword(setNewPassword, url, new StatusCallback() {
+            ForgotPasswordStore.getInstance(baseUrl).setNewPassword(setNewPassword, url, new StatusCallback() {
                 @Override
                 public void onSuccess() {
                     listener.onSuccess();

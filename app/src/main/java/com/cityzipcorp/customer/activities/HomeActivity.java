@@ -36,6 +36,7 @@ import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.LocationUtils;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
@@ -151,22 +152,24 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         if (NetworkUtils.isNetworkAvailable(this)) {
             isInitialLoad = true;
             uiUtils.showProgressDialog();
-            UserStore.getInstance().getProfileStatus(sharedPreferenceManager.getAccessToken(), new ProfileStatusCallback() {
-                @Override
-                public void onSuccess(ProfileStatus profileStatus) {
-                    isInitialLoad = false;
-                    uiUtils.dismissDialog();
-                    validateProfileStatus(profileStatus);
-                }
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    getProfileStatus(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
+                            new ProfileStatusCallback() {
+                                @Override
+                                public void onSuccess(ProfileStatus profileStatus) {
+                                    isInitialLoad = false;
+                                    uiUtils.dismissDialog();
+                                    validateProfileStatus(profileStatus);
+                                }
 
-                @Override
-                public void onFailure(Error error) {
-                    isInitialLoad = false;
-                    uiUtils.dismissDialog();
-                    setUpBottomNavigationView(0);
-                    replaceFragment(new BoardingPassFragment(), getString(string.boarding_pass));
-                }
-            });
+                                @Override
+                                public void onFailure(Error error) {
+                                    isInitialLoad = false;
+                                    uiUtils.dismissDialog();
+                                    setUpBottomNavigationView(0);
+                                    replaceFragment(new BoardingPassFragment(), getString(string.boarding_pass));
+                                }
+                            });
         } else {
             isInitialLoad = false;
             uiUtils.noInternetDialog();
@@ -401,7 +404,10 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     private void navigateToLogin() {
-        sharedPreferenceManager.clearUserData();
+        sharedPreferenceManager.clearValue(SharedPreferenceManagerConstant.ACCESS_TOKEN);
+        sharedPreferenceManager.clearValue(SharedPreferenceManagerConstant.FCM_TOKEN);
+        sharedPreferenceManager.clearValue(SharedPreferenceManagerConstant.IMAGE_DATA);
+        sharedPreferenceManager.clearValue(SharedPreferenceManagerConstant.BASE_URL);
         Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
@@ -487,10 +493,13 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         FcmRegistrationToken fcmRegistrationToken = new FcmRegistrationToken();
         fcmRegistrationToken.setName("userName");
         fcmRegistrationToken.setCloudMessageType("FCM");
-        fcmRegistrationToken.setRegistrationId(sharedPreferenceManager.getFcmToken());
+        fcmRegistrationToken.setRegistrationId(sharedPreferenceManager.
+                getValue(SharedPreferenceManagerConstant.FCM_TOKEN));
         fcmRegistrationToken.setDeviceId("");
         fcmRegistrationToken.setApplicationId("");
-        UserStore.getInstance().registerFcmToken(fcmRegistrationToken, sharedPreferenceManager.getAccessToken());
+        UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                registerFcmToken(fcmRegistrationToken,
+                        sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
     }
 
     @Override

@@ -12,12 +12,21 @@ import retrofit2.Response;
 
 public class ForgotPasswordStore {
 
-    public static ForgotPasswordStore getInstance() {
-        return new ForgotPasswordStore();
+    private static ForgotPasswordStore instance = null;
+    private ClientGenerator clientGenerator;
+
+    private ForgotPasswordStore(String baseUrl) {
+        clientGenerator = new ClientGenerator(baseUrl);
+    }
+
+    public static ForgotPasswordStore getInstance(String baseUrl) {
+
+        instance = new ForgotPasswordStore(baseUrl);
+        return instance;
     }
 
     public void forgotPassword(String email, String url, final StatusCallback statusCallback) {
-        ForgotPasswordClient forgotPasswordClient = ClientGenerator.createClient(ForgotPasswordClient.class);
+        ForgotPasswordClient forgotPasswordClient = clientGenerator.createClient(ForgotPasswordClient.class);
         SetNewPassword setNewPassword = new SetNewPassword();
         setNewPassword.setEmail(email);
         Call<ResponseBody> call = forgotPasswordClient.forgotPassword(url, setNewPassword);
@@ -43,7 +52,7 @@ public class ForgotPasswordStore {
     }
 
     public void setNewPassword(SetNewPassword setNewPassword, String url, final StatusCallback statusCallback) {
-        ForgotPasswordClient forgotPasswordClient = ClientGenerator.createClient(ForgotPasswordClient.class);
+        ForgotPasswordClient forgotPasswordClient = clientGenerator.createClient(ForgotPasswordClient.class);
         Call<ResponseBody> call = forgotPasswordClient.setNewPassword(url, setNewPassword);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
