@@ -3,6 +3,7 @@ package com.cityzipcorp.customer.application;
 import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
+import com.facebook.stetho.Stetho;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -15,7 +16,7 @@ public class CustomerApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
-
+        Stetho.initializeWithDefaults(this);
     }
 
     @Override
