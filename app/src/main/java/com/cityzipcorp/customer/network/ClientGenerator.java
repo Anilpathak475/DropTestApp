@@ -43,12 +43,9 @@ public class ClientGenerator {
                                         Request original = chain.request();
 
                                         Request.Builder builder = original.newBuilder();
-                                        builder.addHeader(
-                                                "Content-Type",
-                                                "application/json"
-                                        );
-                                        builder.addHeader(Constants.HEADER_TIMEZONE_KEY,
-                                                CalenderUtil.getCurrentTimeZone());
+                                        builder.addHeader("Content-Type", "application/json");
+                                        builder.addHeader(Constants.HEADER_TIMEZONE_KEY, CalenderUtil.getCurrentTimeZone());
+                                        builder.addHeader("User-Agent", System.getProperty("http.agent"));
 
                                         return chain.proceed(builder.build());
                                     }
