@@ -3,6 +3,7 @@ package com.cityzipcorp.customer.network;
 
 import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.Constants;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -50,6 +51,7 @@ public class ClientGenerator {
                                         return chain.proceed(builder.build());
                                     }
                                 })
+                                .addNetworkInterceptor(new StethoInterceptor())
                                 .build()
                 )
                 .addConverterFactory(GsonConverterFactory.create(gson))
