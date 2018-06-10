@@ -160,7 +160,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             }
     }
 
-    private void updateOptInSelection(boolean checked) {
+    private void updateOptInSelection(final boolean checked) {
         user.setOptedIn(checked);
         UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
                 updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
@@ -173,6 +173,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                     @Override
                     public void onFailure(Error error) {
                         uiUtils.dismissDialog();
+                        optInCheckBox.setChecked(!checked);
                         uiUtils.shortToast("Unable to update profile!");
                     }
                 });
