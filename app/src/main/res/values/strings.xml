@@ -53,5 +53,8 @@
     <string name="register">Register</string>
     <string name="select_area">Select Area</string>
     <string name="no">No</string>
+    <string name="opt_in_description">Opt-In settings</string>
+    <string name="opt_in_opted_in_description">You are currently opted in, change to opted out by unchecking here</string>
+    <string name="opt_in_opted_out_description">You are currently opted out, change to opted in by checking here</string>
 
 </resources>

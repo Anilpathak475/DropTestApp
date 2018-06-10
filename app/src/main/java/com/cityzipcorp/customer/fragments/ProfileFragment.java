@@ -13,9 +13,12 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.activities.MapsActivity;
@@ -30,6 +33,7 @@ import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
@@ -89,6 +93,13 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
+
+    @BindView(R.id.opt_in_checkbox)
+    CheckBox optInCheckBox;
+
+    @BindView(R.id.opt_in_description)
+    TextView optInDesc;
+
     boolean isAllowedToCLickOnGroup = false;
     int ADDRESS_CODE_HOME = 101;
     int ADDRESS_CODE_NODAL = 102;
@@ -133,6 +144,38 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", user);
         return bundle;
+    }
+
+    @OnCheckedChanged(R.id.opt_in_checkbox)
+    void onOptedInCheckedBoxClicked(CompoundButton button, boolean checked) {
+
+            uiUtils.showProgressDialog();
+
+            if (NetworkUtils.isNetworkAvailable(activity)) {
+                updateOptInSelection(checked);
+            } else {
+                button.setChecked(!checked);
+                uiUtils.noInternetDialog();
+                uiUtils.dismissDialog();
+            }
+    }
+
+    private void updateOptInSelection(boolean checked) {
+        user.setOptedIn(checked);
+        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        uiUtils.dismissDialog();
+                        setOptInDescription(user.getOptedIn());
+                    }
+
+                    @Override
+                    public void onFailure(Error error) {
+                        uiUtils.dismissDialog();
+                        uiUtils.shortToast("Unable to update profile!");
+                    }
+                });
     }
 
     @OnClick(R.id.card_home_address)
@@ -202,11 +245,13 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         if (user.getEmployeeId() != null) {
             txtEmpId.setText(user.getEmployeeId());
         }
-
+        if (user.getOptedIn() != null) {
+            optInCheckBox.setChecked(user.getOptedIn());
+            setOptInDescription(user.getOptedIn());
+        }
         if (user.getNodalStop() != null) {
             txtNodalAddress.setText(user.getNodalStop().getName());
         }
-
         if (user.getGroup() == null && user.getShift() == null) {
             mainLayoutGroup.setVisibility(View.GONE);
             txtNoGrpShift.setVisibility(View.VISIBLE);
@@ -244,6 +289,14 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             });
         }
 
+    }
+
+    private void setOptInDescription(boolean optedIn) {
+        if (optedIn) {
+            optInDesc.setText(R.string.opt_in_opted_in_description);
+        } else {
+            optInDesc.setText(R.string.opt_in_opted_out_description);
+        }
     }
 
     private void getProfileInfo() {

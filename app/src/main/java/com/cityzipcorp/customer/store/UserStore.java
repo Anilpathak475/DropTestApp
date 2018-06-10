@@ -113,6 +113,28 @@ public class UserStore {
         });
     }
 
+    public void updateOptInInfo(String authToken, User user, final UserCallback userCallback) {
+
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
+        Call<User> call = userClient.updateProfile(Utils.getHeader(authToken), user.getId(), user);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    userCallback.onSuccess(response.body());
+                } else {
+                    userCallback.onFailure(new Error("Request ended with " + response.code() + " status"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                userCallback.onFailure(new Error(t));
+            }
+        });
+    }
+
     public void logout(String autToken, final StatusCallback statusCallback) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<ResponseBody> call = userClient.logout(Utils.getHeader(autToken));
