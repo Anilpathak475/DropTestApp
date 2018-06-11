@@ -14,6 +14,8 @@ import com.cityzipcorp.customer.mvp.setpassword.SetNewPasswordPresenterImpl;
 import com.cityzipcorp.customer.mvp.setpassword.SetNewPasswordView;
 import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.NetworkUtils;
+import com.cityzipcorp.customer.utils.SharedPreferenceManager;
+import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
 import com.marlonmafra.android.widget.EditTextPassword;
 
@@ -68,7 +70,9 @@ public class SetNewPasswordActivity extends AppCompatActivity implements SetNewP
             setNewPassword.setNewPassword(edtNewPassword.getText().toString());
             setNewPassword.setConfirmPassword(edtConfirmPassword.getText().toString());
             setNewPassword.setEmail(emailId);
-            presenter.validatePassword("", setNewPassword, Constants.FORGOT_PASSWORD_CHANGE_URL);
+            presenter.validatePassword(new SharedPreferenceManager(this).
+                            getValue(SharedPreferenceManagerConstant.BASE_URL),
+                    setNewPassword, Constants.FORGOT_PASSWORD_CHANGE_URL);
         } else {
             uiUtils.shortToast("No Internet!");
         }
