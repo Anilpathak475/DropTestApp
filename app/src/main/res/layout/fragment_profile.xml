@@ -35,10 +35,10 @@
                         android:id="@+id/img_edit_profile"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:layout_alignParentEnd="true"
                         android:layout_alignParentTop="true"
-                        android:layout_marginEnd="10dp"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginTop="15dp"
+                        android:layout_marginEnd="10dp"
                         android:contentDescription="@string/edit_profile"
                         android:src="@drawable/ic_edit" />
 
@@ -58,8 +58,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/img_profile"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
                         android:layout_marginTop="5dp"
+                        android:layout_marginRight="20dp"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="18sp"
@@ -70,10 +70,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/txt_comp_name"
-                        android:layout_marginBottom="10dp"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
                         android:layout_marginTop="5dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginBottom="10dp"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="15sp"
@@ -92,19 +92,22 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/grey_profile"
-                    android:layout_marginTop="16dp">
+                    android:layout_marginTop="16dp"
+                    android:background="@color/grey_profile">
+
                     <TextView
                         android:id="@+id/opt_in_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/opt_in_description"
                         android:layout_alignParentTop="true"
                         android:layout_marginStart="10dp"
-                        android:textSize="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="4dp"
                         android:fontFamily="@font/roboto_thin"
+                        android:text="@string/opt_in_description"
                         android:textColor="@color/black"
-                        android:textStyle="bold"/>
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
 
                     <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
@@ -113,28 +116,126 @@
                         android:padding="16dp">
 
                         <LinearLayout
-                            android:layout_height="wrap_content"
                             android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:padding="10dp">
 
                             <TextView
                                 android:id="@+id/opt_in_description"
-                                android:layout_alignParentStart="true"
-                                android:layout_height="wrap_content"
                                 android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
                                 android:layout_weight="1"
                                 android:text="@string/opt_in_opted_in_description"
                                 android:textSize="18dp" />
 
                             <CheckBox
-                                android:layout_gravity="center_vertical"
                                 android:id="@+id/opt_in_checkbox"
-                                android:layout_alignParentEnd="true"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_gravity="center_vertical" />
 
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/weekdays_off_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/grey_profile"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/weekdays_off"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="4dp"
+                        android:fontFamily="@font/roboto_thin"
+                        android:text="@string/weekdays_off"
+                        android:textColor="@color/black"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:id="@+id/weekdays"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/weekdays_off"
+                            android:orientation="vertical"
+                            android:padding="16dp"
+                            android:background="@android:color/white">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ToggleButton
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textOff="M"
+                                    android:textOn="M" />
+
+                                <ToggleButton
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textOff="T"
+                                    android:textOn="T" />
+
+                                <ToggleButton
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textOff="W"
+                                    android:textOn="W" />
+
+                                <ToggleButton
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textOff="T"
+                                    android:textOn="T" />
+
+                                <ToggleButton
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textOff="F"
+                                    android:textOn="F" />
+
+                                <ToggleButton
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textOff="S"
+                                    android:textOn="S" />
+
+                                <ToggleButton
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textOff="S"
+                                    android:textOn="S" />
+
+                            </LinearLayout>
+
+                            <Button
+                                android:id="@+id/btn_update"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/app_theme_red"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:text="Update"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
 
                 </RelativeLayout>
 
@@ -149,8 +250,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
-                        android:layout_marginBottom="2dp"
                         android:layout_marginTop="10dp"
+                        android:layout_marginBottom="2dp"
                         android:fontFamily="@font/roboto_thin"
                         android:paddingStart="10dp"
                         android:text="@string/group"
@@ -238,8 +339,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/card_group_shifts"
-                        android:layout_marginBottom="2dp"
                         android:layout_marginTop="10dp"
+                        android:layout_marginBottom="2dp"
                         android:fontFamily="@font/roboto_thin"
                         android:paddingStart="10dp"
                         android:text="Home Address"
@@ -274,8 +375,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="15dp"
                                 android:layout_weight="0.8"
-                                android:paddingEnd="5dp"
                                 android:paddingStart="10dp"
+                                android:paddingEnd="5dp"
                                 android:textSize="15sp" />
 
                             <ImageView
@@ -292,8 +393,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/card_home_address"
-                        android:layout_marginBottom="2dp"
                         android:layout_marginTop="10dp"
+                        android:layout_marginBottom="2dp"
                         android:fontFamily="@font/roboto_thin"
                         android:paddingStart="10dp"
                         android:text="Nodal Address"
@@ -328,8 +429,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="15dp"
                                 android:layout_weight="1"
-                                android:paddingEnd="5dp"
                                 android:paddingStart="10dp"
+                                android:paddingEnd="5dp"
                                 android:textSize="15sp" />
 
                             <ImageView
@@ -345,14 +446,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/card_nodal_address"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginTop="10dp">
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="15dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:layout_marginBottom="15dp"
                             android:layout_marginTop="10dp"
+                            android:layout_marginBottom="15dp"
                             android:gravity="center">
 
                             <TextView

@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,6 +100,9 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @BindView(R.id.opt_in_description)
     TextView optInDesc;
+
+    @BindView((R.id.weekdays_off_layout))
+    RelativeLayout weeklyDaysOffLayout;
 
     boolean isAllowedToCLickOnGroup = false;
     int ADDRESS_CODE_HOME = 101;
@@ -266,7 +270,6 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             isAllowedToCLickOnGroup = true;
         }
 
-
         if (!sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA).equalsIgnoreCase("")) {
             user.setProfilePicUri(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA));
             String encodedImage = user.getProfilePicUri();
@@ -295,8 +298,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     private void setOptInDescription(boolean optedIn) {
         if (optedIn) {
             optInDesc.setText(R.string.opt_in_opted_in_description);
+            weeklyDaysOffLayout.setVisibility(View.VISIBLE);
         } else {
             optInDesc.setText(R.string.opt_in_opted_out_description);
+            weeklyDaysOffLayout.setVisibility(View.GONE);
         }
     }
 
