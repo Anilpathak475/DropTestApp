@@ -1,5 +1,6 @@
 package com.cityzipcorp.customer.fragments;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -13,13 +14,12 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.activities.MapsActivity;
@@ -51,6 +51,9 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @BindView(R.id.card_home_address)
     CardView cardAddress;
 
+    @BindView(R.id.layout_week_off)
+    CardView cardWeeklyOff;
+
     @BindView(R.id.card_group_shifts)
     CardView cardGroupAndShifts;
 
@@ -68,6 +71,15 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @BindView(R.id.txt_nodal_address)
     TextView txtNodalAddress;
+
+    @BindView(R.id.txt_week_off_day_1)
+    TextView txtWeekOffDay1;
+
+    @BindView(R.id.txt_week_off_day_2)
+    TextView txtWeekOffDay2;
+
+    @BindView(R.id.txt_no_week_off)
+    TextView txtNoWeekOff;
 
     @BindView(R.id.txt_comp_name)
     TextView txtCompanyName;
@@ -98,11 +110,11 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @BindView(R.id.opt_in_checkbox)
     CheckBox optInCheckBox;
 
+    @BindView(R.id.weekdays)
+    LinearLayout layoutWeekdays;
+
     @BindView(R.id.opt_in_description)
     TextView optInDesc;
-
-    @BindView((R.id.weekdays_off_layout))
-    RelativeLayout weeklyDaysOffLayout;
 
     boolean isAllowedToCLickOnGroup = false;
     int ADDRESS_CODE_HOME = 101;
@@ -153,15 +165,15 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @OnCheckedChanged(R.id.opt_in_checkbox)
     void onOptedInCheckedBoxClicked(CompoundButton button, boolean checked) {
 
-            uiUtils.showProgressDialog();
+        uiUtils.showProgressDialog();
 
-            if (NetworkUtils.isNetworkAvailable(activity)) {
-                updateOptInSelection(checked);
-            } else {
-                button.setChecked(!checked);
-                uiUtils.noInternetDialog();
-                uiUtils.dismissDialog();
-            }
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            updateOptInSelection(checked);
+        } else {
+            button.setChecked(!checked);
+            uiUtils.noInternetDialog();
+            uiUtils.dismissDialog();
+        }
     }
 
     private void updateOptInSelection(final boolean checked) {
@@ -209,6 +221,16 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         groupAndShiftFragment.setArguments(bundle);
         activity.replaceFragment(groupAndShiftFragment, activity.getString(R.string.group_and_shift));
         activity.backAllowed = true;
+    }
+
+    @OnClick(R.id.layout_week_off)
+    void onClickWeeklyOff() {
+        Dialog dialog = new Dialog(activity);
+        Window window = dialog.getWindow();
+        assert window != null;
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.setContentView(R.layout.layout_weekly_off);
+        dialog.show();
     }
 
     @OnClick(R.id.card_nodal_address)
@@ -269,7 +291,19 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             txtShiftName.setText(user.getShift().getName());
             isAllowedToCLickOnGroup = true;
         }
-
+        if (user.getWeeekdaysOff() != null) {
+            if (user.getWeeekdaysOff().length > 0) {
+                txtNoWeekOff.setVisibility(View.GONE);
+                txtWeekOffDay1.setText(user.getWeeekdaysOff()[0]);
+                txtWeekOffDay1.setText(user.getWeeekdaysOff()[1]);
+            } else {
+                layoutWeekdays.setVisibility(View.GONE);
+                txtNoWeekOff.setVisibility(View.VISIBLE);
+            }
+        } else {
+            cardWeeklyOff.setVisibility(View.GONE);
+            txtNoWeekOff.setVisibility(View.VISIBLE);
+        }
         if (!sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA).equalsIgnoreCase("")) {
             user.setProfilePicUri(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA));
             String encodedImage = user.getProfilePicUri();
@@ -298,10 +332,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     private void setOptInDescription(boolean optedIn) {
         if (optedIn) {
             optInDesc.setText(R.string.opt_in_opted_in_description);
-            weeklyDaysOffLayout.setVisibility(View.VISIBLE);
         } else {
             optInDesc.setText(R.string.opt_in_opted_out_description);
-            weeklyDaysOffLayout.setVisibility(View.GONE);
         }
     }
 

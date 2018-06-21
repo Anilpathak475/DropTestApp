@@ -118,17 +118,7 @@ public class AddressActivity extends AppCompatActivity {
 
     private void setValues(Address address) {
         selectedAddress = address;
-        String selectedAddress = address.getSociety() + " " + address.getLocality() + " " + address.getStreetAddress();
-        selectedAddress = selectedAddress.replace("null", "");
-        selectedAddress = selectedAddress.replace(address.getArea(), "");
-        selectedAddress = selectedAddress.replace(address.getCity(), "");
-        selectedAddress = selectedAddress.replace(address.getCountry(), "");
-        selectedAddress = selectedAddress.replace(address.getPostalCode(), "");
-        selectedAddress = selectedAddress.replace(address.getLandmark(), "");
-        selectedAddress = selectedAddress.replace(address.getArea(), "");
-        edtSelectedAddress.setText(selectedAddress);
         txtCity.setText(address.getCity());
-        edtLandmark.setText(address.getLandmark());
         txtState.setText(address.getState());
         txtPinCode.setText(address.getPostalCode());
     }
@@ -141,7 +131,6 @@ public class AddressActivity extends AppCompatActivity {
                 Address address = new Address();
                 address.setArea(autoCompleteArea.getText().toString());
                 address.setCity(txtCity.getText().toString());
-                address.setSociety(selectedAddress.getSociety());
                 address.setState(selectedAddress.getState());
                 address.setLandmark(edtLandmark.getText().toString());
                 address.setLocality(selectedAddress.getLocality());

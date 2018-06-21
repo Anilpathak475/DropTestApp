@@ -54,7 +54,7 @@ public class User implements Parcelable {
     @SerializedName("opt_in")
     private Boolean optedIn;
     @SerializedName("weekly_off_days")
-    private String[] weeekdaysOff;
+    private String[] weeekDaysOff;
 
     public User() {
     }
@@ -76,7 +76,6 @@ public class User implements Parcelable {
         this.shift = in.readParcelable(Shift.class.getClassLoader());
         this.group = in.readParcelable(Group.class.getClassLoader());
         this.optedIn = in.readByte() != 0; //optedIn == true if byte != 0
-        in.readStringArray(weeekdaysOff);
     }
 
     public User(NodalStopBody nodalStopBody) {
@@ -214,7 +213,6 @@ public class User implements Parcelable {
         dest.writeParcelable(this.shift, flags);
         dest.writeParcelable(this.group, flags);
         dest.writeByte((byte) (this.optedIn ? 1 : 0)); //if optedIn == true, byte == 1
-        dest.writeStringArray(this.weeekdaysOff);
     }
 
     public NodalStopBody getNodalStop() {
@@ -246,10 +244,10 @@ public class User implements Parcelable {
     }
 
     public String[] getWeeekdaysOff() {
-        return weeekdaysOff;
+        return weeekDaysOff;
     }
 
     public void setWeeekdaysOff(String[] weeekdaysOff) {
-        this.weeekdaysOff = weeekdaysOff;
+        this.weeekDaysOff = weeekdaysOff;
     }
 }

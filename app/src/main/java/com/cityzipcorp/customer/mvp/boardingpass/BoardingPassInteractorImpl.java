@@ -18,7 +18,13 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
 
     @Override
     public void sendSos(String baseUrl, Location location, String passId, String accessToken, final BoardingPassCommonCallback listener) {
-        GeoJsonPoint geoJsonPoint = new GeoJsonPoint(location.getLongitude(), location.getLatitude());
+        GeoJsonPoint geoJsonPoint;
+        if (location == null) {
+            geoJsonPoint = new GeoJsonPoint(0, 0);
+        } else {
+            geoJsonPoint = new GeoJsonPoint(location.getLongitude(), location.getLatitude());
+        }
+
         SosBody sosBody = new SosBody();
         sosBody.setBoardingPassId(passId);
         sosBody.setGeoJsonPoint(geoJsonPoint);
