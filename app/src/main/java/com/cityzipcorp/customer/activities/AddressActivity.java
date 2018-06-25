@@ -133,7 +133,6 @@ public class AddressActivity extends AppCompatActivity {
                 address.setCity(txtCity.getText().toString());
                 address.setState(selectedAddress.getState());
                 address.setLandmark(edtLandmark.getText().toString());
-                address.setLocality(selectedAddress.getLocality());
                 address.setCountry(selectedAddress.getCountry());
                 User user = new User();
                 user.setId(this.user.getId());
@@ -172,12 +171,10 @@ public class AddressActivity extends AppCompatActivity {
             uiUtils.shortToast("Please enter address");
             return false;
         }
-
         if (edtLandmark.getText().toString().equalsIgnoreCase("")) {
             uiUtils.shortToast("Please enter landmark");
             return false;
         }
-
         return true;
     }
 

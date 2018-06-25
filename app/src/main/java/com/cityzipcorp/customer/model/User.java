@@ -75,7 +75,6 @@ public class User implements Parcelable {
         this.password = in.readString();
         this.shift = in.readParcelable(Shift.class.getClassLoader());
         this.group = in.readParcelable(Group.class.getClassLoader());
-        this.optedIn = in.readByte() != 0; //optedIn == true if byte != 0
     }
 
     public User(NodalStopBody nodalStopBody) {
@@ -212,7 +211,6 @@ public class User implements Parcelable {
         dest.writeString(this.password);
         dest.writeParcelable(this.shift, flags);
         dest.writeParcelable(this.group, flags);
-        dest.writeByte((byte) (this.optedIn ? 1 : 0)); //if optedIn == true, byte == 1
     }
 
     public NodalStopBody getNodalStop() {

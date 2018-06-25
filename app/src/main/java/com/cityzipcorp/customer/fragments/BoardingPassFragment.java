@@ -54,7 +54,8 @@ import butterknife.OnClick;
  * Created by anilpathak on 02/11/17.
  */
 
-public class BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefreshLayout.OnRefreshListener, LocationListener {
+public class
+BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefreshLayout.OnRefreshListener, LocationListener {
 
     @BindView(R.id.layout_vehicle_details)
     LinearLayout layoutVehicleDetails;

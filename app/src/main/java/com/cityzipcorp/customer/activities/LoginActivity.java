@@ -3,6 +3,7 @@ package com.cityzipcorp.customer.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -47,7 +48,7 @@ import butterknife.OnClick;
 import io.fabric.sdk.android.Fabric;
 
 
-public class LoginActivity extends BaseActivity implements LoginView {
+public class LoginActivity extends AppCompatActivity implements LoginView {
 
     @BindView(R.id.edt_user_name)
     protected EditText edtUserName;
@@ -138,10 +139,10 @@ public class LoginActivity extends BaseActivity implements LoginView {
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        checkSession();
         uiUtils = new UiUtils(this);
         loginPresenter = new LoginPresenterImpl(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
+        checkSession();
         getContracts();
     }
 

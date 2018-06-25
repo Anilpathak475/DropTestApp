@@ -20,6 +20,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.activities.MapsActivity;
@@ -120,6 +121,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     int ADDRESS_CODE_HOME = 101;
     int ADDRESS_CODE_NODAL = 102;
     private User user;
+    private boolean onGoingProfilerequest = false;
 
     @Nullable
     @Override
@@ -230,6 +232,57 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         assert window != null;
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         dialog.setContentView(R.layout.layout_weekly_off);
+        ToggleButton tBtnMon = dialog.findViewById(R.id.t_btn_mon);
+        ToggleButton tBtnTue = dialog.findViewById(R.id.t_btn_tue);
+        ToggleButton tBtnWed = dialog.findViewById(R.id.t_btn_wed);
+        ToggleButton tBtnThu = dialog.findViewById(R.id.t_btn_thu);
+        ToggleButton tBtnFri = dialog.findViewById(R.id.t_btn_fri);
+        ToggleButton tBtnSat = dialog.findViewById(R.id.t_btn_sat);
+        ToggleButton tBtnSun = dialog.findViewById(R.id.t_btn_sun);
+
+        tBtnMon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+            }
+        });
+        tBtnTue.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+            }
+        });
+        tBtnWed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+            }
+        });
+        tBtnThu.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+            }
+        });
+
+        tBtnFri.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+            }
+        });
+        tBtnSat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+            }
+        });
+        tBtnSun.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+            }
+        });
         dialog.show();
     }
 
@@ -260,7 +313,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         }
         if (user.getHomeStop() != null && user.getAddress() != null) {
             Address address = user.getAddress();
-            String addressFromObj = address.getLocality() + ", "
+            String addressFromObj = address.getStreetAddress() + ", "
                     + address.getLandmark() + ", "
                     + address.getArea() + ", "
                     + address.getPostalCode();
@@ -338,39 +391,43 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     }
 
     private void getProfileInfo() {
-        if (NetworkUtils.isNetworkAvailable(activity)) {
-            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
-                    getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
-                            new UserCallback() {
-                                @Override
-                                public void onSuccess(User user) {
-                                    if (user != null) {
-                                        try {
-                                            uiUtils.dismissDialog();
-                                            setValues(user);
-                                            noDataLayout.setVisibility(View.GONE);
-                                            layoutMain.setVisibility(View.VISIBLE);
-                                            swipeRefreshLayout.setRefreshing(false);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                            swipeRefreshLayout.setRefreshing(false);
-                                            uiUtils.dismissDialog();
+        if (!onGoingProfilerequest)
+            if (NetworkUtils.isNetworkAvailable(activity)) {
+                onGoingProfilerequest = true;
+                UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                        getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
+                                new UserCallback() {
+                                    @Override
+                                    public void onSuccess(User user) {
+                                        if (user != null) {
+                                            onGoingProfilerequest = false;
+                                            try {
+                                                uiUtils.dismissDialog();
+                                                setValues(user);
+                                                noDataLayout.setVisibility(View.GONE);
+                                                layoutMain.setVisibility(View.VISIBLE);
+                                                swipeRefreshLayout.setRefreshing(false);
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                                swipeRefreshLayout.setRefreshing(false);
+                                                uiUtils.dismissDialog();
+                                            }
                                         }
                                     }
-                                }
 
-                                @Override
-                                public void onFailure(Error error) {
-                                    swipeRefreshLayout.setRefreshing(false);
-                                    uiUtils.dismissDialog();
-                                    uiUtils.shortToast("Unable to fetch profile details!");
-                                }
-                            });
-        } else {
-            uiUtils.noInternetDialog();
-            uiUtils.dismissDialog();
-            swipeRefreshLayout.setRefreshing(false);
-        }
+                                    @Override
+                                    public void onFailure(Error error) {
+                                        onGoingProfilerequest = false;
+                                        swipeRefreshLayout.setRefreshing(false);
+                                        uiUtils.dismissDialog();
+                                        uiUtils.shortToast("Unable to fetch profile details!");
+                                    }
+                                });
+            } else {
+                uiUtils.noInternetDialog();
+                uiUtils.dismissDialog();
+                swipeRefreshLayout.setRefreshing(false);
+            }
     }
 
     @OnClick(R.id.card_change_password)

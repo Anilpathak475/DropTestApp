@@ -54,12 +54,6 @@ public class UiUtils {
     }
 
     public void dismissDialog() {
-       /* if(progress!=null) {
-            if (progress.isShowing()) {
-                progress.dismiss();
-            }
-        }*/
-
         if (avLoadingIndicatorDialog != null) {
             if (avLoadingIndicatorDialog.isShowing()) {
                 avLoadingIndicatorDialog.dismiss();
@@ -102,67 +96,86 @@ public class UiUtils {
     }
 
     public void getAlertDialogWithMessage(String message, final DialogCallback dialogCallback) {
-        final Dialog dialog = new Dialog(activity);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.layout_conformation_pop_up);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        Button btnOk = dialog.findViewById(R.id.btn_ok);
-        TextView textView = dialog.findViewById(R.id.txt_message);
-        textView.setText(message);
-        Button btnCancel = dialog.findViewById(R.id.btn_cancel);
-        btnOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                dialogCallback.onYes();
-            }
-        });
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
+        if (activity == null) {
+            return;
+        }
+        try {
+            final Dialog dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.layout_conformation_pop_up);
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(dialog.getWindow().getAttributes());
+            Button btnOk = dialog.findViewById(R.id.btn_ok);
+            TextView textView = dialog.findViewById(R.id.txt_message);
+            textView.setText(message);
+            Button btnCancel = dialog.findViewById(R.id.btn_cancel);
+            btnOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                    dialogCallback.onYes();
+                }
+            });
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
 
-            }
-        });
-        dialog.show();
+                }
+            });
+            dialog.show();
+        } catch (WindowManager.BadTokenException e) {
+            throw new WindowManager.BadTokenException();
+        }
     }
 
 
-    public void getAlertDialogForNotify(String message, final DialogCallback dialogCallback) {
-        final Dialog dialog = new Dialog(activity);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.layout_notify_pop_up);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        Button btnOk = dialog.findViewById(R.id.btn_ok);
-        TextView textView = dialog.findViewById(R.id.txt_message);
-        textView.setText(message);
-        btnOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                dialogCallback.onYes();
-            }
-        });
-        dialog.show();
+    public void getAlertDialogForNotify(String message, final DialogCallback dialogCallback) throws WindowManager.BadTokenException {
+        if (activity == null) {
+            return;
+        }
+        try {
+            final Dialog dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.layout_notify_pop_up);
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(dialog.getWindow().getAttributes());
+            Button btnOk = dialog.findViewById(R.id.btn_ok);
+            TextView textView = dialog.findViewById(R.id.txt_message);
+            textView.setText(message);
+            btnOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                    dialogCallback.onYes();
+                }
+            });
+            dialog.show();
+        } catch (WindowManager.BadTokenException e) {
+            throw new WindowManager.BadTokenException();
+        }
     }
 
     public void noInternetDialog() {
+        if (activity == null) {
+            return;
+        }
+        try {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle("No Internet Connection");
+            builder.setMessage("You need to have Mobile Data or wifi to access this. Press ok to Exit");
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("No Internet Connection");
-        builder.setMessage("You need to have Mobile Data or wifi to access this. Press ok to Exit");
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        builder.show();
-
+            builder.show();
+        } catch (WindowManager.BadTokenException e) {
+            throw new WindowManager.BadTokenException();
+        }
     }
 }

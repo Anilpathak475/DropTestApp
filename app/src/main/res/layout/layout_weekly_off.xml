@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/weekdays_off_layout"
+    android:id="@+id/weeks_off_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/grey_profile"
@@ -19,6 +19,7 @@
             android:layout_height="wrap_content">
 
             <ToggleButton
+                android:id="@+id/t_btn_mon"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -26,6 +27,7 @@
                 android:textOn="M" />
 
             <ToggleButton
+                android:id="@+id/t_btn_tue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -33,6 +35,7 @@
                 android:textOn="T" />
 
             <ToggleButton
+                android:id="@+id/t_btn_wed"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -40,6 +43,7 @@
                 android:textOn="W" />
 
             <ToggleButton
+                android:id="@+id/t_btn_thu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -47,6 +51,7 @@
                 android:textOn="T" />
 
             <ToggleButton
+                android:id="@+id/t_btn_fri"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -54,6 +59,7 @@
                 android:textOn="F" />
 
             <ToggleButton
+                android:id="@+id/t_btn_sat"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -61,6 +67,7 @@
                 android:textOn="S" />
 
             <ToggleButton
+                android:id="@+id/t_btn_sun"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
