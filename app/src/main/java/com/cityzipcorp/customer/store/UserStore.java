@@ -95,7 +95,6 @@ public class UserStore {
     public void updateProfileInfo(String authToken, User user, final UserCallback userCallback) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
         Call<User> call = userClient.updateProfile(Utils.getHeader(authToken), user.getId(), user);
-
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
