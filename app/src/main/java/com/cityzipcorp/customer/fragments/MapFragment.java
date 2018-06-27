@@ -128,7 +128,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //  ((HomeActivity) getActivity()).setTitle(getString(R.string.boarding_pass));
     }
 
     @Override

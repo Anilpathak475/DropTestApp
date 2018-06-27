@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by anilpathak on 03/11/17.
@@ -169,4 +170,10 @@ public class CalenderUtil {
         }
         return convertedShiftTimes;
     }
+
+    public static long getTimeDiff(Date dateOne, Date dateTwo) {
+        long timeDiff = Math.abs(dateOne.getTime() - dateTwo.getTime());
+        return TimeUnit.MILLISECONDS.toMinutes(timeDiff) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(timeDiff));
+    }
+
 }

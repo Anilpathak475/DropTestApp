@@ -46,6 +46,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -379,13 +382,22 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     @Override
     public void trackDetailSuccess(TrackRide trackRide) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("track", trackRide);
-        bundle.putParcelable("boardingPass", boardingPass);
-        MapFragment mapFragment = new MapFragment();
-        mapFragment.setArguments(bundle);
-        activity.replaceFragment(mapFragment, getString(R.string.map_fragment));
-        activity.backAllowed = true;
+        Date recordedTime = trackRide.getRecordedAt();
+        if (recordedTime != null) {
+            if (CalenderUtil.getTimeDiff(recordedTime, Calendar.getInstance().getTime()) < 30) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("track", trackRide);
+                bundle.putParcelable("boardingPass", boardingPass);
+                MapFragment mapFragment = new MapFragment();
+                mapFragment.setArguments(bundle);
+                activity.replaceFragment(mapFragment, getString(R.string.map_fragment));
+                activity.backAllowed = true;
+            } else {
+                uiUtils.shortToast("Trip not Started yet!");
+            }
+        } else {
+            uiUtils.shortToast("Trip not Started yet!");
+        }
     }
 
     @Override

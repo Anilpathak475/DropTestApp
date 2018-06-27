@@ -9,18 +9,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class TrackRide implements Serializable, Parcelable {
-
-    public static final Parcelable.Creator<TrackRide> CREATOR = new Parcelable.Creator<TrackRide>() {
-        @Override
-        public TrackRide createFromParcel(Parcel source) {
-            return new TrackRide(source);
-        }
-
-        @Override
-        public TrackRide[] newArray(int size) {
-            return new TrackRide[size];
-        }
-    };
     @SerializedName("service_location")
     private GeoJsonPoint serviceLocation;
     @SerializedName("eta")
@@ -68,4 +56,15 @@ public class TrackRide implements Serializable, Parcelable {
         return recordedAt;
     }
 
+    public static final Parcelable.Creator<TrackRide> CREATOR = new Parcelable.Creator<TrackRide>() {
+        @Override
+        public TrackRide createFromParcel(Parcel source) {
+            return new TrackRide(source);
+        }
+
+        @Override
+        public TrackRide[] newArray(int size) {
+            return new TrackRide[size];
+        }
+    };
 }
