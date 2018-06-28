@@ -2,7 +2,7 @@ package com.cityzipcorp.customer.clients;
 
 import com.cityzipcorp.customer.model.Attendance;
 import com.cityzipcorp.customer.model.BoardingPass;
-import com.cityzipcorp.customer.model.GeoJsonPoint;
+import com.cityzipcorp.customer.model.SosBody;
 import com.cityzipcorp.customer.model.TrackRide;
 
 import java.util.Map;
@@ -25,7 +25,7 @@ public interface BoardingPassClient {
     Call<BoardingPass> getBoardingPass(@HeaderMap Map<String, String> headers);
 
     @POST("/api/v1/boarding_passes/{id}/sos/")
-    Call<ResponseBody> sosAlert(@Body GeoJsonPoint geoJsonPoint, @Path("id") String id, @HeaderMap Map<String, String> headers);
+    Call<ResponseBody> sosAlert(@Body SosBody sosBody, @Path("id") String id, @HeaderMap Map<String, String> headers);
 
     @POST("/api/v1/boarding_passes/{id}/mark_attendance/")
     Call<ResponseBody> markAttendance(@Body Attendance attendance, @Path("id") String id, @HeaderMap Map<String, String> headers);
