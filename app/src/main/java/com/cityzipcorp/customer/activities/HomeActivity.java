@@ -42,6 +42,9 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -213,6 +216,14 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     }
 
+    private void deleteFcmInstance() {
+        try {
+            FirebaseInstanceId.getInstance().deleteInstanceId();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setUpBottomNavigationView(int index) {
         navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         addFragmentByIndex(index);
@@ -320,6 +331,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         new UiUtils(this).getAlertDialogWithMessage(" Are you sure you want to logout?", new DialogCallback() {
             @Override
             public void onYes() {
+                deleteFcmInstance();
                 navigateToLogin();
             }
         });
