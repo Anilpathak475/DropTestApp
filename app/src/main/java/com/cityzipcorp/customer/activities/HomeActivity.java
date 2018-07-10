@@ -75,10 +75,10 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     @BindView(id.btn_update_password)
     Button btnUpdatePassword;
 
-    boolean bulkModeActivated = false;
-    boolean isInitialLoad = false;
+    public boolean bulkModeActivated = false;
+    public boolean isOptIn = true;
+    private boolean isInitialLoad = false;
     SharedPreferenceManager sharedPreferenceManager;
-    private int LOCATION_PERMISSION = 101;
     private UiUtils uiUtils;
     private LocationUtils locationUtils;
     private GoogleApiClient googleApiClient;
@@ -93,10 +93,21 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
                     backAllowed = false;
                     return true;
                 case id.schedule:
-                    clearBackStack();
-                    replaceFragment(new ScheduleFragment(), getString(string.schedule));
-                    backAllowed = false;
-                    return true;
+                    if (isOptIn) {
+                        clearBackStack();
+                        replaceFragment(new ScheduleFragment(), getString(string.schedule));
+                        backAllowed = false;
+                        return true;
+                    } else {
+                        uiUtils.notifyDialog("You are opted out from schedule! please opt in to see schedule", new DialogCallback() {
+                            @Override
+                            public void onYes() {
+
+                            }
+                        });
+                        return false;
+                    }
+
                 case id.profile:
                     clearBackStack();
                     replaceFragment(new ProfileFragment(), getString(string.profile));
@@ -305,7 +316,6 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     public void setUpProfileView() {
-        //  swipeRefreshLayout.setEnabled(false);
         setTitle("Profile");
         backAllowed = false;
         imgLogout.setVisibility(View.VISIBLE);
@@ -328,7 +338,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     @OnClick(id.img_logout)
     void onLogout() {
-        new UiUtils(this).getAlertDialogWithMessage(" Are you sure you want to logout?", new DialogCallback() {
+        new UiUtils(this).conformationDialog(" Are you sure you want to logout?", new DialogCallback() {
             @Override
             public void onYes() {
                 deleteFcmInstance();
@@ -356,7 +366,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
             unregisterReceiver(mMessageReceiver);
             unregisterReceiver(dataReceiver);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -378,13 +388,18 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(getFragmentTag());
-        fragment.onActivityResult(requestCode, resultCode, data);
+        try {
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(getFragmentTag());
+            fragment.onActivityResult(requestCode, resultCode, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        int LOCATION_PERMISSION = 101;
         if (requestCode == LOCATION_PERMISSION) {
             if (!locationUtils.isLocationEnabled()) {
                 locationUtils.enableGps(googleApiClient);

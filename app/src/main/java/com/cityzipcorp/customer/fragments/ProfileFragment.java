@@ -173,11 +173,9 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @OnCheckedChanged(R.id.opt_in_checkbox)
     void onOptedInCheckedBoxClicked(CompoundButton button, boolean checked) {
-
         uiUtils.showProgressDialog();
-
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            updateOptInSelection(checked);
+            optInChanged(checked);
         } else {
             button.setChecked(!checked);
             uiUtils.noInternetDialog();
@@ -185,20 +183,36 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         }
     }
 
-    private void updateOptInSelection(final boolean checked) {
-        user.setOptedIn(checked);
+    private void optInChanged(final boolean checked) {
+        if (!checked) {
+            uiUtils.conformationDialog("Are you sure you want to opt out!", new DialogCallback() {
+                @Override
+                public void onYes() {
+                    user.setOptedIn(false);
+                    updateOptInSelection();
+                }
+            });
+        } else {
+            user.setOptedIn(true);
+            updateOptInSelection();
+        }
+    }
+
+    private void updateOptInSelection() {
         UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
                 updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
                     @Override
                     public void onSuccess(User user) {
                         uiUtils.dismissDialog();
                         setOptInDescription(user.getOptedIn());
+                        activity.isOptIn = user.getOptedIn();
                     }
 
                     @Override
                     public void onFailure(Error error) {
                         uiUtils.dismissDialog();
-                        optInCheckBox.setChecked(!checked);
+                        optInCheckBox.setChecked(!user.getOptedIn());
+                        activity.isOptIn = !user.getOptedIn();
                         uiUtils.shortToast("Unable to update profile!");
                     }
                 });
@@ -255,10 +269,12 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         Button btnSubmit = dialog.findViewById(R.id.btn_submit);
         if (user.getWeeekdaysOff().length > 0) {
             String weekOffDay1 = user.getWeeekdaysOff()[0];
+            days.add(weekOffDay1);
             ToggleButton toggleButtonDay1 = dialog.findViewById(getDayId(weekOffDay1));
             toggleButtonDay1.setChecked(true);
             if (user.getWeeekdaysOff().length == 2) {
                 String weekOffDay2 = user.getWeeekdaysOff()[1];
+                days.add(weekOffDay2);
                 ToggleButton toggleButtonDay2 = dialog.findViewById(getDayId(weekOffDay2));
                 toggleButtonDay2.setChecked(true);
             }
@@ -407,9 +423,12 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         }
         if (user.getHomeStop() != null && user.getAddress() != null) {
             Address address = user.getAddress();
-            String addressFromObj = address.getStreetAddress() + ", "
+            String addressFromObj = address.getSociety() + ", "
+                    + address.getLocality() + ", "
+                    + address.getStreetAddress() + ", "
                     + address.getLandmark() + ", "
                     + address.getArea() + ", "
+                    + address.getCity() + ", "
                     + address.getPostalCode();
             txtHomeAddress.setText(addressFromObj);
         }
@@ -421,6 +440,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         }
         if (user.getOptedIn() != null) {
             optInCheckBox.setChecked(user.getOptedIn());
+            activity.isOptIn = user.getOptedIn();
             setOptInDescription(user.getOptedIn());
         }
         if (user.getNodalStop() != null) {
@@ -442,7 +462,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             if (user.getWeeekdaysOff().length > 0) {
                 txtNoWeekOff.setVisibility(View.GONE);
                 txtWeekOffDay1.setText(user.getWeeekdaysOff()[0]);
-                if (user.getWeeekdaysOff().length >= 2) {
+                if (user.getWeeekdaysOff().length > 1) {
                     txtWeekOffDay2.setVisibility(View.VISIBLE);
                     txtWeekOffDay2.setText(user.getWeeekdaysOff()[1]);
                 } else {
@@ -465,14 +485,14 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             imgProfile.setImageBitmap(decodedByte);
         }
         if (user.getHomeStop() == null) {
-            uiUtils.getAlertDialogWithMessage("Please set home stop", new DialogCallback() {
+            uiUtils.conformationDialog("Please set home stop", new DialogCallback() {
                 @Override
                 public void onYes() {
                     onClickHome();
                 }
             });
         } else if (user.getNodalStop() == null) {
-            uiUtils.getAlertDialogWithMessage("Please set nodal stop", new DialogCallback() {
+            uiUtils.conformationDialog("Please set nodal stop", new DialogCallback() {
                 @Override
                 public void onYes() {
                     onClickNodal();

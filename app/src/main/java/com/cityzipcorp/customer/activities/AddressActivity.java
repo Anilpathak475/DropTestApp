@@ -31,8 +31,14 @@ import butterknife.OnClick;
 
 public class AddressActivity extends AppCompatActivity {
 
-    @BindView(R.id.edt_selected_address)
-    EditText edtSelectedAddress;
+    @BindView(R.id.edt_society)
+    EditText edtSociety;
+
+    @BindView(R.id.edt_street_address)
+    EditText edtStreetAddress;
+
+    @BindView(R.id.edt_locality)
+    EditText edtLocality;
 
     @BindView(R.id.edt_landmark)
     EditText edtLandmark;
@@ -130,9 +136,12 @@ public class AddressActivity extends AppCompatActivity {
             if (NetworkUtils.isNetworkAvailable(this)) {
                 Address address = new Address();
                 address.setArea(autoCompleteArea.getText().toString());
+                address.setLocality(edtLocality.getText().toString());
+                address.setSociety(edtSociety.getText().toString());
+                address.setLandmark(edtLandmark.getText().toString());
+                address.setStreetAddress(edtStreetAddress.getText().toString());
                 address.setCity(txtCity.getText().toString());
                 address.setState(selectedAddress.getState());
-                address.setLandmark(edtLandmark.getText().toString());
                 address.setCountry(selectedAddress.getCountry());
                 User user = new User();
                 user.setId(this.user.getId());
@@ -167,8 +176,20 @@ public class AddressActivity extends AppCompatActivity {
             uiUtils.shortToast("Please select area");
             return false;
         }
-        if (edtSelectedAddress.getText().toString().equalsIgnoreCase("")) {
-            uiUtils.shortToast("Please enter address");
+        if (edtLandmark.getText().toString().equalsIgnoreCase("")) {
+            uiUtils.shortToast("Please enter landmark");
+            return false;
+        }
+        if (edtStreetAddress.getText().toString().equalsIgnoreCase("")) {
+            uiUtils.shortToast("Please enter street address");
+            return false;
+        }
+        if (edtSociety.getText().toString().equalsIgnoreCase("")) {
+            uiUtils.shortToast("Please enter society");
+            return false;
+        }
+        if (edtLocality.getText().toString().equalsIgnoreCase("")) {
+            uiUtils.shortToast("Please enter locality");
             return false;
         }
         if (edtLandmark.getText().toString().equalsIgnoreCase("")) {

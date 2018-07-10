@@ -10,14 +10,31 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/edt_selected_address"
+            android:id="@+id/edt_society"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:hint="@string/enter_address_building_no_street_name"
+            android:hint="Society"
             android:paddingStart="5dp"
             android:textSize="18sp" />
 
+        <EditText
+            android:id="@+id/edt_street_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Street Address"
+            android:paddingStart="5dp"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/edt_locality"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Locality"
+            android:paddingStart="5dp"
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/edt_landmark"

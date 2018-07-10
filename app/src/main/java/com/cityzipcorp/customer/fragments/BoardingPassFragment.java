@@ -294,7 +294,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
                 }
             }
         } else {
-            uiUtils.getAlertDialogForNotify("Please enable location to perform sos", new DialogCallback() {
+            uiUtils.notifyDialog("Please enable location to perform sos", new DialogCallback() {
                 @Override
                 public void onYes() {
                     sosRequested = true;

@@ -95,7 +95,7 @@ public class UiUtils {
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-    public void getAlertDialogWithMessage(String message, final DialogCallback dialogCallback) {
+    public void conformationDialog(String message, final DialogCallback dialogCallback) {
         if (activity == null) {
             return;
         }
@@ -130,7 +130,7 @@ public class UiUtils {
     }
 
 
-    public void getAlertDialogForNotify(String message, final DialogCallback dialogCallback) throws WindowManager.BadTokenException {
+    public void notifyDialog(String message, final DialogCallback dialogCallback) throws WindowManager.BadTokenException {
         if (activity == null) {
             return;
         }

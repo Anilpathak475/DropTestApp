@@ -1,6 +1,8 @@
 package com.cityzipcorp.customer.network;
 
 
+import android.os.Build;
+
 import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.Constants;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
@@ -8,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -42,11 +45,16 @@ public class ClientGenerator {
                                     @Override
                                     public Response intercept(Chain chain) throws IOException {
                                         Request original = chain.request();
-
+                                        Field[] fields = Build.VERSION_CODES.class.getFields();
                                         Request.Builder builder = original.newBuilder();
                                         builder.addHeader("Content-Type", "application/json");
                                         builder.addHeader(Constants.HEADER_TIMEZONE_KEY, CalenderUtil.getCurrentTimeZone());
                                         builder.addHeader("User-Agent", System.getProperty("http.agent"));
+                                      /*  builder.addHeader(Constants.HEADER_MOBILE_OS, fields[Build.VERSION.SDK_INT + 1].getName());
+                                        builder.addHeader(Constants.HEADER_MOBILE_APP_VERSION, BuildConfig.VERSION_NAME);
+                                        builder.addHeader(Constants.HEADER_MOBILE_OS_VERSION, String.valueOf(android.os.Build.VERSION.SDK_INT));
+                                        builder.addHeader(Constants.HEADER_MOBILE_MANUFACTURER, Build.MANUFACTURER);
+                                        builder.addHeader(Constants.HEADER_MOBILE_MANUFACTURER_MODEL, Build.MODEL);*/
 
                                         return chain.proceed(builder.build());
                                     }

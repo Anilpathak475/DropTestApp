@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.cityzipcorp.customer.BuildConfig;
 import com.cityzipcorp.customer.R;
-import com.cityzipcorp.customer.base.BaseActivity;
 import com.cityzipcorp.customer.callbacks.ContractCallback;
 import com.cityzipcorp.customer.callbacks.DialogCallback;
 import com.cityzipcorp.customer.model.Contract;
@@ -92,7 +91,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
                             if (contracts.size() > 0) {
                                 setContractAdapter(contracts);
                             } else {
-                                uiUtils.getAlertDialogForNotify("Unable to get contacts, please try again later ", new DialogCallback() {
+                                uiUtils.notifyDialog("Unable to get contacts, please try again later ", new DialogCallback() {
                                     @Override
                                     public void onYes() {
                                         finish();
@@ -103,7 +102,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
                         @Override
                         public void onFailure(Error error) {
-                            uiUtils.getAlertDialogForNotify("Unable to get contacts, please try again later ", new DialogCallback() {
+                            uiUtils.notifyDialog("Unable to get contacts, please try again later ", new DialogCallback() {
                                 @Override
                                 public void onYes() {
                                     finish();

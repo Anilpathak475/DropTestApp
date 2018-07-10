@@ -96,7 +96,7 @@ public class NewUserPassword extends AppCompatActivity implements SetNewPassword
 
     @Override
     public void navigateToLogin() {
-        uiUtils.getAlertDialogForNotify("Password has been set successfully. click ok login!", new DialogCallback() {
+        uiUtils.notifyDialog("Password has been set successfully. click ok login!", new DialogCallback() {
             @Override
             public void onYes() {
                 Intent intent = new Intent(NewUserPassword.this, LoginActivity.class);
