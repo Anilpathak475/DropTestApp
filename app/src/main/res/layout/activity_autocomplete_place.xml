@@ -70,6 +70,8 @@
                 android:layout_height="40dp"
                 android:layout_alignRight="@id/img_search"
                 android:layout_centerVertical="true"
+                android:textColor="@color/black"
+
                 android:background="@color/white"
                 android:hint="Search for a locality or landmark" />
         </LinearLayout>

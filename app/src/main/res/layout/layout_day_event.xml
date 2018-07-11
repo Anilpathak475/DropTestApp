@@ -27,6 +27,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/start_time"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 android:textSize="@dimen/ts_x_regular"
                 android:textStyle="normal" />
 
@@ -37,6 +38,7 @@
                 android:layout_marginTop="2dp"
                 android:text="--:--"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 android:textSize="@dimen/ts_large"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -60,6 +62,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/end_time"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 android:textSize="@dimen/ts_x_regular"
                 android:textStyle="normal" />
 
@@ -70,6 +73,7 @@
                 android:layout_marginTop="2dp"
                 android:text="--:--"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 android:textSize="@dimen/ts_xlarge"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -92,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No trip scheduled"
-                android:textColor="#c21807"
+                android:textColor="@color/black"
                 android:textSize="@dimen/ts_xlarge"
                 android:textStyle="normal" />
 
@@ -100,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tap to book your ride"
-                android:textColor="#9a9a9a"
+                android:textColor="@color/black"
                 android:textSize="@dimen/ts_regular"
                 android:textStyle="normal" />
         </LinearLayout>
