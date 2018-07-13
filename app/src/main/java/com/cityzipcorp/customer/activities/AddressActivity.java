@@ -65,6 +65,7 @@ public class AddressActivity extends AppCompatActivity {
     private User user;
     private Address selectedAddress;
     private UiUtils uiUtils;
+    private List<String> areaNames = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +89,10 @@ public class AddressActivity extends AppCompatActivity {
                     getAreas(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new AreaCallback() {
                         @Override
                         public void onSuccess(List<Area> areas) {
-                            List<String> areaNames = new ArrayList<>();
+
                             int selectedIndex = -1;
                             for (Area area : areas) {
-                                areaNames.add(area.getAreaName());
+                                areaNames.add(area.getAreaName().toUpperCase());
                                 if (selectedAddress.getArea().equalsIgnoreCase(area.getAreaName())) {
                                     selectedIndex = areaNames.indexOf(area.getAreaName());
                                 }
@@ -201,6 +202,12 @@ public class AddressActivity extends AppCompatActivity {
         }
         if (edtLandmark.getText().toString().equalsIgnoreCase("")) {
             uiUtils.shortToast("Please enter landmark");
+            return false;
+        }
+
+        if (!areaNames.contains(autoCompleteArea.getText().toString())) {
+            uiUtils.shortToast("Please select area");
+            autoCompleteArea.getText().clear();
             return false;
         }
         return true;

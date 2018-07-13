@@ -272,7 +272,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             days.add(weekOffDay1);
             ToggleButton toggleButtonDay1 = dialog.findViewById(getDayId(weekOffDay1));
             toggleButtonDay1.setChecked(true);
-            if (user.getWeeekdaysOff().length == 2) {
+            if (user.getWeeekdaysOff().length > 1) {
                 String weekOffDay2 = user.getWeeekdaysOff()[1];
                 days.add(weekOffDay2);
                 ToggleButton toggleButtonDay2 = dialog.findViewById(getDayId(weekOffDay2));
@@ -460,6 +460,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         }
         if (user.getWeeekdaysOff() != null) {
             if (user.getWeeekdaysOff().length > 0) {
+                layoutWeekdays.setVisibility(View.VISIBLE);
                 txtNoWeekOff.setVisibility(View.GONE);
                 txtWeekOffDay1.setText(user.getWeeekdaysOff()[0]);
                 if (user.getWeeekdaysOff().length > 1) {
@@ -474,7 +475,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                 txtNoWeekOff.setVisibility(View.VISIBLE);
             }
         } else {
-            cardWeeklyOff.setVisibility(View.GONE);
+            layoutWeekdays.setVisibility(View.GONE);
             txtNoWeekOff.setVisibility(View.VISIBLE);
         }
         if (!sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA).equalsIgnoreCase("")) {

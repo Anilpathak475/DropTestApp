@@ -19,15 +19,13 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            debuggable true
+            debuggable false
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     lintOptions {
-
         checkReleaseBuilds false
-
     }
     productFlavors {
         production {
@@ -35,18 +33,8 @@ android {
             applicationId 'com.cityzipcorp.customer'
             targetSdkVersion 27
             versionCode 1
-            versionName '1.0'
+            versionName '0.1'
             multiDexEnabled true
-            buildConfigField 'String', 'BASE_URL_CONTRACT', "\"https://api-staging.cityzipcorp.in/api/v1/customer_contracts/summary/\""
-            resValue 'string', 'google_maps_api_key', "\"AIzaSyDUj5kX3TqwW3pCStQpK43oswapBCvLc-s\""
-
-
-        }
-        preprod {
-            minSdkVersion 17
-            applicationId 'com.cityzipcorp.customer.preprod'
-            targetSdkVersion 27
-            versionCode 1
             versionName '1.0'
             multiDexEnabled true
             buildConfigField 'String', 'BASE_URL_CONTRACT', "\"https://api-preprod.cityzipcorp.in\""
@@ -58,8 +46,8 @@ android {
             minSdkVersion 17
             applicationId 'com.cityzipcorp.customer.staging'
             targetSdkVersion 27
-            versionCode 1
-            versionName '1.0'
+            versionCode 2
+            versionName '1.1'
             multiDexEnabled true
             buildConfigField 'String', 'BASE_URL_CONTRACT', "\"https://api-staging.cityzipcorp.in/api/v1/customer_contracts/summary/\""
             resValue 'string', 'google_maps_api_key', "\"AIzaSyDUj5kX3TqwW3pCStQpK43oswapBCvLc-s\""

@@ -58,6 +58,9 @@ public class NewUserPassword extends AppCompatActivity implements SetNewPassword
             if (data != null) {
                 resetId = data.getQueryParameter("reset_id");
                 emailId = data.getQueryParameter("email");
+                if (emailId.contains(" ")) {
+                    emailId = emailId.replace(" ", "+");
+                }
             }
         }
     }

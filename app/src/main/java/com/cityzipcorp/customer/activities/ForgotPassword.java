@@ -161,7 +161,7 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
 
     @Override
     public void success() {
-        uiUtils.notifyDialog("Conformation email has benn sent to your email : " + edtEmail.getText().toString(), new DialogCallback() {
+        uiUtils.notifyDialog("Conformation email has been sent to your email : " + edtEmail.getText().toString(), new DialogCallback() {
             @Override
             public void onYes() {
                 Intent intent = new Intent(ForgotPassword.this, LoginActivity.class);
