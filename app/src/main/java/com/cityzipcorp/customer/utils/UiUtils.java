@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
@@ -22,8 +20,6 @@ import android.widget.Toast;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.callbacks.DialogCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 /**
  * Created by anilpathak on 05/09/17.
@@ -48,9 +44,6 @@ public class UiUtils {
         avLoadingIndicatorDialog = new AVLoadingIndicatorDialog(activity);
         avLoadingIndicatorDialog.setMessage(getString(R.string.loading));
         avLoadingIndicatorDialog.show();
-       /* progress = ProgressDialog.show(activity, getString(R.string.loading),
-                getString(R.string.wait), true);
-        progress.setCanceledOnTouchOutside(true);*/
     }
 
     public void dismissDialog() {
@@ -81,18 +74,7 @@ public class UiUtils {
         Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
-        Bitmap bitmapResized = Bitmap.createScaledBitmap(bitmap, width, height, false);
-
-        return bitmapResized;
-    }
-
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context, @DrawableRes int vectorDrawableResourceId) {
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorDrawableResourceId);
-        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
+        return Bitmap.createScaledBitmap(bitmap, width, height, false);
     }
 
     public void conformationDialog(String message, final DialogCallback dialogCallback) {
@@ -124,8 +106,8 @@ public class UiUtils {
                 }
             });
             dialog.show();
-        } catch (WindowManager.BadTokenException e) {
-            throw new WindowManager.BadTokenException();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -151,8 +133,8 @@ public class UiUtils {
                 }
             });
             dialog.show();
-        } catch (WindowManager.BadTokenException e) {
-            throw new WindowManager.BadTokenException();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -174,8 +156,8 @@ public class UiUtils {
             });
 
             builder.show();
-        } catch (WindowManager.BadTokenException e) {
-            throw new WindowManager.BadTokenException();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

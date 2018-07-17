@@ -29,10 +29,16 @@ public class Schedule implements Parcelable {
     private Date currentDate;
     @SerializedName("date")
     private String dateString;
-    @SerializedName("out_time_update")
+    @SerializedName("out_time")
     private TimeUpdate outTimeUpdate;
-    @SerializedName("in_time_update")
+    @SerializedName("in_time")
     private TimeUpdate inTimeUpdate;
+
+    @SerializedName("off_type")
+    private String offType;
+
+    @SerializedName("off_reason")
+    private String offReason;
 
     public Schedule() {
 
@@ -85,6 +91,14 @@ public class Schedule implements Parcelable {
 
     public TimeUpdate getInTimeUpdate() {
         return inTimeUpdate;
+    }
+
+    public String getOffType() {
+        return offType;
+    }
+
+    public String getOffReason() {
+        return offReason;
     }
 
     public void setInTimeUpdate(TimeUpdate inTimeUpdate) {

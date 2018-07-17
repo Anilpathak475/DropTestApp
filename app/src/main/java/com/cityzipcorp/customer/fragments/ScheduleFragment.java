@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,6 +49,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import butterknife.BindColor;
+import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -66,6 +69,26 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     TableLayout tableLayout;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+
+    @BindColor(R.color.disabel_backgroud)
+    int disableBackground;
+    @BindColor(R.color.edited_date)
+    int editedColor;
+    @BindColor(R.color.current_date_background)
+    int currentDateBackground;
+    @BindColor(R.color.cancelled_bg)
+    int cancelledBg;
+    @BindColor(R.color.green_bg)
+    int greenBg;
+    @BindColor(R.color.white)
+    int white;
+
+    @BindDrawable(R.drawable.small_circle_cancel_date)
+    Drawable smallCircleCancelDate;
+    @BindDrawable(R.drawable.small_circle_current_date)
+    Drawable smallCircleCurrentDate;
+    @BindDrawable(R.drawable.small_circle_updated)
+    Drawable smallCircleUpdated;
     private LayoutInflater layoutInflater;
     private RelativeLayout previousClickedLayout;
     private String previousDate = null;
@@ -78,6 +101,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     private ColorDrawable currentBackgroundColor;
     private ColorDrawable cancelledBackgroundColor;
     private HashMap<String, Schedule> bulkDateList = new HashMap<>();
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,9 +123,9 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         c = Calendar.getInstance();
         layoutInflater = (LayoutInflater) activity.getSystemService(LAYOUT_INFLATER_SERVICE);
 
-        editedBackgroundColor = new ColorDrawable(activity.getResources().getColor(R.color.edited_date));
-        currentBackgroundColor = new ColorDrawable(activity.getResources().getColor(R.color.current_date_background));
-        cancelledBackgroundColor = new ColorDrawable(activity.getResources().getColor(R.color.cancelled_bg));
+        editedBackgroundColor = new ColorDrawable(editedColor);
+        currentBackgroundColor = new ColorDrawable(currentDateBackground);
+        cancelledBackgroundColor = new ColorDrawable(cancelledBg);
         recyclerView.addItemDecoration(new RecyclerSectionItemDecoration(33, true, getSectionCallback()));
     }
 
@@ -271,6 +295,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                 dateFromString.setTime(CalenderUtil.getDateFromString(date));
                 RelativeLayout relativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.calender_cell, null);
                 final RelativeLayout mainLayout = relativeLayout.findViewById(R.id.main_layout);
+                final TextView txtHoliday = mainLayout.findViewById(R.id.txt_holiday);
                 final TextView textDate = mainLayout.findViewById(R.id.txt_date);
                 final TextView txtMonthName = mainLayout.findViewById(R.id.txt_month_name);
                 final ImageView imgSelector = mainLayout.findViewById(R.id.img_state);
@@ -296,10 +321,10 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                                     bulkDateList.remove(date);
                                     imgChkBulk.setVisibility(View.GONE);
                                     eventView.setVisibility(View.VISIBLE);
-                                    mainLayout.setBackground(new ColorDrawable(activity.getResources().getColor(R.color.white)));
+                                    mainLayout.setBackground(new ColorDrawable(white));
                                     addColorsToCalender(dateScheduleLinkedHashMap.get(date), dateFromString.getTime(), mainLayout, textDate, eventView);
                                 } else {
-                                    mainLayout.setBackground(new ColorDrawable(activity.getResources().getColor(R.color.green_bg)));
+                                    mainLayout.setBackground(new ColorDrawable(greenBg));
                                     bulkDateList.put(date, dateScheduleLinkedHashMap.get(date));
                                     imgChkBulk.setVisibility(View.VISIBLE);
                                     eventView.setVisibility(View.GONE);
@@ -311,7 +336,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
 
                                 imgSelector.setVisibility(View.VISIBLE);
                                 imgSelector.setBackgroundResource(R.drawable.ic_action_circle);
-                                textDate.setTextColor(activity.getResources().getColor(R.color.white));
+                                textDate.setTextColor(white);
                                 previousClickedLayout = mainLayout;
                                 textDate.setTextSize(16);
                                 previousDate = date;
@@ -328,17 +353,16 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                     addColorsToCalender(dateScheduleLinkedHashMap.get(date), dateFromString.getTime(), mainLayout, textDate, eventView);
                 } else {
                     mainLayout.setEnabled(false);
-                    mainLayout.setBackground(new ColorDrawable(activity.getResources().getColor(R.color.disabel_backgroud)));
-                    textDate.setTextColor(activity.getResources().getColor(R.color.disabel_date));
+                    mainLayout.setBackground(new ColorDrawable(disableBackground));
+                    textDate.setTextColor(disableBackground);
                     textDate.setTextSize(9);
-                    eventView.setBackgroundColor(activity.getResources().getColor(R.color.disabel_backgroud));
+                    eventView.setBackgroundColor(disableBackground);
                 }
                 position++;
                 tableRow.addView(relativeLayout);
 
             }
             tableLayout.addView(tableRow);
-
         }
     }
 
@@ -387,24 +411,24 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
             if (cancelled) {
                 mainLayout.setBackground(cancelledBackgroundColor);
                 textDate.setTextColor(this.getResources().getColor(cancelledFontColor));
-                eventView.setBackground(this.getResources().getDrawable(R.drawable.small_circle_cancel_date));
+                eventView.setBackground(smallCircleCancelDate);
 
             }
             if (updated) {
                 mainLayout.setBackground(editedBackgroundColor);
                 textDate.setTextColor(this.getResources().getColor(editedFontColor));
-                eventView.setBackground(this.getResources().getDrawable(R.drawable.small_circle_updated));
+                eventView.setBackground(smallCircleUpdated);
             }
             if (updated && cancelled) {
                 mainLayout.setBackground(editedBackgroundColor);
                 textDate.setTextColor(this.getResources().getColor(editedFontColor));
-                eventView.setBackground(this.getResources().getDrawable(R.drawable.small_circle_updated));
+                eventView.setBackground(smallCircleUpdated);
             }
 
             if (date.getDate() == c.get(Calendar.DATE)) {
                 mainLayout.setBackground(currentBackgroundColor);
-                textDate.setTextColor(this.getResources().getColor(R.color.white));
-                eventView.setBackground(this.getResources().getDrawable(R.drawable.small_circle_current_date));
+                textDate.setTextColor(white);
+                eventView.setBackground(smallCircleCurrentDate);
             }
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -505,9 +529,9 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
             }
 
             @Override
-            public CharSequence getSectionHeader(int position) {
-                Date eventDate = scheduleList.get(position).getDate();
-                return CalenderUtil.getDay(eventDate) + ", " + CalenderUtil.getMonthAndDate(eventDate);
+            public Schedule getSectionData(int position) {
+                return scheduleList.get(position);
+                /*return CalenderUtil.getDay(eventDate) + ", " + CalenderUtil.getMonthAndDate(eventDate);*/
             }
         };
     }
@@ -516,7 +540,8 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     private interface SectionCallback {
         boolean isSection(int position);
 
-        CharSequence getSectionHeader(int position);
+        Schedule getSectionData(int position);
+
     }
 
     private class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
@@ -527,6 +552,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
 
         private View headerView;
         private TextView header;
+        private TextView txtHoliday;
 
         private RecyclerSectionItemDecoration(int headerHeight, boolean sticky, @NonNull SectionCallback sectionCallback) {
             headerOffset = headerHeight;
@@ -550,6 +576,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
 
             if (headerView == null) {
                 headerView = inflateHeaderView(parent);
+                txtHoliday = headerView.findViewById(R.id.txt_holiday);
                 header = headerView.findViewById(R.id.txt_date);
                 fixLayoutSize(headerView, parent);
             }
@@ -559,11 +586,22 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                 View child = parent.getChildAt(i);
                 final int position = parent.getChildAdapterPosition(child);
 
-                CharSequence title = sectionCallback.getSectionHeader(position);
+                Schedule schedule = sectionCallback.getSectionData(position);
+                String title = String.format("%s, %s", CalenderUtil.getDay(schedule.getDate()), CalenderUtil.getMonthAndDate(schedule.getDate()));
                 header.setText(title);
                 if (!previousHeader.equals(title) || sectionCallback.isSection(position)) {
                     drawHeader(c, child, headerView);
                     previousHeader = title;
+                }
+                if (schedule.getOffType() != null && !schedule.getOffType().equalsIgnoreCase("")) {
+                    txtHoliday.setVisibility(View.VISIBLE);
+                    if (!schedule.getOffReason().equalsIgnoreCase("")) {
+                        txtHoliday.setText(schedule.getOffReason());
+                    } else {
+                        txtHoliday.setText("Week Off");
+                    }
+                } else {
+                    txtHoliday.setVisibility(View.INVISIBLE);
                 }
             }
         }
