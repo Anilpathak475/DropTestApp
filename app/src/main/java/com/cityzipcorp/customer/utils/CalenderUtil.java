@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -76,35 +75,23 @@ public class CalenderUtil {
         return timeZone.getID();
     }
 
-    public static List<LinkedHashMap<String, Schedule>> getAllDays(Date date, List<Schedule> scheduleList) {
+    public static List<List<Date>> getAllDays(Date date) {
 
-        List<LinkedHashMap<String, Schedule>> allDays = new ArrayList<>(3);
-
+        List<List<Date>> allDays = new ArrayList<>(3);
         Calendar currentDate = Calendar.getInstance();
         currentDate.setTime(date);
-        currentDate.set(Calendar.DAY_OF_MONTH, scheduleList.get(0).getDate().getDate());
+        currentDate.set(Calendar.DAY_OF_MONTH, date.getDate());
         int day = currentDate.getFirstDayOfWeek();
         currentDate.set(Calendar.DAY_OF_MONTH, day);
         currentDate.setFirstDayOfWeek(Calendar.SUNDAY);
         currentDate.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         while (allDays.size() < 3) {
-            LinkedHashMap<String, Schedule> scheduleHashMap = new LinkedHashMap<>();
+            List<Date> dates = new ArrayList<>();
             for (int i = 1; i < 8; i++) {
-                Schedule schedule = null;
-                for (Schedule scheduleFromList : scheduleList) {
-                    Calendar dateFromSchedule = Calendar.getInstance();
-                    dateFromSchedule.setTime(scheduleFromList.getDate());
-                    if (currentDate.get(Calendar.DATE) == dateFromSchedule.get(Calendar.DATE)) {
-                        if (currentDate.get(Calendar.MONTH) == dateFromSchedule.get(Calendar.MONTH)) {
-                            schedule = scheduleFromList;
-                        }
-                    }
-                }
-                scheduleHashMap.put(CalenderUtil.getDateStringFromDate(currentDate.getTime()), schedule);
+                dates.add(currentDate.getTime());
                 currentDate.add(Calendar.DAY_OF_MONTH, 1);
             }
-            allDays.add(scheduleHashMap);
-
+            allDays.add(dates);
         }
         return allDays;
     }
