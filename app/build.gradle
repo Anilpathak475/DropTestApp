@@ -10,7 +10,7 @@ android {
     flavorDimensions "staging"
     signingConfigs {
         release {
-            storeFile file("F:\\Android\\keystore\\customer_release.jks")
+            storeFile file('../keystore/customer_release.keystore')
             storePassword "metrozip"
             keyAlias "metrozip"
             keyPassword "metrozip"

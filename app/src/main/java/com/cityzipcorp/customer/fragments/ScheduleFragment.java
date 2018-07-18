@@ -138,8 +138,9 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                                 @Override
                                 public void onSuccess(List<Schedule> schedules) {
                                     if (schedules.size() > 0) {
-                                        scheduleList.clear();
-                                        createEventListForAdapter(schedules);
+                                        scheduleList = schedules;
+                                        createCalenderFromList();
+                                        setAdapter();
                                         uiUtils.dismissDialog();
                                     } else {
                                         setDefaultSchedule();
@@ -227,8 +228,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                 this.scheduleList.add(i, schedule);
             }
         }
-        createCalenderFromList();
-        setAdapter();
+
     }
 
     @Override
@@ -295,7 +295,6 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                 dateFromString.setTime(CalenderUtil.getDateFromString(date));
                 RelativeLayout relativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.calender_cell, null);
                 final RelativeLayout mainLayout = relativeLayout.findViewById(R.id.main_layout);
-                final TextView txtHoliday = mainLayout.findViewById(R.id.txt_holiday);
                 final TextView textDate = mainLayout.findViewById(R.id.txt_date);
                 final TextView txtMonthName = mainLayout.findViewById(R.id.txt_month_name);
                 final ImageView imgSelector = mainLayout.findViewById(R.id.img_state);
@@ -525,7 +524,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         return new SectionCallback() {
             @Override
             public boolean isSection(int position) {
-                return position == 0 || scheduleList.get(position).getDate().toString() != scheduleList.get(position - 1).getDate().toString();
+                return position == 0 || !scheduleList.get(position).getDate().toString().equalsIgnoreCase(scheduleList.get(position - 1).getDate().toString());
             }
 
             @Override
@@ -577,10 +576,11 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
             if (headerView == null) {
                 headerView = inflateHeaderView(parent);
                 txtHoliday = headerView.findViewById(R.id.txt_holiday);
+                txtHoliday.setText("");
                 header = headerView.findViewById(R.id.txt_date);
                 fixLayoutSize(headerView, parent);
             }
-
+            txtHoliday.setText("");
             CharSequence previousHeader = "";
             for (int i = 0; i < parent.getChildCount(); i++) {
                 View child = parent.getChildAt(i);
@@ -601,7 +601,8 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                         txtHoliday.setText("Week Off");
                     }
                 } else {
-                    txtHoliday.setVisibility(View.INVISIBLE);
+                    txtHoliday.setText("");
+
                 }
             }
         }
