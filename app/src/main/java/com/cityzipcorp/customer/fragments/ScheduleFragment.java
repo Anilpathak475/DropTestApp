@@ -43,10 +43,10 @@ import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -71,6 +71,8 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
 
     @BindColor(R.color.disabel_backgroud)
     int disableBackground;
+    @BindColor(R.color.disabel_date)
+    int disableDateTextColor;
     @BindColor(R.color.edited_date)
     int editedColor;
     @BindColor(R.color.current_date_background)
@@ -90,12 +92,12 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     Drawable smallCircleUpdated;
     private LayoutInflater layoutInflater;
     private RelativeLayout previousClickedLayout;
-    private String previousDate = null;
+    private Date previousDate = null;
     private Calendar c;
     private Handler handler = new Handler();
     private boolean isCalenderClicked = false;
     private List<Schedule> scheduleList = new ArrayList<>();
-    private LinkedHashMap<String, RelativeLayout> dateMapList = new LinkedHashMap<>();
+    private LinkedHashMap<Date, RelativeLayout> dateMapList = new LinkedHashMap<>();
     private ColorDrawable editedBackgroundColor;
     private ColorDrawable currentBackgroundColor;
     private ColorDrawable cancelledBackgroundColor;
@@ -188,8 +190,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                         try {
                             LinearLayoutManager layoutManager = ((LinearLayoutManager)
                                     recyclerView.getLayoutManager());
-                            setSelectedDateInTableFromScroll(CalenderUtil.getDateStringFromDate(
-                                    scheduleList.get(layoutManager.findFirstVisibleItemPosition()).getDate()));
+                            setSelectedDateInTableFromScroll(scheduleList.get(layoutManager.findFirstVisibleItemPosition()).getDate());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -263,25 +264,23 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void createCalenderFromList() {
-        List<LinkedHashMap<String, Schedule>> mapList = CalenderUtil.getAllDays(c.getTime(), this.scheduleList);
+        List<List<Date>> mapList = CalenderUtil.getAllDays(scheduleList.get(0).getDate());
         tableLayout.removeAllViews();
         bulkDateList.clear();
         dateMapList.clear();
         addWeekDaysInTable();
         int position = 0;
-        for (final LinkedHashMap<String, Schedule> dateScheduleLinkedHashMap : mapList) {
+        for (final List<Date> dates : mapList) {
             TableRow tableRow = new TableRow(activity);
-            Set<String> dateSet = dateScheduleLinkedHashMap.keySet();
-            for (final String date : dateSet) {
+            for (final Date date : dates) {
                 final Calendar dateFromString = Calendar.getInstance();
-                dateFromString.setTime(CalenderUtil.getDateFromString(date));
+                dateFromString.setTime(date);
                 RelativeLayout relativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.calender_cell, null);
                 final RelativeLayout mainLayout = relativeLayout.findViewById(R.id.main_layout);
                 final TextView textDate = mainLayout.findViewById(R.id.txt_date);
                 final TextView txtMonthName = mainLayout.findViewById(R.id.txt_month_name);
                 final ImageView imgSelector = mainLayout.findViewById(R.id.img_state);
                 final View eventView = mainLayout.findViewById(R.id.event_view);
-                final ImageView imgChkBulk = mainLayout.findViewById(R.id.img_chk_bulk);
 
                 mainLayout.setVisibility(View.VISIBLE);
                 textDate.setText(String.valueOf(dateFromString.get(Calendar.DATE)));
@@ -293,49 +292,37 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                         activity.setTitle(CalenderUtil.getFullMonthName(dateFromString.getTime()));
 
                 }
-                if (dateScheduleLinkedHashMap.get(date) != null) {
+                final Schedule schedule = getScheduleFromDate(date);
+                if (schedule.getDate() != null) {
                     mainLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (isBulkModeActive) {
-                                if (bulkDateList.containsKey(date)) {
-                                    bulkDateList.remove(date);
-                                    imgChkBulk.setVisibility(View.GONE);
-                                    eventView.setVisibility(View.VISIBLE);
-                                    mainLayout.setBackground(new ColorDrawable(white));
-                                    addColorsToCalender(dateScheduleLinkedHashMap.get(date), dateFromString.getTime(), mainLayout, textDate, eventView);
-                                } else {
-                                    mainLayout.setBackground(new ColorDrawable(greenBg));
-                                    bulkDateList.put(date, dateScheduleLinkedHashMap.get(date));
-                                    imgChkBulk.setVisibility(View.VISIBLE);
-                                    eventView.setVisibility(View.GONE);
-                                }
-                            } else {
-                                if (previousDate != null && !previousDate.equalsIgnoreCase(date)) {
-                                    clearPreviousSelection();
-                                }
 
-                                imgSelector.setVisibility(View.VISIBLE);
-                                imgSelector.setBackgroundResource(R.drawable.ic_action_circle);
-                                textDate.setTextColor(white);
-                                previousClickedLayout = mainLayout;
-                                textDate.setTextSize(16);
-                                previousDate = date;
-                                try {
-                                    isCalenderClicked = true;
-                                    scrollRecyclerViewWithCalenderSelection(Integer.parseInt(textDate.getText().toString()));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                            if (previousDate != null && !(previousDate == date)) {
+                                clearPreviousSelection();
+                            }
+
+                            imgSelector.setVisibility(View.VISIBLE);
+                            imgSelector.setBackgroundResource(R.drawable.ic_action_circle);
+                            textDate.setTextColor(white);
+                            previousClickedLayout = mainLayout;
+                            textDate.setTextSize(16);
+                            previousDate = date;
+                            try {
+                                isCalenderClicked = true;
+                                scrollRecyclerViewWithCalenderSelection(Integer.parseInt(textDate.getText().toString()));
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
+
                     });
                     dateMapList.put(date, mainLayout);
-                    addColorsToCalender(dateScheduleLinkedHashMap.get(date), dateFromString.getTime(), mainLayout, textDate, eventView);
+                    addColorsToCalender(schedule, dateFromString.getTime(), mainLayout, textDate, eventView);
                 } else {
                     mainLayout.setEnabled(false);
                     mainLayout.setBackground(new ColorDrawable(disableBackground));
-                    textDate.setTextColor(disableBackground);
+                    textDate.setTextColor(disableDateTextColor);
                     textDate.setTextSize(9);
                     eventView.setBackgroundColor(disableBackground);
                 }
@@ -459,7 +446,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         textView.setTextColor(this.getResources().getColor(R.color.black));
         imgSelector.setVisibility(View.INVISIBLE);
         textView.setTextSize(13);
-        previousDate = "";
+        previousDate = null;
         previousClickedLayout = null;
     }
 
@@ -478,15 +465,15 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         activity.startActivityForResult(intent, 101);
     }
 
-    private void setSelectedDateInTableFromScroll(String dateInTableFromScroll) {
+    private void setSelectedDateInTableFromScroll(Date dateInTableFromScroll) {
         try {
             Calendar calendar = Calendar.getInstance();
-            calendar.setTime(CalenderUtil.getDateFromString(dateInTableFromScroll));
+            calendar.setTime(dateInTableFromScroll);
             final RelativeLayout mainLayout = dateMapList.get(dateInTableFromScroll);
             final TextView textView = mainLayout.findViewById(R.id.txt_date);
             final ImageView imgSelector = mainLayout.findViewById(R.id.img_state);
             if (textView.getText().toString().equalsIgnoreCase(String.valueOf(calendar.get(Calendar.DATE)))) {
-                if (previousDate != null && !previousDate.equalsIgnoreCase(dateInTableFromScroll)) {
+                if (previousDate != null && !(previousDate == dateInTableFromScroll)) {
                     clearPreviousSelection();
                 }
                 imgSelector.setVisibility(View.VISIBLE);
@@ -506,7 +493,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         return new SectionCallback() {
             @Override
             public boolean isSection(int position) {
-                return position == 0 || !scheduleList.get(position).getDate().toString().equalsIgnoreCase(scheduleList.get(position - 1).getDate().toString());
+                return position == 0 || !(scheduleList.get(position).getDate().getTime() == scheduleList.get(position - 1).getDate().getTime());
             }
 
             @Override
@@ -523,6 +510,15 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
 
         Schedule getSectionData(int position);
 
+    }
+
+    private Schedule getScheduleFromDate(Date date) {
+        for (Schedule schedule : scheduleList) {
+            if (schedule.getDate().getDate() == date.getDate()) {
+                return schedule;
+            }
+        }
+        return new Schedule();
     }
 
     private class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
@@ -571,21 +567,23 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                 Schedule schedule = sectionCallback.getSectionData(position);
                 String title = String.format("%s, %s", CalenderUtil.getDay(schedule.getDate()), CalenderUtil.getMonthAndDate(schedule.getDate()));
                 header.setText(title);
-                if (!previousHeader.equals(title) || sectionCallback.isSection(position)) {
-                    drawHeader(c, child, headerView);
-                    previousHeader = title;
-                }
                 if (schedule.getOffType() != null && !schedule.getOffType().equalsIgnoreCase("")) {
                     txtHoliday.setVisibility(View.VISIBLE);
                     if (!schedule.getOffReason().equalsIgnoreCase("")) {
                         txtHoliday.setText(schedule.getOffReason());
                     } else {
+                        txtHoliday.setText(R.string.week_off);
                         txtHoliday.setText(R.string.weekly_off);
                     }
                 } else {
                     txtHoliday.setText("");
+                }
+                if (!previousHeader.equals(title) || sectionCallback.isSection(position)) {
+                    drawHeader(c, child, headerView);
+                    previousHeader = title;
 
                 }
+
             }
         }
 

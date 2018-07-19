@@ -122,5 +122,6 @@
     <string name="weekly_off">Weekly Off</string>
     <string name="days">Selected Dates</string>
     <string name="locatopn_error">Unable to fetch address</string>
+    <string name="week_off">Weekly Off</string>
 
 </resources>
