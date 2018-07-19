@@ -43,7 +43,6 @@ import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -572,7 +571,6 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                     if (!schedule.getOffReason().equalsIgnoreCase("")) {
                         txtHoliday.setText(schedule.getOffReason());
                     } else {
-                        txtHoliday.setText(R.string.week_off);
                         txtHoliday.setText(R.string.weekly_off);
                     }
                 } else {

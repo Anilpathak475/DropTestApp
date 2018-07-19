@@ -107,11 +107,6 @@ public class CalenderUtil {
 
     }
 
-    public static String getDateStringFromDate(Date date) {
-        DateFormat df = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
-        return df.format(date);
-    }
-
     public static HashMap<Integer, Integer> getAllDatesFromList(List<Schedule> scheduleList) {
         HashMap<Integer, Integer> hashMap = new HashMap<>();
         int i = 0;
@@ -141,21 +136,6 @@ public class CalenderUtil {
         }
 
         return false;
-    }
-
-
-    public static List<String> convertShiftTimeTo12HrsFormat(List<String> shiftTimes) {
-        List<String> convertedShiftTimes = new ArrayList<>();
-        for (String shiftTime : shiftTimes) {
-            try {
-                DateFormat f1 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH); //HH for hour of the day (0 - 23)
-                Date d = f1.parse(shiftTime);
-                convertedShiftTimes.add(getTime(d));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return convertedShiftTimes;
     }
 
     public static long getTimeDiff(Date dateOne, Date dateTwo) {

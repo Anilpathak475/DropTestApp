@@ -382,7 +382,7 @@
                             android:padding="10dp">
 
                             <ImageView
-                                android:layout_width="40dp"
+                                android:layout_width="38dp"
                                 android:layout_height="40dp"
                                 android:layout_marginStart="10dp"
                                 android:contentDescription="@string/home_address"
@@ -392,7 +392,7 @@
                                 android:id="@+id/txt_home_address"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="15dp"
+                                android:layout_marginStart="25dp"
                                 android:layout_weight="0.8"
                                 android:paddingEnd="5dp"
                                 android:paddingStart="10dp"
