@@ -178,30 +178,74 @@
                                 android:id="@+id/weekdays"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                                android:background="@android:color/white"
+                                android:orientation="horizontal"
+                                android:padding="16dp">
 
-                                <TextView
-                                    android:id="@+id/txt_week_off_day_1"
+
+                                <ToggleButton
+                                    android:id="@+id/t_btn_mon"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:padding="10dp"
-                                    android:textAlignment="center"
-                                    android:textSize="20sp" />
+                                    android:clickable="false"
+                                    android:textOff="M"
+                                    android:textOn="M" />
 
-                                <View
-                                    android:layout_width="1dp"
-                                    android:layout_height="match_parent"
-                                    android:background="@color/text_color_light_grey" />
-
-                                <TextView
-                                    android:id="@+id/txt_week_off_day_2"
+                                <ToggleButton
+                                    android:id="@+id/t_btn_tue"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:padding="10dp"
-                                    android:textAlignment="center"
-                                    android:textSize="20sp" />
+                                    android:clickable="false"
+                                    android:textOff="T"
+                                    android:textOn="T" />
+
+                                <ToggleButton
+                                    android:id="@+id/t_btn_wed"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:clickable="false"
+                                    android:textOff="W"
+                                    android:textOn="W" />
+
+                                <ToggleButton
+                                    android:id="@+id/t_btn_thu"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:clickable="false"
+                                    android:textOff="T"
+                                    android:textOn="T" />
+
+                                <ToggleButton
+                                    android:id="@+id/t_btn_fri"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:clickable="false"
+                                    android:textOff="F"
+                                    android:textOn="F" />
+
+                                <ToggleButton
+                                    android:id="@+id/t_btn_sat"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:clickable="false"
+                                    android:textOff="S"
+                                    android:textOn="S" />
+
+                                <ToggleButton
+                                    android:id="@+id/t_btn_sun"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:clickable="false"
+                                    android:textOff="S"
+                                    android:textOn="S" />
+
 
                             </LinearLayout>
 
@@ -209,15 +253,11 @@
                                 android:id="@+id/txt_no_week_off"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_centerInParent="true"
-                                android:padding="15dp
-"
+                                android:padding="15dp"
                                 android:text="You have not selected your week off days"
                                 android:textColor="@color/black"
                                 android:visibility="gone" />
-
                         </LinearLayout>
-
                     </android.support.v7.widget.CardView>
 
                     <TextView

@@ -248,6 +248,8 @@ public class UserStore {
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     Log.d("FCM Sync Status", "Fcm registration successfully");
+                } else {
+                    Log.d(" FCM Sync Status", "Fcm registration failure wu=ith status code" + response.code());
                 }
             }
 

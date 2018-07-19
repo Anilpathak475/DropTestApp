@@ -593,9 +593,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 txtAddressHome.setText(replaceNull(coreAddress.getAddressLine(0)));
                 address.setPostalCode(replaceNull(coreAddress.getPostalCode()));
                 address.setCity(replaceNull(coreAddress.getLocality()));
-                address.setLocality(replaceNull(coreAddress.getThoroughfare() + ", " + coreAddress.getFeatureName() + ", " + coreAddress.getSubThoroughfare() + ", " + coreAddress.getPremises()));
                 address.setState(replaceNull(coreAddress.getAdminArea()));
-                address.setLandmark(replaceNull(coreAddress.getThoroughfare()));
                 address.setCountry(replaceNull(coreAddress.getCountryName()));
                 geoJsonPoint = new GeoJsonPoint(coreAddress.getLongitude(), coreAddress.getLatitude());
             } else {

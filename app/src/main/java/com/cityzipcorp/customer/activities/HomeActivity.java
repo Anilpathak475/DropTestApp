@@ -518,11 +518,11 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private void updateFcmTokenOnServer() {
         FcmRegistrationToken fcmRegistrationToken = new FcmRegistrationToken();
-        fcmRegistrationToken.setName("userName");
+        fcmRegistrationToken.setName("Customer App");
         fcmRegistrationToken.setCloudMessageType("FCM");
         fcmRegistrationToken.setRegistrationId(sharedPreferenceManager.
                 getValue(SharedPreferenceManagerConstant.FCM_TOKEN));
-        fcmRegistrationToken.setDeviceId("");
+        fcmRegistrationToken.setDeviceId("83543303454710011");
         fcmRegistrationToken.setApplicationId("");
         UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
                 registerFcmToken(fcmRegistrationToken,

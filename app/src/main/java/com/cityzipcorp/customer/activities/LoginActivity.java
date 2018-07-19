@@ -154,26 +154,30 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     @OnClick(R.id.btn_login)
     void onLogin() {
-        validateCaptcha();
+        if (spnContract.getSelectedItemPosition() > 0) {
+            validateCaptcha();
+        } else {
+            uiUtils.shortToast("Please select contract");
+        }
     }
 
     private void performLogin(String captchaToken) {
-        if (spnContract.getSelectedItemPosition() > 0) {
-            Contract contract = contracts.get(spnContract.getSelectedItemPosition() - 1);
-            sharedPreferenceManager.saveValue(SharedPreferenceManagerConstant.BASE_URL, contract.getHost());
 
-            String email = edtUserName.getText().toString();
-            String password = edtPassword.getText().toString();
-            UserCredential userCredential = new UserCredential();
-            userCredential.setEmail(email);
-            userCredential.setPassword(password);
-            userCredential.setCaptchaResuktToken(captchaToken);
-            if (NetworkUtils.isNetworkAvailable(this)) {
-                loginPresenter.validate(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), userCredential);
-            } else {
-                uiUtils.noInternetDialog();
-            }
+        Contract contract = contracts.get(spnContract.getSelectedItemPosition() - 1);
+        sharedPreferenceManager.saveValue(SharedPreferenceManagerConstant.BASE_URL, contract.getHost());
+
+        String email = edtUserName.getText().toString();
+        String password = edtPassword.getText().toString();
+        UserCredential userCredential = new UserCredential();
+        userCredential.setEmail(email);
+        userCredential.setPassword(password);
+        userCredential.setCaptchaResuktToken(captchaToken);
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            loginPresenter.validate(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), userCredential);
+        } else {
+            uiUtils.noInternetDialog();
         }
+
     }
 
 

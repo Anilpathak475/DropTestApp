@@ -210,14 +210,6 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
                     dateToDisplay = dateToDisplay + calendar.get(Calendar.DATE) + " " + CalenderUtil.getMonth(date) + ", ";
-                       /* if(index == 0 ) {
-                            Date date = CalenderUtil.getDateFromString(key);
-                            dateToDisplay = date.getDate() +" "+CalenderUtil.getMonth(date);
-                        }
-                        if(index == dateSet.size()-1) {
-                            Date date = CalenderUtil.getDateFromString(key);
-                            dateToDisplay = dateToDisplay + " - "+date.getDate() +" "+CalenderUtil.getMonth(date);
-                        }*/
                 }
                 txtDate.setText(dateToDisplay);
                 tabLayout.getTabAt(0).select();

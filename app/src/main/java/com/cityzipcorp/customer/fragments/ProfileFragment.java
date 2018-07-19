@@ -79,12 +79,6 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @BindView(R.id.txt_nodal_address)
     TextView txtNodalAddress;
 
-    @BindView(R.id.txt_week_off_day_1)
-    TextView txtWeekOffDay1;
-
-    @BindView(R.id.txt_week_off_day_2)
-    TextView txtWeekOffDay2;
-
     @BindView(R.id.txt_no_week_off)
     TextView txtNoWeekOff;
 
@@ -123,6 +117,24 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @BindView(R.id.opt_in_description)
     TextView optInDesc;
 
+    @BindView(R.id.t_btn_mon)
+    ToggleButton toggleButtonMon;
+
+    @BindView(R.id.t_btn_tue)
+    ToggleButton toggleButtonTue;
+
+    @BindView(R.id.t_btn_wed)
+    ToggleButton toggleButtonWed;
+
+    @BindView(R.id.t_btn_thu)
+    ToggleButton toggleButtonThu;
+
+    @BindView(R.id.t_btn_fri)
+    ToggleButton toggleButtonFri;
+    @BindView(R.id.t_btn_sat)
+    ToggleButton toggleButtonSat;
+    @BindView(R.id.t_btn_sun)
+    ToggleButton toggleButtonSun;
     boolean isAllowedToCLickOnGroup = false;
     int ADDRESS_CODE_HOME = 101;
     int ADDRESS_CODE_NODAL = 102;
@@ -267,16 +279,12 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         ToggleButton tBtnSat = dialog.findViewById(R.id.t_btn_sat);
         ToggleButton tBtnSun = dialog.findViewById(R.id.t_btn_sun);
         Button btnSubmit = dialog.findViewById(R.id.btn_submit);
-        if (user.getWeeekdaysOff().length > 0) {
-            String weekOffDay1 = user.getWeeekdaysOff()[0];
-            days.add(weekOffDay1);
-            ToggleButton toggleButtonDay1 = dialog.findViewById(getDayId(weekOffDay1));
-            toggleButtonDay1.setChecked(true);
-            if (user.getWeeekdaysOff().length > 1) {
-                String weekOffDay2 = user.getWeeekdaysOff()[1];
-                days.add(weekOffDay2);
-                ToggleButton toggleButtonDay2 = dialog.findViewById(getDayId(weekOffDay2));
-                toggleButtonDay2.setChecked(true);
+        String[] weeklyOff = user.getWeeekdaysOff();
+        if (weeklyOff != null && user.getWeeekdaysOff().length > 0) {
+            for (String weekOff : weeklyOff) {
+                days.add(weekOff);
+                ToggleButton toggleButton = dialog.findViewById(getDayId(weekOff));
+                toggleButton.setChecked(true);
             }
         }
         tBtnMon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -458,26 +466,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             txtShiftName.setText(user.getShift().getName());
             isAllowedToCLickOnGroup = true;
         }
-        if (user.getWeeekdaysOff() != null) {
-            if (user.getWeeekdaysOff().length > 0) {
-                layoutWeekdays.setVisibility(View.VISIBLE);
-                txtNoWeekOff.setVisibility(View.GONE);
-                txtWeekOffDay1.setText(user.getWeeekdaysOff()[0]);
-                if (user.getWeeekdaysOff().length > 1) {
-                    txtWeekOffDay2.setVisibility(View.VISIBLE);
-                    txtWeekOffDay2.setText(user.getWeeekdaysOff()[1]);
-                } else {
-                    txtWeekOffDay2.setText("");
-                    txtWeekOffDay2.setVisibility(View.GONE);
-                }
-            } else {
-                layoutWeekdays.setVisibility(View.GONE);
-                txtNoWeekOff.setVisibility(View.VISIBLE);
-            }
-        } else {
-            layoutWeekdays.setVisibility(View.GONE);
-            txtNoWeekOff.setVisibility(View.VISIBLE);
-        }
+        weeklyOff(user);
         if (!sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA).equalsIgnoreCase("")) {
             user.setProfilePicUri(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA));
             String encodedImage = user.getProfilePicUri();
@@ -501,6 +490,27 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             });
         }
 
+    }
+
+    private void weeklyOff(User user) {
+        toggleButtonMon.setChecked(false);
+        toggleButtonTue.setChecked(false);
+        toggleButtonWed.setChecked(false);
+        toggleButtonThu.setChecked(false);
+        toggleButtonFri.setChecked(false);
+        toggleButtonSat.setChecked(false);
+        toggleButtonSun.setChecked(false);
+        String[] weeklyOff = user.getWeeekdaysOff();
+        if (weeklyOff != null && user.getWeeekdaysOff().length > 0) {
+            layoutWeekdays.setVisibility(View.VISIBLE);
+            txtNoWeekOff.setVisibility(View.GONE);
+            for (String weekOff : weeklyOff) {
+                setWeeklyOffs(weekOff);
+            }
+        } else {
+            layoutWeekdays.setVisibility(View.GONE);
+            txtNoWeekOff.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setOptInDescription(boolean optedIn) {
@@ -611,5 +621,29 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                 break;
         }
         return id;
+    }
+
+    private void setWeeklyOffs(String weekOff) {
+        if (weekOff.equalsIgnoreCase("Monday")) {
+            toggleButtonMon.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Tuesday")) {
+            toggleButtonTue.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Wednesday")) {
+            toggleButtonWed.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Thursday")) {
+            toggleButtonThu.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Friday")) {
+            toggleButtonFri.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Saturday")) {
+            toggleButtonSat.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Sunday")) {
+            toggleButtonSun.setChecked(true);
+        }
     }
 }

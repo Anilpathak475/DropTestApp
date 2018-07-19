@@ -89,16 +89,7 @@ public class AddressActivity extends AppCompatActivity {
                     getAreas(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new AreaCallback() {
                         @Override
                         public void onSuccess(List<Area> areas) {
-
-                            int selectedIndex = -1;
-                            for (Area area : areas) {
-                                areaNames.add(area.getAreaName().toUpperCase());
-                                if (selectedAddress.getArea().equalsIgnoreCase(area.getAreaName())) {
-                                    selectedIndex = areaNames.indexOf(area.getAreaName());
-                                }
-                            }
-                            setAdapter(areaNames, selectedIndex);
-                            uiUtils.dismissDialog();
+                            createAddress(areas);
                         }
 
                         @Override
@@ -110,6 +101,18 @@ public class AddressActivity extends AppCompatActivity {
         } else {
             uiUtils.noInternetDialog();
         }
+    }
+
+    private void createAddress(List<Area> areas) {
+        int selectedIndex = -1;
+        for (Area area : areas) {
+            areaNames.add(area.getAreaName().toUpperCase());
+            if (selectedAddress.getArea().equalsIgnoreCase(area.getAreaName())) {
+                selectedIndex = areaNames.indexOf(area.getAreaName());
+            }
+        }
+        setAdapter(areaNames, selectedIndex);
+        uiUtils.dismissDialog();
     }
 
     private void setAdapter(List<String> areaNames, int selectedIndex) {
