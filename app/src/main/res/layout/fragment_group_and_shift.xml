@@ -12,7 +12,7 @@
         android:layout_marginTop="10dp"
         android:ellipsize="marquee"
         android:singleLine="true"
-        android:text="Group"
+        android:text="@string/group"
         android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
         android:textStyle="normal" />
 
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:ellipsize="marquee"
-        android:text="Shift"
+        android:text="@string/shift"
         android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
         android:textStyle="normal" />
 
@@ -44,6 +44,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@color/app_theme_red"
-        android:text="Update"
+        android:text="@string/update"
         android:textColor="@color/white" />
 </LinearLayout>

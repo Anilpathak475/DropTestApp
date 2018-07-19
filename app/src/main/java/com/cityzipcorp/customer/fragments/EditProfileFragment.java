@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -78,7 +79,7 @@ public class EditProfileFragment extends BaseFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_profile, container, false);
         ButterKnife.bind(this, view);
         activity.setUpEditProfileView();
@@ -149,9 +150,10 @@ public class EditProfileFragment extends BaseFragment {
             String lastName = edtLastName.getText().toString();
             String email = edtEmailId.getText().toString();
             String alternateEmail = edtAlternativeEmailId.getText().toString();
-            String phone = edtMobileNo.getText().toString();
+            String phone;
+            phone = edtMobileNo.getText().toString();
             String employeeId = edtEmployeeId.getText().toString();
-            if (validate(email, firstName, lastName, gender, phone, alternateEmail, employeeId)) {
+            if (validate(email, firstName, lastName, gender, phone, employeeId)) {
                 User user = new User();
                 user.setFirstName(firstName);
                 user.setLastName(lastName);
@@ -255,7 +257,7 @@ public class EditProfileFragment extends BaseFragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode == 1 && grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             choosePhoto = new ChoosePhoto(activity);
@@ -283,7 +285,7 @@ public class EditProfileFragment extends BaseFragment {
 
     }
 
-    private boolean validate(String email, String firstName, String lastName, String gender, String phoneNo, String alternateEmail, String employeeId) {
+    private boolean validate(String email, String firstName, String lastName, String gender, String phoneNo, String employeeId) {
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             uiUtils.shortToast("Enter Valid Email");
             edtEmailId.requestFocus();

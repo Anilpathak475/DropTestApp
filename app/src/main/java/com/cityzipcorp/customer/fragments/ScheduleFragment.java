@@ -43,7 +43,6 @@ import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -111,7 +110,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_schedule, null);
+        View view = inflater.inflate(R.layout.fragment_schedule, container, false);
         ButterKnife.bind(this, view);
         init();
         getSchedule();
@@ -212,23 +211,6 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
             }
             i++;
         }
-    }
-
-    public void createEventListForAdapter(List<Schedule> scheduleList) {
-        this.scheduleList.clear();
-        HashMap<Integer, Integer> hashMap = CalenderUtil.getAllDatesFromList(scheduleList);
-        for (int i = 0; i < 14; i++) {
-            Calendar calendar = new GregorianCalendar();
-            calendar.add(Calendar.DATE, i);
-            Schedule schedule = new Schedule();
-            schedule.setDate(calendar.getTime());
-            if (hashMap.containsKey(calendar.get(Calendar.DATE))) {
-                this.scheduleList.add(i, scheduleList.get(hashMap.get(calendar.get(Calendar.DATE))));
-            } else {
-                this.scheduleList.add(i, schedule);
-            }
-        }
-
     }
 
     @Override
@@ -441,7 +423,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         TableRow tableRow = new TableRow(activity);
         TextView txtSun = new TextView(activity);
         txtSun.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        txtSun.setText("Sun");
+        txtSun.setText("S");
         tableRow.addView(txtSun);
         TextView txtM = new TextView(activity);
         txtM.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -598,7 +580,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                     if (!schedule.getOffReason().equalsIgnoreCase("")) {
                         txtHoliday.setText(schedule.getOffReason());
                     } else {
-                        txtHoliday.setText("Week Off");
+                        txtHoliday.setText(R.string.weekly_off);
                     }
                 } else {
                     txtHoliday.setText("");

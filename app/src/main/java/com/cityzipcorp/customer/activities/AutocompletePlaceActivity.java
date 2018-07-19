@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -124,7 +125,7 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
                 PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
                 placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
                     @Override
-                    public void onResult(PlaceBuffer places) {
+                    public void onResult(@NonNull PlaceBuffer places) {
 
                         // TODO: Extra this to a method
                         //Do the things here on Click.....
@@ -157,7 +158,6 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
         return super.onOptionsItemSelected(item);
     }
 
@@ -177,7 +177,7 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.v("Google API Callback", "Connection Failed");
         Log.e("Error Code", String.valueOf(connectionResult.getErrorCode()));
     }
@@ -214,7 +214,7 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
         GestureDetector mGestureDetector;
         private OnItemClickListener mListener;
 
-        public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
+        RecyclerItemClickListener(Context context, OnItemClickListener listener) {
             mListener = listener;
             mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override

@@ -15,65 +15,69 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/weekdays"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
 
             <ToggleButton
                 android:id="@+id/t_btn_mon"
-                android:layout_width="40dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textOff="M"
-                android:textOn="M" />
+                android:textOff="@string/m"
+                android:textOn="@string/m" />
 
             <ToggleButton
                 android:id="@+id/t_btn_tue"
-                android:layout_width="40dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textOff="T"
-                android:textOn="T" />
+                android:textOff="@string/t"
+                android:textOn="@string/t" />
 
             <ToggleButton
                 android:id="@+id/t_btn_wed"
-                android:layout_width="40dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textOff="W"
-                android:textOn="W" />
+                android:textOff="@string/w"
+                android:textOn="@string/w" />
 
             <ToggleButton
                 android:id="@+id/t_btn_thu"
-                android:layout_width="40dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textOff="T"
-                android:textOn="T" />
+                android:textOff="@string/t"
+                android:textOn="@string/t" />
 
             <ToggleButton
                 android:id="@+id/t_btn_fri"
-                android:layout_width="40dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textOff="F"
-                android:textOn="F" />
+                android:textOff="@string/f"
+                android:textOn="@string/f" />
 
             <ToggleButton
                 android:id="@+id/t_btn_sat"
-                android:layout_width="40dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textOff="S"
-                android:textOn="S" />
+                android:textOff="@string/s"
+                android:textOn="@string/s" />
 
             <ToggleButton
                 android:id="@+id/t_btn_sun"
-                android:layout_width="40dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textOff="S"
-                android:textOn="S" />
-
+                android:textOff="@string/s"
+                android:textOn="@string/s" />
         </LinearLayout>
 
         <Button
@@ -83,7 +87,7 @@
             android:layout_margin="10dp"
             android:background="@color/app_theme_red"
             android:foreground="?attr/selectableItemBackground"
-            android:text="Update"
+            android:text="@string/update"
             android:textColor="@color/white" />
     </LinearLayout>
 

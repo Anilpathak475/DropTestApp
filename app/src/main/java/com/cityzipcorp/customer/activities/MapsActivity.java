@@ -60,6 +60,7 @@ import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -93,7 +94,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.tick_mark_labels_rl)
     RelativeLayout tickMarkLabelsRelativeLayout;
 
-    private Marker homeMarker;
     private SharedPreferenceManager sharedPreferenceManager;
     private NodalStop nodalStop;
     private GoogleMap googleMap;
@@ -316,7 +316,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         this.googleMap = map;
         getBundleExtra();
         if (latLng != null) {
-            homeMarker = googleMap.addMarker(new MarkerOptions().
+            googleMap.addMarker(new MarkerOptions().
                     position(latLng).
                     title("Home").icon(BitmapDescriptorFactory.
                     fromBitmap(uiUtils.getBitmapBySize(R.drawable.home_location_pin, 80, 120))));
@@ -385,6 +385,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (requestCode == 111) {
             if (resultCode == RESULT_OK) {
                 Bundle bundle = data.getExtras();
+                assert bundle != null;
                 latLng = bundle.getParcelable("address");
                 new FetchAddress().execute(latLng);
                 moveMap();
@@ -470,7 +471,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void setMarkerBounce(ClusterManager clusterManager) {
-        for (final com.google.android.gms.maps.model.Marker m : clusterManager.getMarkerCollection().getMarkers()) {
+        ArrayList<Marker> markers = (ArrayList<Marker>) clusterManager.getMarkerCollection().getMarkers();
+        for (final com.google.android.gms.maps.model.Marker m : markers) {
             final Handler handler = new Handler();
             final long startTime = SystemClock.uptimeMillis();
             final long duration = 2000;
@@ -486,13 +488,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 }
             });
-            return;
         }
     }
 
     void setNodalStopValue(NodalStop nodalStopValue) {
         this.nodalStop = nodalStopValue;
-        txtAddressNodal.setText("You selected " + nodalStopValue.getStop().getName());
+        txtAddressNodal.setText(String.format("You selected %s", nodalStopValue.getStop().getName()));
 
     }
 
@@ -567,7 +568,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    class FetchAddress extends AsyncTask<LatLng, Void, android.location.Address> {
+    private class FetchAddress extends AsyncTask<LatLng, Void, android.location.Address> {
         android.location.Address coreAddress;
 
         @Override
@@ -597,7 +598,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 address.setCountry(replaceNull(coreAddress.getCountryName()));
                 geoJsonPoint = new GeoJsonPoint(coreAddress.getLongitude(), coreAddress.getLatitude());
             } else {
-                txtAddressHome.setText("Unable to fetch address");
+                txtAddressHome.setText(R.string.locatopn_error);
             }
         }
     }

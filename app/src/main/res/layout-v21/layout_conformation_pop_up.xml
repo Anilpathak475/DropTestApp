@@ -30,22 +30,22 @@
 
             <Button
                 android:id="@+id/btn_ok"
+                style="?android:buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="65dp"
                 android:layout_marginEnd="0.5dp"
                 android:layout_marginTop="0.5dp"
                 android:layout_weight="1"
                 android:background="@color/white"
-                style="?android:buttonBarButtonStyle"
 
                 android:text="@string/yes"
                 android:textColor="@color/red" />
 
             <Button
                 android:id="@+id/btn_cancel"
+                style="?android:buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="65dp"
-                style="?android:buttonBarButtonStyle"
                 android:layout_marginTop="0.5dp"
                 android:layout_weight="1"
                 android:background="@color/white"

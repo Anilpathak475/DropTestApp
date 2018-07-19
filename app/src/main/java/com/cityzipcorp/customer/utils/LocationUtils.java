@@ -5,13 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.cityzipcorp.customer.model.GeoJsonPoint;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -85,26 +83,5 @@ public class LocationUtils {
                 }
             }
         });
-    }
-
-    public GeoJsonPoint getLocation(GoogleApiClient googleApiClient) {
-
-        GeoJsonPoint geoJsonPoint = null;
-        if (!checkLocationPermission()) {
-            requestLocationPermission();
-        } else {
-            if (!isLocationEnabled()) {
-                enableGps(googleApiClient);
-            }
-        }
-        Location mLastLocation = LocationServices.FusedLocationApi
-                .getLastLocation(googleApiClient);
-
-        if (mLastLocation != null) {
-            geoJsonPoint = new GeoJsonPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        } else {
-            geoJsonPoint = new GeoJsonPoint(0, 0);
-        }
-        return geoJsonPoint;
     }
 }

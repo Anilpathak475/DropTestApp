@@ -42,7 +42,9 @@ import com.cityzipcorp.customer.utils.LocationUtils;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -112,6 +114,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     private BoardingPass boardingPass;
     private BoardingPassPresenter boardingPassPresenter;
     private LocationUtils locationUtils;
+    private FusedLocationProviderClient mFusedLocationClient;
     private boolean sosRequested = false;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -136,6 +139,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
         ButterKnife.bind(this, view);
         locationUtils = new LocationUtils(activity);
         buildGoogleApiClient();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         locationUtils.enableGps(googleApiClient);
         LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         if (locationUtils.checkLocationPermission()) {
@@ -178,8 +182,16 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
         if (NetworkUtils.isNetworkAvailable(activity)) {
             if (locationUtils.checkLocationPermission()) {
                 if (locationUtils.isLocationEnabled()) {
-                    Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-                    getRideDetails(location);
+                    mFusedLocationClient.getLastLocation()
+                            .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    // Got last known location. In some rare situations, this can be null.
+                                    if (location != null) {
+                                        getRideDetails(location);
+                                    }
+                                }
+                            });
                 } else {
                     locationUtils.enableGps(googleApiClient);
                 }
@@ -281,17 +293,23 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     void onClickSos() {
         if (locationUtils.checkLocationPermission()) {
             if (locationUtils.isLocationEnabled()) {
-                Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-                if (location == null) {
-                    sosRequested = true;
-                }
-                if (NetworkUtils.isNetworkAvailable(activity)) {
-                    sosRequested = false;
-                    boardingPassPresenter.sendSos(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
-                            location, boardingPass.getId(), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
-                } else {
-                    uiUtils.noInternetDialog();
-                }
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations, this can be null.
+                                if (location != null) {
+                                    if (NetworkUtils.isNetworkAvailable(activity)) {
+                                        sosRequested = false;
+                                        boardingPassPresenter.sendSos(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                                                location, boardingPass.getId(), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+                                    } else {
+                                        uiUtils.noInternetDialog();
+                                    }
+                                }
+                            }
+                        });
+
             }
         } else {
             uiUtils.notifyDialog("Please enable location to perform sos", new DialogCallback() {
@@ -326,14 +344,22 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     private void markAttendance() {
         if (locationUtils.checkLocationPermission()) {
             if (locationUtils.isLocationEnabled()) {
-                Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-                if (NetworkUtils.isNetworkAvailable(activity)) {
-                    boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
-                            location, boardingPass.getId(),
-                            sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
-                } else {
-                    uiUtils.noInternetDialog();
-                }
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations, this can be null.
+                                if (location != null) {
+                                    if (NetworkUtils.isNetworkAvailable(activity)) {
+                                        boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                                                location, boardingPass.getId(),
+                                                sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+                                    } else {
+                                        uiUtils.noInternetDialog();
+                                    }
+                                }
+                            }
+                        });
             }
         }
 

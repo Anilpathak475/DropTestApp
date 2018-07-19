@@ -45,8 +45,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:contentDescription="@string/date"
-                            android:background="@drawable/ic_calendar_red" />
+                            android:background="@drawable/ic_calendar_red"
+                            android:contentDescription="@string/date" />
 
                         <TextView
                             android:id="@+id/txt_date"
@@ -65,14 +65,15 @@
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="25dp"
                         android:orientation="horizontal"
-                        android:padding="10dp">
+                        android:padding="10dp"
+                        tools:ignore="UseCompoundDrawables">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:contentDescription="@string/time"
-                            android:background="@drawable/ic_clock_circular_outline" />
+                            android:background="@drawable/ic_clock_circular_outline"
+                            android:contentDescription="@string/time" />
 
                         <TextView
                             android:id="@+id/txt_start_time"
@@ -261,8 +262,8 @@
                     android:layout_height="60dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="30dp"
-                    android:contentDescription="@string/open_camera"
-                    android:background="@drawable/ic_open_camera" />
+                    android:background="@drawable/ic_open_camera"
+                    android:contentDescription="@string/open_camera" />
 
                 <TextView
                     android:layout_width="60dp"

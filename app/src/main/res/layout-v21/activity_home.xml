@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/too_bar_color"
+        android:elevation="4dp"
         android:minHeight="?attr/actionBarSize"
         app:contentInsetEnd="0dp"
         app:contentInsetStart="0dp">
@@ -26,8 +27,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="15dp"
-                android:contentDescription="@string/refresh"
                 android:background="@drawable/ic_refresh_black_24dp"
+                android:contentDescription="@string/refresh"
                 android:visibility="gone" />
 
             <Button
@@ -56,6 +57,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="#5C5C5C"
+                android:stateListAnimator="@null"
                 android:text="@string/bulk"
                 android:textColor="@color/white"
                 android:visibility="gone" />
@@ -67,6 +69,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="#5C5C5C"
+                android:stateListAnimator="@null"
                 android:text="@string/done"
                 android:textColor="@color/white"
 
@@ -79,6 +82,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="#5C5C5C"
+                android:stateListAnimator="@null"
                 android:text="@string/update"
                 android:textColor="@color/white"
                 android:visibility="gone" />
@@ -111,7 +115,8 @@
             android:id="@+id/card_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:elevation="10dp">
 
             <android.support.design.widget.BottomNavigationView
                 android:id="@+id/navigation"

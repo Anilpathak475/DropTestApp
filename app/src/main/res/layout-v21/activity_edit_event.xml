@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#5C5C5C"
+        android:elevation="4dp"
         android:minHeight="?attr/actionBarSize"
         app:contentInsetEnd="0dp"
         app:contentInsetStart="0dp">
@@ -178,6 +179,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
+                android:buttonTint="@color/app_theme_red"
                 android:text="@string/cancel_event"
                 android:textSize="17sp"
                 android:textStyle="normal" />

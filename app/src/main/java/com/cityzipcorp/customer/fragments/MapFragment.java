@@ -37,6 +37,7 @@ import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -52,6 +53,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.concurrent.TimeUnit;
 
@@ -83,9 +85,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     private Marker vehicleMarker;
     private Marker serviceMarker;
-    private Marker userLocationMarker;
     private LocationUtils locationUtils;
-    boolean isMarkerRotating;
     private GoogleApiClient googleApiClient;
     private TrackRide trackRide;
     private BoardingPass boardingPass;
@@ -98,6 +98,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             handler.postDelayed(this, 10000);
         }
     };
+    private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,7 +109,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         ButterKnife.bind(this, view);
         init(savedInstanceState, view);
@@ -123,7 +124,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         mMapView = view.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
-
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
     }
 
     @Override
@@ -154,11 +155,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     private void startTrackingRepeated() {
         handler.postDelayed(locationRequestRunnable, 10000);
-    }
-
-    private void moveMap() {
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(boardingPass.getGeoJsonPoint().getLocation(), 14.0f));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
     }
 
     @Override
@@ -198,13 +194,20 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     private void requestLatestTrackLocations() {
         if (locationUtils.checkLocationPermission()) {
-            Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            if (location != null) {
-                Log.d("Location", "my location is " + location.toString());
-                fetchTripDetailsOnMap(location);
-            } else {
-                uiUtils.shortToast("Unable to fetch location");
-            }
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations, this can be null.
+                            if (location != null) {
+                                Log.d("Location", "my location is " + location.toString());
+                                fetchTripDetailsOnMap(location);
+                            } else {
+                                uiUtils.shortToast("Unable to fetch location");
+                            }
+                        }
+                    });
+
         } else {
             locationUtils.requestLocationPermission();
         }
@@ -251,11 +254,11 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                 layoutOtp.setVisibility(View.GONE);
             } else {
                 layoutOtp.setVisibility(View.VISIBLE);
-                txtOtp.setText(" " + boardingPass.getOtp());
+                txtOtp.setText(String.format(" %s", boardingPass.getOtp()));
             }
             if (trackRide.getEta() >= 0) {
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(trackRide.getEta());
-                txtEta.setText(String.valueOf(minutes) + " m");
+                txtEta.setText(String.format("%s m", String.valueOf(minutes)));
             }
             drawTripDetailsOnMap(trackRide);
             startTrackingRepeated();
@@ -272,7 +275,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                     serviceMarker = googleMap.addMarker(new MarkerOptions().
                             position(latLng).
                             title("Service Location").icon(BitmapDescriptorFactory.
-                            fromBitmap(getBitmapBySize(R.drawable.service_location_pin, 80, 120))));
+                            fromBitmap(getBitmapBySize(R.drawable.service_location_pin))));
 
                 }
                 builder.include(latLng);
@@ -285,7 +288,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                     vehicleMarker = googleMap.addMarker(new MarkerOptions().
                             position(latLng).
                             title("Vehicle Location").icon(BitmapDescriptorFactory.
-                            fromBitmap(getBitmapBySize(R.drawable.track_bus_pin, 80, 120))));
+                            fromBitmap(getBitmapBySize(R.drawable.track_bus_pin))));
 
                 } else {
                     animateMarker(vehicleMarker, latLng, false);
@@ -351,27 +354,28 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     }
 
 
-    private Bitmap getBitmapBySize(int iconResID, int width, int height) {
+    private Bitmap getBitmapBySize(int iconResID) {
         Drawable drawable = ContextCompat.getDrawable(activity, iconResID);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            assert drawable != null;
             drawable = (DrawableCompat.wrap(drawable)).mutate();
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return Bitmap.createScaledBitmap(bitmap, 80, 120, false);
         }
-
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-        return Bitmap.createScaledBitmap(bitmap, width, height, false);
+        return null;
     }
 
     public void animateMarker(final Marker marker, final LatLng toPosition,
                               final boolean hideMarker) {
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
-        Projection proj = googleMap.getProjection();
-        Point startPoint = proj.toScreenLocation(marker.getPosition());
-        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+        Projection projection = googleMap.getProjection();
+        Point startPoint = projection.toScreenLocation(marker.getPosition());
+        final LatLng startLatLng = projection.fromScreenLocation(startPoint);
         final long duration = 500;
 
         final Interpolator interpolator = new LinearInterpolator();
@@ -402,7 +406,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         });
     }
 
-    private double bearingBetweenLocations(LatLng latLng1, LatLng latLng2) {
+   /* private double bearingBetweenLocations(LatLng latLng1, LatLng latLng2) {
 
         double PI = 3.14159;
         double lat1 = latLng1.latitude * PI / 180;
@@ -453,6 +457,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                 }
             });
         }
-    }
+    }*/
 
 }
