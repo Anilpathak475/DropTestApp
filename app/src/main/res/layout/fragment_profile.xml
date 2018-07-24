@@ -131,7 +131,6 @@
                             <Switch
                                 android:id="@+id/opt_in_switch"
                                 android:layout_width="wrap_content"
-                                style="@style/switch_properties"
                                 android:thumbTint="#2C3E50"
                                 android:trackTint="#707070"
                                 android:layout_height="wrap_content"
