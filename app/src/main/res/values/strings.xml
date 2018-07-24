@@ -54,8 +54,13 @@
     <string name="select_area">Select Area</string>
     <string name="no">No</string>
     <string name="opt_in_description">Opt-In settings</string>
-    <string name="opt_in_opted_in_description">You are currently opted in, change to opted out by uncheking here</string>
-    <string name="opt_in_opted_out_description">You are currently opted out, change to opted in by checking here</string>
+    <string name="opt_in_opted_in_description">You are now subscribed for transport
+services. In case you need to pause the
+service for a certain period please click here</string>
+    <string name="opt_in_opted_out_description">You are not subscribed for transport
+services. In case you wish to avail the
+transport service for a certain period
+please click here</string>
     <string name="weekdays_off">Weekdays Off</string>
     <string name="landmark">Landmark</string>
     <string name="enter_address_building_no_street_name">Enter Address(Building No/Street name)</string>

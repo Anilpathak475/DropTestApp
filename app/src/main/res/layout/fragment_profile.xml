@@ -125,16 +125,17 @@
                                 android:id="@+id/opt_in_description"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
                                 android:layout_weight="1"
                                 android:text="@string/opt_in_opted_in_description"
-                                android:textSize="18dp" />
+                                android:textSize="18sp" />
 
-                            <CheckBox
-                                android:id="@+id/opt_in_checkbox"
+                            <Switch
+                                android:id="@+id/opt_in_switch"
                                 android:layout_width="wrap_content"
+                                style="@style/switch_properties"
+                                android:thumbTint="#2C3E50"
+                                android:trackTint="#707070"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
                                 android:layout_gravity="center_vertical" />
 
                         </LinearLayout>

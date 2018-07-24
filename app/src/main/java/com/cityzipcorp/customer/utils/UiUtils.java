@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.callbacks.DialogCallback;
+import com.cityzipcorp.customer.callbacks.OptOutDialogCallback;
 
 /**
  * Created by anilpathak on 05/09/17.
@@ -29,6 +30,7 @@ public class UiUtils {
     public Activity activity;
     AVLoadingIndicatorDialog avLoadingIndicatorDialog;
     private ProgressDialog progress;
+    Dialog dialog;
 
     public UiUtils(Activity activity) {
         this.activity = activity;
@@ -82,6 +84,44 @@ public class UiUtils {
             return;
         }
         try {
+            if (dialog == null) {
+                dialog = new Dialog(activity);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.layout_conformation_pop_up);
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                Button btnOk = dialog.findViewById(R.id.btn_ok);
+                TextView textView = dialog.findViewById(R.id.txt_message);
+                textView.setText(message);
+                Button btnCancel = dialog.findViewById(R.id.btn_cancel);
+                btnOk.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                        dialogCallback.onYes();
+                        dialog = null;
+                    }
+                });
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                        dialog = null;
+                    }
+                });
+                dialog.show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void optOutConformationDialog(String message, final OptOutDialogCallback dialogCallback) {
+        if (activity == null) {
+            return;
+        }
+        try {
             final Dialog dialog = new Dialog(activity);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.layout_conformation_pop_up);
@@ -102,7 +142,7 @@ public class UiUtils {
                 @Override
                 public void onClick(View view) {
                     dialog.dismiss();
-
+                    dialogCallback.onNo();
                 }
             });
             dialog.show();
