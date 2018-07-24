@@ -18,10 +18,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -29,6 +29,7 @@ import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.activities.MapsActivity;
 import com.cityzipcorp.customer.base.BaseFragment;
 import com.cityzipcorp.customer.callbacks.DialogCallback;
+import com.cityzipcorp.customer.callbacks.OptOutDialogCallback;
 import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.model.Address;
 import com.cityzipcorp.customer.model.User;
@@ -108,8 +109,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    @BindView(R.id.opt_in_checkbox)
-    CheckBox optInCheckBox;
+    @BindView(R.id.opt_in_switch)
+    Switch optInSwitch;
 
     @BindView(R.id.weekdays)
     LinearLayout layoutWeekdays;
@@ -183,25 +184,27 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         return bundle;
     }
 
-    @OnCheckedChanged(R.id.opt_in_checkbox)
+    @OnCheckedChanged(R.id.opt_in_switch)
     void onOptedInCheckedBoxClicked(CompoundButton button, boolean checked) {
-        uiUtils.showProgressDialog();
         if (NetworkUtils.isNetworkAvailable(activity)) {
             optInChanged(checked);
         } else {
             button.setChecked(!checked);
             uiUtils.noInternetDialog();
-            uiUtils.dismissDialog();
         }
     }
 
     private void optInChanged(final boolean checked) {
         if (!checked) {
-            uiUtils.conformationDialog("Are you sure you want to opt out!", new DialogCallback() {
+            uiUtils.optOutConformationDialog("Are you sure you want to opt out!", new OptOutDialogCallback() {
                 @Override
                 public void onYes() {
                     user.setOptedIn(false);
                     updateOptInSelection();
+                }
+
+                public void onNo() {
+                    optInSwitch.setChecked(true);
                 }
             });
         } else {
@@ -211,6 +214,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     }
 
     private void updateOptInSelection() {
+        uiUtils.showProgressDialog();
         UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
                 updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
                     @Override
@@ -223,7 +227,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                     @Override
                     public void onFailure(Error error) {
                         uiUtils.dismissDialog();
-                        optInCheckBox.setChecked(!user.getOptedIn());
+                        optInSwitch.setChecked(!user.getOptedIn());
                         activity.isOptIn = !user.getOptedIn();
                         uiUtils.shortToast("Unable to update profile!");
                     }
@@ -447,7 +451,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             txtEmpId.setText(user.getEmployeeId());
         }
         if (user.getOptedIn() != null) {
-            optInCheckBox.setChecked(user.getOptedIn());
+            optInSwitch.setChecked(user.getOptedIn());
             activity.isOptIn = user.getOptedIn();
             setOptInDescription(user.getOptedIn());
         }
