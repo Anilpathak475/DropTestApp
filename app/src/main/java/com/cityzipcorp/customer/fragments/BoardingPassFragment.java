@@ -341,11 +341,11 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
         }
     }
 
-    private void markAttendance(String vehicleNumber) {
+    private void markAttendance(String vehicleId) {
 
         if (NetworkUtils.isNetworkAvailable(activity)) {
             boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
-                    vehicleNumber, boardingPass.getId(),
+                    vehicleId, boardingPass.getId(),
                     sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
         } else {
             uiUtils.noInternetDialog();

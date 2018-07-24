@@ -15,7 +15,7 @@ public class Attendance {
     @SerializedName("attended_at")
     private Date attendedAt;
 
-    @SerializedName("vehicle_number")
+    @SerializedName("vehicle_id")
     private String vehicleNumber;
 
     public void setVehicleNumber(String vehicleNumber) {
