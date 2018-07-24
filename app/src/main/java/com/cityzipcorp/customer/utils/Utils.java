@@ -13,6 +13,9 @@ import java.util.Map;
  */
 
 public class Utils {
+    public static Utils getInstance() {
+        return new Utils();
+    }
 
     public static Map<String, String> getHeader(String authToken) {
         Field[] fields = Build.VERSION_CODES.class.getFields();
@@ -47,5 +50,11 @@ public class Utils {
         } else {
             return "";
         }
+    }
+
+
+    public UserAgentInterceptor getUserAgent() {
+        int sdkVersion = Build.VERSION.SDK_INT;
+        return new UserAgentInterceptor("" + sdkVersion, Build.MANUFACTURER, Build.MODEL, "454834548632", "44:44:44:44:44", BuildConfig.VERSION_NAME);
     }
 }

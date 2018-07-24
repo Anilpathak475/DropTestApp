@@ -335,32 +335,20 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
                 if (result.getContents() == null) {
                     uiUtils.shortToast("Cancelled");
                 } else {
-                    markAttendance();
+                    markAttendance(result.getContents());
                 }
             }
         }
     }
 
-    private void markAttendance() {
-        if (locationUtils.checkLocationPermission()) {
-            if (locationUtils.isLocationEnabled()) {
-                mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                // Got last known location. In some rare situations, this can be null.
-                                if (location != null) {
-                                    if (NetworkUtils.isNetworkAvailable(activity)) {
-                                        boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
-                                                location, boardingPass.getId(),
-                                                sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
-                                    } else {
-                                        uiUtils.noInternetDialog();
-                                    }
-                                }
-                            }
-                        });
-            }
+    private void markAttendance(String vehicleNumber) {
+
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                    vehicleNumber, boardingPass.getId(),
+                    sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+        } else {
+            uiUtils.noInternetDialog();
         }
 
     }

@@ -12,7 +12,7 @@ public interface BoardingPassInteractor {
 
     void getRideDetails(String baseUrl, Location location, String passId, String accessToken, TrackMyRideCallback trackMyRideCallback);
 
-    void markAttendance(String baseUrl, Location location, String passId, String accessToken, BoardingPassAttendanceCallback boardingPassCommonCallback);
+    void markAttendance(String baseUrl, String vehicleNumber, String passId, String accessToken, BoardingPassAttendanceCallback boardingPassCommonCallback);
 
     interface BoardingPassCommonCallback {
         void setError(String error);
