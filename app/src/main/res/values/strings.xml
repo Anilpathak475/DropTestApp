@@ -45,7 +45,7 @@
     <string name="new_account">Don\'t have an account yet, click Register!</string>
     <string name="register">Register</string>
     <string name="select_area">Select Area</string>
-   <string name="opt_in_description">Opt-In settings</string>
+    <string name="opt_in_description">Opt-In settings</string>
     <string name="opt_in_opted_in_description">You are now subscribed for transport
 services. In case you need to pause the
 service for a certain period please click here</string>
