@@ -87,12 +87,11 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
     }
 
     @Override
-    public void markAttendance(String baseUrl, Location location, String passId, String accessToken, final BoardingPassAttendanceCallback boardingPassCommonCallback) {
-        GeoJsonPoint geoJsonPoint = new GeoJsonPoint(location.getLongitude(), location.getLatitude());
+    public void markAttendance(String baseUrl, String vehicleId, String passId, String accessToken, final BoardingPassAttendanceCallback boardingPassCommonCallback) {
         Attendance attendance = new Attendance();
         attendance.setAttendedAt(Calendar.getInstance().getTime());
         attendance.setAttended(true);
-        attendance.setGeoJsonPoint(geoJsonPoint);
+        attendance.setVehicleId(vehicleId);
         BoardingPassStore.getInstance(baseUrl).markAttendance(attendance, passId, accessToken, new StatusCallback() {
             @Override
             public void onSuccess() {

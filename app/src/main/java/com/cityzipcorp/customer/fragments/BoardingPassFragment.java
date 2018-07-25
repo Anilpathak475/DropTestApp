@@ -335,35 +335,23 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
                 if (result.getContents() == null) {
                     uiUtils.shortToast("Cancelled");
                 } else {
-                    markAttendance();
+                    String vehicleId = result.getContents();
+                    markAttendance(vehicleId);
                 }
             }
         }
     }
 
-    private void markAttendance() {
-        if (locationUtils.checkLocationPermission()) {
-            if (locationUtils.isLocationEnabled()) {
-                mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                // Got last known location. In some rare situations, this can be null.
-                                if (location != null) {
-                                    if (NetworkUtils.isNetworkAvailable(activity)) {
-                                        boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
-                                                location, boardingPass.getId(),
-                                                sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
-                                    } else {
-                                        uiUtils.noInternetDialog();
-                                    }
-                                }
-                            }
-                        });
-            }
+    private void markAttendance(String vehicleId) {
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                    vehicleId, boardingPass.getId(),
+                    sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+        } else {
+            uiUtils.noInternetDialog();
         }
-
     }
+
 
     @Override
     public void showProgress() {
