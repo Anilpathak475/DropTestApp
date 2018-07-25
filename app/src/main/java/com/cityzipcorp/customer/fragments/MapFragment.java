@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -356,17 +355,14 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     private Bitmap getBitmapBySize(int iconResID) {
         Drawable drawable = ContextCompat.getDrawable(activity, iconResID);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            assert drawable != null;
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-            return Bitmap.createScaledBitmap(bitmap, 80, 120, false);
-        }
-        return null;
+        assert drawable != null;
+        drawable = (DrawableCompat.wrap(drawable)).mutate();
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return Bitmap.createScaledBitmap(bitmap, 80, 120, false);
     }
 
     public void animateMarker(final Marker marker, final LatLng toPosition,
