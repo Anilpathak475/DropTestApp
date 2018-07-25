@@ -16,10 +16,10 @@ public class Attendance {
     private Date attendedAt;
 
     @SerializedName("vehicle_id")
-    private String vehicleNumber;
+    private String vehicleId;
 
-    public void setVehicleNumber(String vehicleNumber) {
-        this.vehicleNumber = vehicleNumber;
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
     }
 
     public boolean isAttended() {

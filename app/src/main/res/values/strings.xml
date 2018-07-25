@@ -95,7 +95,6 @@ please click here</string>
     <string name="car">Car</string>
     <string name="rotate">Rotate</string>
     <string name="border">Border</string>
-
     <string name="open_maps">Open Maps</string>
     <string name="time">Time</string>
     <string name="date">Date</string>
@@ -103,12 +102,11 @@ please click here</string>
     <string name="search">Search</string>
     <string name="show_password">Show Password</string>
     <string name="top_logo">Top Logo</string>
+    <string name="logout">Logout</string>
     <string name="please_select_any_of_the_nodal_stops_highlighted_in_pink">Please select any of the nodal stops highlighted in pink</string>
     <string name="tap_here_to_search_location">Tap here to search location</string>
     <string name="contract">Contract</string>
-
     <string name="forgot_password">Forgot Password?</string>
-
     <string name="done">Done</string>
     <string name="loading_title">Loading…</string>
     <string name="refresh">Refresh</string>
@@ -126,5 +124,10 @@ please click here</string>
     <string name="days">Selected Dates</string>
     <string name="locatopn_error">Unable to fetch address</string>
     <string name="week_off">Weekly Off</string>
+    <string name="password">Password</string>
+    <string name="back">Back</string>
+    <string name="bulk">Bulk</string>
+    <string name="right">Right</string>
+
 
 </resources>

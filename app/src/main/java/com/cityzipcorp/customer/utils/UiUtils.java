@@ -28,9 +28,9 @@ import com.cityzipcorp.customer.callbacks.OptOutDialogCallback;
 
 public class UiUtils {
     public Activity activity;
-    AVLoadingIndicatorDialog avLoadingIndicatorDialog;
+    private AVLoadingIndicatorDialog avLoadingIndicatorDialog;
     private ProgressDialog progress;
-    Dialog dialog;
+    private Dialog dialog;
 
     public UiUtils(Activity activity) {
         this.activity = activity;
