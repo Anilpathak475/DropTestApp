@@ -27,4 +27,5 @@ public interface Constants {
     String FORGOT_PASSWORD_CHANGE_URL = "/api/v1/users/set_new_password/";
     String NEW_USER_PASSWORD_CHANGE_URL = "/api/v1/users/register/";
     int REQUEST_CODE_ADDRESS_INTENT = 186;
+    int PHONE_STATE_PERMISSION_TRACK = 1002;
 }

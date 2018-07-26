@@ -2,6 +2,7 @@ package com.cityzipcorp.customer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,6 +26,7 @@ import com.cityzipcorp.customer.mvp.login.LoginPresenter;
 import com.cityzipcorp.customer.mvp.login.LoginPresenterImpl;
 import com.cityzipcorp.customer.mvp.login.LoginView;
 import com.cityzipcorp.customer.store.UserStore;
+import com.cityzipcorp.customer.utils.LocationUtils;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
@@ -71,13 +73,23 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     private LoginPresenter loginPresenter;
     private List<Contract> contracts;
     private SharedPreferenceManager sharedPreferenceManager;
+    private LocationUtils locationUtils;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         init();
-
+        locationUtils = new LocationUtils(this);
+        if (!locationUtils.checkReadPhoneStatePermission()) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    locationUtils.requestPhoneStatePermission();
+                }
+            }, 1000);
+        }
     }
 
     private void getContracts() {
@@ -219,6 +231,11 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         Intent intent = new Intent(LoginActivity.this, ForgotPassword.class);
         intent.putExtra("action", "register");
         startActivity(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void startHomeActivity() {

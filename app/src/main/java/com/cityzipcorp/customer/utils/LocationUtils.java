@@ -45,6 +45,15 @@ public class LocationUtils {
 
     }
 
+    public boolean checkReadPhoneStatePermission() {
+        return ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void requestPhoneStatePermission() {
+        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_PHONE_STATE}, Constants.PHONE_STATE_PERMISSION_TRACK);
+    }
+
     public void enableGps(GoogleApiClient googleApiClient) {
         final LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);

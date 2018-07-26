@@ -32,7 +32,7 @@ import retrofit2.Response;
 
 public class ScheduleStore {
 
-    private static ScheduleStore instance = null;
+
     private ClientGenerator clientGenerator;
 
     private ScheduleStore(String baseUrl) {
@@ -40,10 +40,7 @@ public class ScheduleStore {
     }
 
     public static ScheduleStore getInstance(String baseUrl) {
-
-        instance = new ScheduleStore(baseUrl);
-
-        return instance;
+        return new ScheduleStore(baseUrl);
     }
 
     public void getSchedule(String authToken, final ScheduleCallback scheduleCallback) {

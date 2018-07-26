@@ -1,5 +1,7 @@
 package com.cityzipcorp.customer.store;
 
+import android.support.annotation.NonNull;
+
 import com.cityzipcorp.customer.callbacks.BoardingPassCallback;
 import com.cityzipcorp.customer.callbacks.StatusCallback;
 import com.cityzipcorp.customer.callbacks.TrackRideCallback;
@@ -21,7 +23,6 @@ import retrofit2.Response;
  */
 
 public class BoardingPassStore {
-    private static BoardingPassStore instance = null;
     private ClientGenerator clientGenerator;
 
     private BoardingPassStore(String baseUrl) {
@@ -29,8 +30,7 @@ public class BoardingPassStore {
     }
 
     public static BoardingPassStore getInstance(String baseUrl) {
-        instance = new BoardingPassStore(baseUrl);
-        return instance;
+        return new BoardingPassStore(baseUrl);
     }
 
     public void getBoardingPass(String authToken, final BoardingPassCallback boardingPassCallback) {
@@ -38,7 +38,7 @@ public class BoardingPassStore {
         Call<BoardingPass> call = boardingPassClient.getBoardingPass(Utils.getHeader(authToken));
         call.enqueue(new Callback<BoardingPass>() {
             @Override
-            public void onResponse(Call<BoardingPass> call, Response<BoardingPass> response) {
+            public void onResponse(@NonNull Call<BoardingPass> call, @NonNull Response<BoardingPass> response) {
                 if (response.isSuccessful()) {
                     boardingPassCallback.onSuccess(response.body());
                 } else {
@@ -47,7 +47,7 @@ public class BoardingPassStore {
             }
 
             @Override
-            public void onFailure(Call<BoardingPass> call, Throwable t) {
+            public void onFailure(@NonNull Call<BoardingPass> call, @NonNull Throwable t) {
                 boardingPassCallback.onFailure(new Error(t.getMessage()));
             }
         });
@@ -58,7 +58,7 @@ public class BoardingPassStore {
         Call<ResponseBody> call = boardingPassClient.sosAlert(sosBody, boardingPassId, Utils.getHeader(accessToken));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
                 } else {
@@ -67,7 +67,7 @@ public class BoardingPassStore {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 statusCallback.onFailure(new Error(t.getMessage()));
             }
         });
@@ -78,7 +78,7 @@ public class BoardingPassStore {
         Call<ResponseBody> call = boardingPassClient.markAttendance(attendance, boardingPassId, Utils.getHeader(accessToken));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
                 } else {
@@ -87,7 +87,7 @@ public class BoardingPassStore {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 statusCallback.onFailure(new Error(t));
             }
         });
@@ -98,7 +98,7 @@ public class BoardingPassStore {
         Call<TrackRide> call = boardingPassClient.trackMyRide(boardingPassId, lat, lng, Utils.getHeader(accessToken));
         call.enqueue(new Callback<TrackRide>() {
             @Override
-            public void onResponse(Call<TrackRide> call, Response<TrackRide> response) {
+            public void onResponse(@NonNull Call<TrackRide> call, @NonNull Response<TrackRide> response) {
                 if (response.isSuccessful()) {
                     trackRideCallback.onSuccess(response.body());
                 } else if (response.code() == 412) {
@@ -109,7 +109,7 @@ public class BoardingPassStore {
             }
 
             @Override
-            public void onFailure(Call<TrackRide> call, Throwable t) {
+            public void onFailure(@NonNull Call<TrackRide> call, @NonNull Throwable t) {
                 trackRideCallback.onFailure(new Error("Unable to Fetch Ride Details"));
             }
         });

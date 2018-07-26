@@ -127,17 +127,15 @@
             android:layout_height="35dp"
             android:layout_gravity="bottom"
             android:layout_marginTop="8dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
             app:backdropFillColor="@color/blue700"
             app:backdropStrokeColor="@color/blue700"
             app:backdropStrokeWidth="1dp"
             app:horizontalBarThickness="2dp"
             app:position="0"
+            app:tickMarkCount="7"
             app:progressDrawable="@drawable/transparent_progress_drawable"
             app:thumb="@drawable/thumb"
-            app:tickMarkCount="5"
-            app:tickMarkRadius="6dp" />
+            app:tickMarkRadius="7dp" />
 
         <RelativeLayout
             android:id="@+id/tick_mark_labels_rl"

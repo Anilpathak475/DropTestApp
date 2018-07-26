@@ -91,7 +91,7 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
         Attendance attendance = new Attendance();
         attendance.setAttendedAt(Calendar.getInstance().getTime());
         attendance.setAttended(true);
-        attendance.setVehicleId(vehicleNumber);
+        attendance.setVehicleNumber(vehicleNumber);
         BoardingPassStore.getInstance(baseUrl).markAttendance(attendance, passId, accessToken, new StatusCallback() {
             @Override
             public void onSuccess() {

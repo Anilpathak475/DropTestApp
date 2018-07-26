@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.telephony.TelephonyManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -517,12 +518,20 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     private void updateFcmTokenOnServer() {
+        TelephonyManager telephonyManager;
+        telephonyManager = (TelephonyManager) getSystemService(Context.
+                TELEPHONY_SERVICE);
         FcmRegistrationToken fcmRegistrationToken = new FcmRegistrationToken();
         fcmRegistrationToken.setName("Customer App");
         fcmRegistrationToken.setCloudMessageType("FCM");
         fcmRegistrationToken.setRegistrationId(sharedPreferenceManager.
                 getValue(SharedPreferenceManagerConstant.FCM_TOKEN));
-        fcmRegistrationToken.setDeviceId("83543303454710011");
+        if (!locationUtils.checkReadPhoneStatePermission()) {
+            fcmRegistrationToken.setDeviceId(telephonyManager.getDeviceId());
+        } else {
+            fcmRegistrationToken.setDeviceId("115566332211440");
+        }
+
         fcmRegistrationToken.setApplicationId("");
         UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
                 registerFcmToken(fcmRegistrationToken,
