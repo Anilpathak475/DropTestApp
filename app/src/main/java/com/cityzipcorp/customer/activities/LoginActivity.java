@@ -81,6 +81,10 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         init();
+
+    }
+
+    private void requestPhoneStatePermission() {
         locationUtils = new LocationUtils(this);
         if (!locationUtils.checkReadPhoneStatePermission()) {
             new Handler().postDelayed(new Runnable() {
@@ -153,6 +157,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         uiUtils = new UiUtils(this);
         loginPresenter = new LoginPresenterImpl(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
+        requestPhoneStatePermission();
         checkSession();
         getContracts();
     }
