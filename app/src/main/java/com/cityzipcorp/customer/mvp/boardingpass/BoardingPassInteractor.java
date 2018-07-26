@@ -2,6 +2,7 @@ package com.cityzipcorp.customer.mvp.boardingpass;
 
 import android.location.Location;
 
+import com.cityzipcorp.customer.model.Attendance;
 import com.cityzipcorp.customer.model.BoardingPass;
 import com.cityzipcorp.customer.model.TrackRide;
 
@@ -12,7 +13,7 @@ public interface BoardingPassInteractor {
 
     void getRideDetails(String baseUrl, Location location, String passId, String accessToken, TrackMyRideCallback trackMyRideCallback);
 
-    void markAttendance(String baseUrl, String vehicleNumber, String passId, String accessToken, BoardingPassAttendanceCallback boardingPassCommonCallback);
+    void markAttendance(String baseUrl, Attendance attendance, String passId, String accessToken, BoardingPassAttendanceCallback boardingPassCommonCallback);
 
     interface BoardingPassCommonCallback {
         void setError(String error);

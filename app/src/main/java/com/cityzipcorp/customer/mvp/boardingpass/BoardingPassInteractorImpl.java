@@ -12,8 +12,6 @@ import com.cityzipcorp.customer.model.SosBody;
 import com.cityzipcorp.customer.model.TrackRide;
 import com.cityzipcorp.customer.store.BoardingPassStore;
 
-import java.util.Calendar;
-
 public class BoardingPassInteractorImpl implements BoardingPassInteractor {
 
     @Override
@@ -87,11 +85,8 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
     }
 
     @Override
-    public void markAttendance(String baseUrl, String vehicleNumber, String passId, String accessToken, final BoardingPassAttendanceCallback boardingPassCommonCallback) {
-        Attendance attendance = new Attendance();
-        attendance.setAttendedAt(Calendar.getInstance().getTime());
-        attendance.setAttended(true);
-        attendance.setVehicleNumber(vehicleNumber);
+    public void markAttendance(String baseUrl, Attendance attendance, String passId, String accessToken, final BoardingPassAttendanceCallback boardingPassCommonCallback) {
+
         BoardingPassStore.getInstance(baseUrl).markAttendance(attendance, passId, accessToken, new StatusCallback() {
             @Override
             public void onSuccess() {

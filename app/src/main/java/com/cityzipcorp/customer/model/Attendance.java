@@ -10,6 +10,7 @@ import java.util.Date;
 
 public class Attendance {
     @SerializedName("attended_location")
+    private
     GeoJsonPoint geoJsonPoint;
     private boolean attended;
     @SerializedName("attended_at")

@@ -2,6 +2,8 @@ package com.cityzipcorp.customer.mvp.boardingpass;
 
 import android.location.Location;
 
+import com.cityzipcorp.customer.model.Attendance;
+
 public interface BoardingPassPresenter {
     void onDestroy();
 
@@ -11,5 +13,5 @@ public interface BoardingPassPresenter {
 
     void getRideDetails(String baseUrl, Location location, String passId, String accessToken);
 
-    void markAttendance(String baseUrl, String vehicleNumber, String passId, String accessToken);
+    void markAttendance(String baseUrl, Attendance attendance, String passId, String accessToken);
 }

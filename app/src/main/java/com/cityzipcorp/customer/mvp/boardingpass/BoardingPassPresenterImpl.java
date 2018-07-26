@@ -2,6 +2,7 @@ package com.cityzipcorp.customer.mvp.boardingpass;
 
 import android.location.Location;
 
+import com.cityzipcorp.customer.model.Attendance;
 import com.cityzipcorp.customer.model.BoardingPass;
 import com.cityzipcorp.customer.model.TrackRide;
 
@@ -67,9 +68,9 @@ public class BoardingPassPresenterImpl implements BoardingPassPresenter, Boardin
     }
 
     @Override
-    public void markAttendance(String baseUrl, String vehicleNumber, String passId, String accessToken) {
+    public void markAttendance(String baseUrl, Attendance attendance, String passId, String accessToken) {
         boardingPassView.showProgress();
-        boardingPassInteractor.markAttendance(baseUrl, vehicleNumber, passId, accessToken, this);
+        boardingPassInteractor.markAttendance(baseUrl, attendance, passId, accessToken, this);
     }
 
     @Override

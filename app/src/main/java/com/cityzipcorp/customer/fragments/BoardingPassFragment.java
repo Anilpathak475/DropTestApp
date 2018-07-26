@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.base.BaseFragment;
 import com.cityzipcorp.customer.callbacks.DialogCallback;
+import com.cityzipcorp.customer.model.Attendance;
 import com.cityzipcorp.customer.model.BoardingPass;
 import com.cityzipcorp.customer.model.GeoJsonPoint;
 import com.cityzipcorp.customer.model.TrackRide;
@@ -116,6 +117,8 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     private LocationUtils locationUtils;
     private FusedLocationProviderClient mFusedLocationClient;
     private boolean sosRequested = false;
+    private boolean attedanceMarked = false;
+    private String vehicleNumber;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -335,22 +338,49 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
                 if (result.getContents() == null) {
                     uiUtils.shortToast("Cancelled");
                 } else {
-                    markAttendance(result.getContents());
+                    scanResult(result.getContents());
                 }
             }
         }
     }
 
-    private void markAttendance(String vehicleId) {
-
+    private void scanResult(final String vehicleNumber) {
+        this.vehicleNumber = vehicleNumber;
+        final Attendance attendance = new Attendance();
+        attendance.setAttendedAt(Calendar.getInstance().getTime());
+        attendance.setAttended(true);
+        attendance.setVehicleNumber(vehicleNumber);
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
-                    vehicleId, boardingPass.getId(),
-                    sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+            if (locationUtils.checkLocationPermission() && locationUtils.isLocationEnabled()) {
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations, this can be null.
+                                GeoJsonPoint geoJsonPoint;
+                                if (location != null) {
+                                    geoJsonPoint = new GeoJsonPoint(location.getLongitude(), location.getLatitude());
+                                } else {
+                                    geoJsonPoint = new GeoJsonPoint(8.8, 8.8);
+                                }
+                                attendance.setGeoJsonPoint(geoJsonPoint);
+                                markAttendance(attendance);
+                            }
+                        });
+            } else {
+                locationUtils.enableGps(googleApiClient);
+                attendance.setGeoJsonPoint(new GeoJsonPoint(8.8, 8.8));
+                markAttendance(attendance);
+            }
         } else {
             uiUtils.noInternetDialog();
         }
+    }
 
+    private void markAttendance(Attendance attendance) {
+        boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                attendance, boardingPass.getId(),
+                sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
     }
 
     @Override
@@ -454,7 +484,17 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     @Override
     public void onLocationChanged(Location location) {
         if (sosRequested) {
+            sosRequested = false;
             onClickSos();
+        }
+        if (attedanceMarked) {
+            attedanceMarked = false;
+            final Attendance attendance = new Attendance();
+            attendance.setAttendedAt(Calendar.getInstance().getTime());
+            attendance.setAttended(true);
+            attendance.setVehicleNumber(vehicleNumber);
+            attendance.setGeoJsonPoint(new GeoJsonPoint(location.getLongitude(), location.getLatitude()));
+            markAttendance(attendance);
         }
     }
 
@@ -470,6 +510,5 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     @Override
     public void onProviderDisabled(String s) {
-
     }
 }
