@@ -35,7 +35,7 @@ android {
             multiDexEnabled true
             versionName '1.0'
             multiDexEnabled true
-            buildConfigField 'String', 'BASE_URL_CONTRACT', "\"https://api-preprod.cityzipcorp.in\""
+            buildConfigField 'String', 'BASE_URL_CONTRACT', "\"https://api-staging.cityzipcorp.in/api/v1/customer_contracts/summary/\""
             resValue 'string', 'google_maps_api_key', "\"AIzaSyDAmlBKUTYq6bc3D42L7i9_krGre-zvUrg\""
         }
 

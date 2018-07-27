@@ -132,8 +132,8 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     private void getSchedule() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
             uiUtils.showProgressDialog();
-            ScheduleStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
-                    getSchedule(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
+            ScheduleStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId)
+                    .getSchedule(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                             new ScheduleCallback() {
                                 @Override
                                 public void onSuccess(List<Schedule> schedules) {

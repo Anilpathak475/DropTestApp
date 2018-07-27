@@ -117,8 +117,9 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     private LocationUtils locationUtils;
     private FusedLocationProviderClient mFusedLocationClient;
     private boolean sosRequested = false;
-    private boolean attedanceMarked = false;
+    private boolean attendanceMarked = false;
     private String vehicleNumber;
+
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -168,6 +169,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
         activity.registerReceiver(mMessageReceiver, new IntentFilter("fcm_data"));
     }
 
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -208,18 +210,24 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     private void getRideDetails(Location location) {
         boardingPassPresenter.getRideDetails(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
-                location, boardingPass.getId(), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+                location, boardingPass.getId(), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), activity.macId);
     }
 
     protected synchronized void buildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(activity).addConnectionCallbacks(activity).addOnConnectionFailedListener(activity).addApi(LocationServices.API).build();
+        googleApiClient = new GoogleApiClient.Builder(activity).
+                addConnectionCallbacks(activity).
+                addOnConnectionFailedListener(activity).
+                addApi(LocationServices.API).build();
         googleApiClient.connect();
     }
 
     public void getPassDetails() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
             swipeRefreshLayout.setRefreshing(true);
-            boardingPassPresenter.getBoardingPass(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+            boardingPassPresenter.getBoardingPass(
+                    sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                    sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
+                    activity.macId);
         } else {
             uiUtils.noInternetDialog();
         }
@@ -304,8 +312,10 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
                                 if (location != null) {
                                     if (NetworkUtils.isNetworkAvailable(activity)) {
                                         sosRequested = false;
-                                        boardingPassPresenter.sendSos(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
-                                                location, boardingPass.getId(), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+                                        boardingPassPresenter.sendSos(
+                                                sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                                                location, boardingPass.getId(),
+                                                sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), activity.macId);
                                     } else {
                                         uiUtils.noInternetDialog();
                                     }
@@ -380,7 +390,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     private void markAttendance(Attendance attendance) {
         boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
                 attendance, boardingPass.getId(),
-                sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+                sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), activity.macId);
     }
 
     @Override
@@ -487,8 +497,8 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
             sosRequested = false;
             onClickSos();
         }
-        if (attedanceMarked) {
-            attedanceMarked = false;
+        if (attendanceMarked) {
+            attendanceMarked = false;
             final Attendance attendance = new Attendance();
             attendance.setAttendedAt(Calendar.getInstance().getTime());
             attendance.setAttended(true);

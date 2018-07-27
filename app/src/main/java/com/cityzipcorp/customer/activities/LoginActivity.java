@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         if (!NetworkUtils.isNetworkAvailable(this)) {
             uiUtils.noInternetDialog();
         } else {
-            UserStore.getInstance(BuildConfig.BASE_URL_CONTRACT).
+            UserStore.getInstance(BuildConfig.BASE_URL_CONTRACT, "").
                     getContracts(new ContractCallback() {
                         @Override
                         public void onSuccess(List<Contract> contracts) {

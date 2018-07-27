@@ -23,6 +23,7 @@ import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
+import com.cityzipcorp.customer.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,7 @@ public class AddressActivity extends AppCompatActivity {
     private Address selectedAddress;
     private UiUtils uiUtils;
     private List<String> areaNames = new ArrayList<>();
-
+    private String macId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,12 +81,13 @@ public class AddressActivity extends AppCompatActivity {
 
         getBundleExtra();
         getAreas();
+        macId = Utils.getInstance().getMacId(this);
     }
 
     private void getAreas() {
         if (NetworkUtils.isNetworkAvailable(this)) {
             uiUtils.showProgressDialog();
-            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                     getAreas(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new AreaCallback() {
                         @Override
                         public void onSuccess(List<Area> areas) {
@@ -162,7 +164,7 @@ public class AddressActivity extends AppCompatActivity {
                 user.setHomeStop(geoLocateAddress);
 
                 UserStore.getInstance(sharedPreferenceManager.
-                        getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                        getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                         updateProfileInfo(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
                             @Override
                             public void onSuccess(User user) {

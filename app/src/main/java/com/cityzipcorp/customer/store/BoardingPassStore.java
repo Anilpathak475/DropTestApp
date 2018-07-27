@@ -24,18 +24,20 @@ import retrofit2.Response;
 
 public class BoardingPassStore {
     private ClientGenerator clientGenerator;
+    private String macId;
 
-    private BoardingPassStore(String baseUrl) {
+    private BoardingPassStore(String baseUrl, String macId) {
         clientGenerator = new ClientGenerator(baseUrl);
+        this.macId = macId;
     }
 
-    public static BoardingPassStore getInstance(String baseUrl) {
-        return new BoardingPassStore(baseUrl);
+    public static BoardingPassStore getInstance(String baseUrl, String macId) {
+        return new BoardingPassStore(baseUrl, macId);
     }
 
     public void getBoardingPass(String authToken, final BoardingPassCallback boardingPassCallback) {
         BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
-        Call<BoardingPass> call = boardingPassClient.getBoardingPass(Utils.getHeader(authToken));
+        Call<BoardingPass> call = boardingPassClient.getBoardingPass(Utils.getHeader(authToken, macId));
         call.enqueue(new Callback<BoardingPass>() {
             @Override
             public void onResponse(@NonNull Call<BoardingPass> call, @NonNull Response<BoardingPass> response) {
@@ -55,7 +57,7 @@ public class BoardingPassStore {
 
     public void sosAlert(SosBody sosBody, String boardingPassId, String accessToken, final StatusCallback statusCallback) {
         BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
-        Call<ResponseBody> call = boardingPassClient.sosAlert(sosBody, boardingPassId, Utils.getHeader(accessToken));
+        Call<ResponseBody> call = boardingPassClient.sosAlert(sosBody, boardingPassId, Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -75,7 +77,7 @@ public class BoardingPassStore {
 
     public void markAttendance(Attendance attendance, String boardingPassId, String accessToken, final StatusCallback statusCallback) {
         BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
-        Call<ResponseBody> call = boardingPassClient.markAttendance(attendance, boardingPassId, Utils.getHeader(accessToken));
+        Call<ResponseBody> call = boardingPassClient.markAttendance(attendance, boardingPassId, Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -95,7 +97,7 @@ public class BoardingPassStore {
 
     public void trackMyRide(String boardingPassId, String lat, String lng, String accessToken, final TrackRideCallback trackRideCallback) {
         BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
-        Call<TrackRide> call = boardingPassClient.trackMyRide(boardingPassId, lat, lng, Utils.getHeader(accessToken));
+        Call<TrackRide> call = boardingPassClient.trackMyRide(boardingPassId, lat, lng, Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<TrackRide>() {
             @Override
             public void onResponse(@NonNull Call<TrackRide> call, @NonNull Response<TrackRide> response) {

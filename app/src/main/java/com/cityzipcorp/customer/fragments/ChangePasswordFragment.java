@@ -60,7 +60,8 @@ public class ChangePasswordFragment extends BaseFragment {
                 ChangePassword changePassword = new ChangePassword();
                 changePassword.setCurrentPassword(edtCurrentPassword.getText().toString());
                 changePassword.setNewPassword(edtNewPassword.getText().toString());
-                UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).changePassword(changePassword, sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new StatusCallback() {
+                UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId)
+                        .changePassword(changePassword, sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new StatusCallback() {
                     @Override
                     public void onSuccess() {
                         uiUtils.dismissDialog();

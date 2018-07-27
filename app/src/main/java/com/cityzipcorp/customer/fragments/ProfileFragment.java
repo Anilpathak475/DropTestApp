@@ -215,7 +215,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     private void updateOptInSelection() {
         uiUtils.showProgressDialog();
-        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                 updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
                     @Override
                     public void onSuccess(User user) {
@@ -386,7 +386,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                     user.setWeeekdaysOff(selectedDays);
                     uiUtils.showProgressDialog();
 
-                    UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                             updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
                                 @Override
                                 public void onSuccess(User user) {
@@ -529,7 +529,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         if (!onGoingProfileRequest)
             if (NetworkUtils.isNetworkAvailable(activity)) {
                 onGoingProfileRequest = true;
-                UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                         getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                                 new UserCallback() {
                                     @Override

@@ -163,7 +163,7 @@ public class GroupAndShiftFragment extends BaseFragment {
 
     private void getProfileInfo() {
         uiUtils.showProgressDialog();
-        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                 getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new UserCallback() {
                     @Override
                     public void onSuccess(User user) {
@@ -211,7 +211,7 @@ public class GroupAndShiftFragment extends BaseFragment {
     private void getGroupsAndShifts() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
             uiUtils.showProgressDialog();
-            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                     getShiftByGroup(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                             new GroupCallBack() {
                                 @Override
@@ -247,7 +247,7 @@ public class GroupAndShiftFragment extends BaseFragment {
             Shift shift = group.getShifts().get(selectedIndexOfShift);
             user.setGroupId(group.getId());
             user.setShiftId(shift.getId());
-            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                     updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                             user, new UserCallback() {
                                 @Override

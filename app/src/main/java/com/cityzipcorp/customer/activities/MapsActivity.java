@@ -39,6 +39,7 @@ import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
+import com.cityzipcorp.customer.utils.Utils;
 import com.etiennelawlor.discreteslider.library.ui.DiscreteSlider;
 import com.etiennelawlor.discreteslider.library.utilities.DisplayUtility;
 import com.google.android.gms.common.ConnectionResult;
@@ -106,6 +107,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private User user;
     private ClusterManager<NodalStop> mClusterManager;
     private LocationUtils locationUtils;
+    private String macId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +125,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         uiUtils = new UiUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         address = new com.cityzipcorp.customer.model.Address();
+        macId = Utils.getInstance().getMacId(this);
     }
 
     private void initLocation() {
@@ -203,7 +206,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             uiUtils.showProgressDialog();
             LatLngBounds latLngBoundsForApi = toBounds(latLng, distance);
             String boundingBounds = String.valueOf(latLngBoundsForApi.southwest.longitude + "," + latLngBoundsForApi.southwest.latitude + "," + latLngBoundsForApi.northeast.longitude + "," + latLngBoundsForApi.northeast.latitude);
-            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                     getNodalStopList(boundingBounds, sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new NodalStopCallback() {
                         @Override
                         public void onSuccess(List<NodalStop> nodalStopList) {
@@ -287,7 +290,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateNodalPoint() {
         if (nodalStop != null) {
             final NodalStopBody nodalStopBody = new NodalStopBody.Builder().setExternalStopId(nodalStop.getId()).setName(nodalStop.getStop().getName()).setCoordinates(nodalStop.getStop().getLocationA().getGeoJsonPoint()).build();
-            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                     updateNodalStop(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                             user.getId(), nodalStopBody, new StatusCallback() {
                                 @Override

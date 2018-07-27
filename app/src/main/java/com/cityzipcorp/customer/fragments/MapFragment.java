@@ -220,7 +220,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     private void fetchTripDetailsOnMap(Location location) {
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            BoardingPassStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            BoardingPassStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                     trackMyRide(boardingPass.getId(), String.valueOf(location.getLatitude()),
                             String.valueOf(location.getLongitude()), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                             new TrackRideCallback() {

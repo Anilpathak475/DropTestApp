@@ -27,6 +27,7 @@ import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
+import com.cityzipcorp.customer.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -96,6 +97,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     private TimeUpdate inTimeUpdate;
     private TimeUpdate outTimeUpdate;
     private UiUtils uiUtils;
+    private String macId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +106,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
         ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
+        macId = Utils.getInstance().getMacId(this);
         initTabLayout();
         getShiftTimings();
     }
@@ -116,7 +119,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     }
 
     private void getShiftTimings() {
-        ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+        ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                 getShiftTimings(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new ShiftCallback() {
             @Override
             public void onSuccess(ShiftTiming shiftTiming) {
@@ -137,7 +140,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     private void getReason() {
         if (NetworkUtils.isNetworkAvailable(this)) {
             uiUtils.showProgressDialog();
-            ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                     getReason(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new ReasonCallback() {
                 @Override
                 public void onSuccess(List<Reason> reasons) {
@@ -263,7 +266,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     }
 
     private void updateSchedule(Schedule schedule) {
-        ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+        ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                 updateSchedule(this, schedule, sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
     }
 

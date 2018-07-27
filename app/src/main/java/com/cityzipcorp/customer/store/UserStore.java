@@ -39,13 +39,15 @@ import retrofit2.Response;
 public class UserStore {
 
     private ClientGenerator clientGenerator;
+    private String macId;
 
-    private UserStore(String baseUrl) {
+    private UserStore(String baseUrl, String macId) {
         clientGenerator = new ClientGenerator(baseUrl);
+        this.macId = macId;
     }
 
-    public static UserStore getInstance(String baseUrl) {
-        return new UserStore(baseUrl);
+    public static UserStore getInstance(String baseUrl, String macId) {
+        return new UserStore(baseUrl, macId);
     }
 
     public void login(UserCredential userCredential, final UserCallback userCallback) {
@@ -74,7 +76,7 @@ public class UserStore {
     public void getProfileInfo(String authToken, final UserCallback userCallback) {
         Log.d("Auth token", authToken);
         UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<User> call = userClient.profile(Utils.getHeader(authToken));
+        Call<User> call = userClient.profile(Utils.getHeader(authToken, macId));
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -94,7 +96,7 @@ public class UserStore {
 
     public void updateProfileInfo(String authToken, User user, final UserCallback userCallback) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<User> call = userClient.updateProfile(Utils.getHeader(authToken), user.getId(), user);
+        Call<User> call = userClient.updateProfile(Utils.getHeader(authToken, macId), user.getId(), user);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -115,7 +117,7 @@ public class UserStore {
     public void updateOptInInfo(String authToken, User user, final UserCallback userCallback) {
 
         UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<User> call = userClient.updateProfile(Utils.getHeader(authToken), user.getId(), user);
+        Call<User> call = userClient.updateProfile(Utils.getHeader(authToken, macId), user.getId(), user);
 
         call.enqueue(new Callback<User>() {
             @Override
@@ -136,7 +138,7 @@ public class UserStore {
 
     public void logout(String autToken, final StatusCallback statusCallback) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<ResponseBody> call = userClient.logout(Utils.getHeader(autToken));
+        Call<ResponseBody> call = userClient.logout(Utils.getHeader(autToken, macId));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -156,7 +158,7 @@ public class UserStore {
 
     public void getNodalStopList(String boundingBoxString, String authToken, final NodalStopCallback nodalStopCallback) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<List<NodalStop>> call = userClient.getNodalStopList(boundingBoxString, Utils.getHeader(authToken));
+        Call<List<NodalStop>> call = userClient.getNodalStopList(boundingBoxString, Utils.getHeader(authToken, macId));
         call.enqueue(new Callback<List<NodalStop>>() {
             @Override
             public void onResponse(Call<List<NodalStop>> call, Response<List<NodalStop>> response) {
@@ -177,7 +179,7 @@ public class UserStore {
     public void updateNodalStop(String authToken, String id, NodalStopBody nodalStopBody, final StatusCallback statusCallback) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
         User user = new User(nodalStopBody);
-        Call<User> call = userClient.updateNodalPoint(Utils.getHeader(authToken), id, user);
+        Call<User> call = userClient.updateNodalPoint(Utils.getHeader(authToken, macId), id, user);
 
         call.enqueue(new Callback<User>() {
             @Override
@@ -199,7 +201,7 @@ public class UserStore {
 
     public void getShiftByGroup(String authToken, final GroupCallBack groupCallBack) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<List<Group>> call = userClient.getAllGroups(Utils.getHeader(authToken));
+        Call<List<Group>> call = userClient.getAllGroups(Utils.getHeader(authToken, macId));
         call.enqueue(new Callback<List<Group>>() {
             @Override
             public void onResponse(Call<List<Group>> call, Response<List<Group>> response) {
@@ -219,7 +221,7 @@ public class UserStore {
 
     public void getProfileStatus(String accessToken, final ProfileStatusCallback profileStatusCallback) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<ProfileStatus> call = userClient.getProfileStatus(Utils.getHeader(accessToken));
+        Call<ProfileStatus> call = userClient.getProfileStatus(Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<ProfileStatus>() {
             @Override
             public void onResponse(Call<ProfileStatus> call, Response<ProfileStatus> response) {
@@ -242,7 +244,7 @@ public class UserStore {
 
     public void registerFcmToken(FcmRegistrationToken fcmRegistrationToken, String accessToken) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<ResponseBody> call = userClient.registerDeviceToFcm(fcmRegistrationToken, Utils.getHeader(accessToken));
+        Call<ResponseBody> call = userClient.registerDeviceToFcm(fcmRegistrationToken, Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -262,7 +264,7 @@ public class UserStore {
 
     public void changePassword(ChangePassword changePassword, String accessToken, final StatusCallback statusCallback) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<ResponseBody> call = userClient.changePassword(changePassword, Utils.getHeader(accessToken));
+        Call<ResponseBody> call = userClient.changePassword(changePassword, Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -285,7 +287,7 @@ public class UserStore {
 
     public void getAreas(String accessToken, final AreaCallback areaCallback) {
         UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<List<Area>> call = userClient.getAreas(Utils.getHeader(accessToken));
+        Call<List<Area>> call = userClient.getAreas(Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<List<Area>>() {
             @Override
             public void onResponse(Call<List<Area>> call, Response<List<Area>> response) {

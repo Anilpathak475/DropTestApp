@@ -39,6 +39,7 @@ import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
+import com.cityzipcorp.customer.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -76,6 +77,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     @BindView(id.btn_update_password)
     Button btnUpdatePassword;
 
+    public String macId;
     public boolean bulkModeActivated = false;
     public boolean isOptIn = true;
     private boolean isInitialLoad = false;
@@ -161,13 +163,14 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         checkProfileStatus();
         checkLocationStatus();
         updateFcmTokenOnServer();
+
     }
 
     private void checkProfileStatus() {
         if (NetworkUtils.isNetworkAvailable(this)) {
             isInitialLoad = true;
             uiUtils.showProgressDialog();
-            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                     getProfileStatus(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                             new ProfileStatusCallback() {
                                 @Override
@@ -218,14 +221,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         locationUtils = new LocationUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         uiUtils = new UiUtils(this);
-       /* swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(false);
-                onSwipeRefresh();
-            }
-        });*/
-
+        macId = Utils.getInstance().getMacId(this);
     }
 
     private void deleteFcmInstance() {
@@ -533,7 +529,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         }
 
         fcmRegistrationToken.setApplicationId("");
-        UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+        UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                 registerFcmToken(fcmRegistrationToken,
                         sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
     }
