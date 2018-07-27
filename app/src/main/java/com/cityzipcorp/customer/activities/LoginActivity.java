@@ -107,10 +107,10 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
                             if (contracts.size() > 0) {
                                 setContractAdapter(contracts);
                             } else {
-                                uiUtils.notifyDialog("Unable to get contacts, please try again later ", new DialogCallback() {
+                                uiUtils.notifyDialog("Unable to get contracts, please try again later ", new DialogCallback() {
                                     @Override
                                     public void onYes() {
-                                        finish();
+                                        getContracts();
                                     }
                                 });
                             }
@@ -118,10 +118,10 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
                         @Override
                         public void onFailure(Error error) {
-                            uiUtils.notifyDialog("Unable to get contacts, please try again later ", new DialogCallback() {
+                            uiUtils.notifyDialog("Unable to get contracts, please try again later ", new DialogCallback() {
                                 @Override
                                 public void onYes() {
-                                    finish();
+                                    getContracts();
                                 }
                             });
                         }
