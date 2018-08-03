@@ -22,6 +22,7 @@ import com.marlonmafra.android.widget.EditTextPassword;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class SetNewPasswordActivity extends AppCompatActivity implements SetNewPasswordView {
 
@@ -39,6 +40,7 @@ public class SetNewPasswordActivity extends AppCompatActivity implements SetNewP
     private UiUtils uiUtils;
     private String resetId;
     private String emailId;
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +112,7 @@ public class SetNewPasswordActivity extends AppCompatActivity implements SetNewP
     @Override
     protected void onDestroy() {
         presenter.onDestroy();
+        unbinder.unbind();
         super.onDestroy();
     }
 }

@@ -55,6 +55,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by anilpathak on 02/11/17.
@@ -119,7 +120,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     private boolean sosRequested = false;
     private boolean attendanceMarked = false;
     private String vehicleNumber;
-
+    private Unbinder unbinder;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -140,7 +141,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_borading_pass, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         locationUtils = new LocationUtils(activity);
         buildGoogleApiClient();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
@@ -180,6 +181,16 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
         super.onDestroy();
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
         activity.unregisterReceiver(mMessageReceiver);
+        mMessageReceiver = null;
+        unbinder.unbind();
+        uiUtils = null;
+        locationUtils = null;
+        boardingPassPresenter = null;
+        boardingPass = null;
+        googleApiClient.disconnect();
+        mFusedLocationClient = null;
+        googleApiClient = null;
+        vehicleNumber = null;
     }
 
     @OnClick(R.id.btn_track_my_ride)

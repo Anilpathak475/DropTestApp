@@ -32,6 +32,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class AddressActivity extends AppCompatActivity {
 
@@ -68,11 +69,12 @@ public class AddressActivity extends AppCompatActivity {
     private UiUtils uiUtils;
     private List<String> areaNames = new ArrayList<>();
     private String macId;
+    private Unbinder unbinder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -222,5 +224,16 @@ public class AddressActivity extends AppCompatActivity {
         Intent intent = new Intent();
         setResult(RESULT_OK, intent);
         this.finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+        sharedPreferenceManager = null;
+        uiUtils = null;
+        areaNames.clear();
+        areaNames = null;
+        selectedAddress = null;
     }
 }

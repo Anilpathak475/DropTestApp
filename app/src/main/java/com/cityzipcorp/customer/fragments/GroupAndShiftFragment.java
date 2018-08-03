@@ -28,6 +28,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by anilpathak on 02/01/18.
@@ -50,6 +51,7 @@ public class GroupAndShiftFragment extends BaseFragment {
     private User userFromProfile;
 
     private boolean isiInit = true;
+    private Unbinder unbinder;
 
     public static GroupAndShiftFragment getInstance() {
         return new GroupAndShiftFragment();
@@ -66,7 +68,7 @@ public class GroupAndShiftFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group_and_shift, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         initListeners();
         getGroupsAndShifts();
         return view;
@@ -287,5 +289,11 @@ public class GroupAndShiftFragment extends BaseFragment {
             shiftList.add(shift.getName());
         }
         return shiftList;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

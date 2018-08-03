@@ -51,6 +51,7 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static com.cityzipcorp.customer.R.id;
 import static com.cityzipcorp.customer.R.string;
@@ -85,6 +86,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private UiUtils uiUtils;
     private LocationUtils locationUtils;
     private GoogleApiClient googleApiClient;
+    private Unbinder unbinder;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -156,7 +158,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private void init() {
         logUser();
         setContentView(R.layout.activity_home);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         buildGoogleApiClient();
         initVariables();
@@ -538,6 +540,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     protected void onDestroy() {
         super.onDestroy();
         unRegisterReceivers();
+        unbinder.unbind();
     }
 
     private void onSwipeRefresh() {

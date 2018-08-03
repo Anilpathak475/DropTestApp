@@ -41,6 +41,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSelectedListener {
 
@@ -98,12 +99,13 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     private TimeUpdate outTimeUpdate;
     private UiUtils uiUtils;
     private String macId;
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_event);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         macId = Utils.getInstance().getMacId(this);
@@ -121,20 +123,20 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     private void getShiftTimings() {
         ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                 getShiftTimings(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new ShiftCallback() {
-            @Override
-            public void onSuccess(ShiftTiming shiftTiming) {
-                inTimes.addAll(shiftTiming.getInTimes());
-                outTimes.addAll(shiftTiming.getOutTimes());
-                setAdapterToSpinner(inTimes, spnInTime);
-                setAdapterToSpinner(outTimes, spnOutTime);
-                getReason();
-            }
+                    @Override
+                    public void onSuccess(ShiftTiming shiftTiming) {
+                        inTimes.addAll(shiftTiming.getInTimes());
+                        outTimes.addAll(shiftTiming.getOutTimes());
+                        setAdapterToSpinner(inTimes, spnInTime);
+                        setAdapterToSpinner(outTimes, spnOutTime);
+                        getReason();
+                    }
 
-            @Override
-            public void onFailure(Error error) {
-                uiUtils.shortToast(error.getLocalizedMessage());
-            }
-        });
+                    @Override
+                    public void onFailure(Error error) {
+                        uiUtils.shortToast(error.getLocalizedMessage());
+                    }
+                });
     }
 
     private void getReason() {
@@ -142,26 +144,26 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
             uiUtils.showProgressDialog();
             ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                     getReason(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new ReasonCallback() {
-                @Override
-                public void onSuccess(List<Reason> reasons) {
-                    reasonList.add("Select Reason");
-                    for (Reason reason : reasons) {
-                        reasonList.add(reason.getReason());
-                    }
-                    // TODO: Extract this to method
-                    setAdapterToSpinner(reasonList, spnCancelReasonInTime);
-                    setAdapterToSpinner(reasonList, spnCancelReasonOutTime);
-                    setUiValues();
-                    layoutMain.setVisibility(View.VISIBLE);
-                    uiUtils.dismissDialog();
-                }
+                        @Override
+                        public void onSuccess(List<Reason> reasons) {
+                            reasonList.add("Select Reason");
+                            for (Reason reason : reasons) {
+                                reasonList.add(reason.getReason());
+                            }
+                            // TODO: Extract this to method
+                            setAdapterToSpinner(reasonList, spnCancelReasonInTime);
+                            setAdapterToSpinner(reasonList, spnCancelReasonOutTime);
+                            setUiValues();
+                            layoutMain.setVisibility(View.VISIBLE);
+                            uiUtils.dismissDialog();
+                        }
 
-                @Override
-                public void onFailure(Error error) {
-                    uiUtils.dismissDialog();
-                    uiUtils.shortToast("Something went wrong!");
-                }
-            });
+                        @Override
+                        public void onFailure(Error error) {
+                            uiUtils.dismissDialog();
+                            uiUtils.shortToast("Something went wrong!");
+                        }
+                    });
         } else {
             uiUtils.noInternetDialog();
         }
@@ -375,6 +377,12 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     public void onBackPressed() {
         this.setResult(RESULT_CANCELED, new Intent().putExtra("status", "backPressed"));
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }
 

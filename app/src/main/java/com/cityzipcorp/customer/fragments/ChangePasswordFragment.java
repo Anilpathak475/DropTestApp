@@ -21,6 +21,7 @@ import com.marlonmafra.android.widget.EditTextPassword;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by anilpathak on 24/11/17.
@@ -40,6 +41,8 @@ public class ChangePasswordFragment extends BaseFragment {
     @BindView(R.id.btn_submit)
     Button btnSubmit;
 
+    private Unbinder unbinder;
+
     public static ChangePasswordFragment getInstance() {
         return new ChangePasswordFragment();
     }
@@ -48,7 +51,7 @@ public class ChangePasswordFragment extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_change_password, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -62,19 +65,19 @@ public class ChangePasswordFragment extends BaseFragment {
                 changePassword.setNewPassword(edtNewPassword.getText().toString());
                 UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId)
                         .changePassword(changePassword, sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new StatusCallback() {
-                    @Override
-                    public void onSuccess() {
-                        uiUtils.dismissDialog();
-                        uiUtils.shortToast("Password changed successfully");
-                        activity.onBackPressed();
-                    }
+                            @Override
+                            public void onSuccess() {
+                                uiUtils.dismissDialog();
+                                uiUtils.shortToast("Password changed successfully");
+                                activity.onBackPressed();
+                            }
 
-                    @Override
-                    public void onFailure(Error error) {
-                        uiUtils.dismissDialog();
-                        uiUtils.shortToast(error.getMessage());
-                    }
-                });
+                            @Override
+                            public void onFailure(Error error) {
+                                uiUtils.dismissDialog();
+                                uiUtils.shortToast(error.getMessage());
+                            }
+                        });
             }
         } else {
             uiUtils.noInternetDialog();
@@ -101,5 +104,11 @@ public class ChangePasswordFragment extends BaseFragment {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

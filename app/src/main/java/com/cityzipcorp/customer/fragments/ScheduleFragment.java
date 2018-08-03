@@ -51,6 +51,7 @@ import butterknife.BindColor;
 import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
@@ -101,7 +102,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     private ColorDrawable currentBackgroundColor;
     private ColorDrawable cancelledBackgroundColor;
     private HashMap<String, Schedule> bulkDateList = new HashMap<>();
-
+    private Unbinder unbinder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -610,5 +611,22 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
             view.measure(childWidth, childHeight);
             view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+        layoutInflater = null;
+        previousClickedLayout = null;
+        previousDate = null;
+        c = null;
+        handler = null;
+        scheduleList = null;
+        dateMapList = null;
+        editedBackgroundColor = null;
+        currentBackgroundColor = null;
+        cancelledBackgroundColor = null;
+        bulkDateList = null;
     }
 }

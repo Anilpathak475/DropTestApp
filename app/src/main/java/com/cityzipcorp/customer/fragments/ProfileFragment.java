@@ -44,6 +44,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -142,12 +143,13 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     private User user;
     private boolean onGoingProfileRequest = false;
     private List<String> days;
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         init();
         activity.setUpProfileView();
         return view;
@@ -649,5 +651,11 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         if (weekOff.equalsIgnoreCase("Sunday")) {
             toggleButtonSun.setChecked(true);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

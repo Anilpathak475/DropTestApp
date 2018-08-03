@@ -68,6 +68,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
@@ -108,12 +109,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ClusterManager<NodalStop> mClusterManager;
     private LocationUtils locationUtils;
     private String macId;
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         initVariables();
         buildGoogleApiClient();
         initLocation();
@@ -606,5 +608,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 txtAddressHome.setText(R.string.locatopn_error);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

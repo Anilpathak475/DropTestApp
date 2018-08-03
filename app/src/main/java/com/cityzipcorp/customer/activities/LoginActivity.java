@@ -46,6 +46,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import io.fabric.sdk.android.Fabric;
 
 
@@ -70,6 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     protected TextView btnRegister;
 
     private UiUtils uiUtils;
+    private Unbinder unbinder;
     private LoginPresenter loginPresenter;
     private List<Contract> contracts;
     private SharedPreferenceManager sharedPreferenceManager;
@@ -153,7 +155,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     private void init() {
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         loginPresenter = new LoginPresenterImpl(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
@@ -247,6 +249,17 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+        loginPresenter = null;
+        locationUtils = null;
+        uiUtils = null;
+        contracts = null;
+        sharedPreferenceManager = null;
     }
 
     @Override
