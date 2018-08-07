@@ -38,8 +38,8 @@ platform :android do
 
   desc "Submit a new Staging Beta Build to Crashlytics Beta"
   lane :staging_beta do
-    ensure_git_status_clean
-    ensure_git_branch(branch: "develop")
+   ## ensure_git_status_clean
+    ##ensure_git_branch(branch: "develop")
     gradle(task: "incrementVersionCode")
     gradle(task: "clean assemblestagingrelease")
     crashlytics
