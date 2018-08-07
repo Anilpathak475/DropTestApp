@@ -24,7 +24,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
                 android:elevation="9dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -45,8 +45,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:contentDescription="@string/date"
-                            android:background="@drawable/ic_calendar_red" />
+                            android:background="@drawable/ic_calendar_red"
+                            android:contentDescription="@string/date" />
 
                         <TextView
                             android:id="@+id/txt_date"
@@ -71,8 +71,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:contentDescription="@string/time"
-                            android:background="@drawable/ic_clock_circular_outline" />
+                            android:background="@drawable/ic_clock_circular_outline"
+                            android:contentDescription="@string/time" />
 
                         <TextView
                             android:id="@+id/txt_start_time"

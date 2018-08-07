@@ -49,7 +49,7 @@ public class UiUtils {
     }
 
     public void dismissDialog() {
-        if (avLoadingIndicatorDialog != null) {
+        if (null != avLoadingIndicatorDialog) {
             if (avLoadingIndicatorDialog.isShowing()) {
                 avLoadingIndicatorDialog.dismiss();
             }

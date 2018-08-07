@@ -404,6 +404,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
                 sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), activity.macId);
     }
 
+
     @Override
     public void showProgress() {
         uiUtils.showProgressDialog();
