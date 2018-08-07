@@ -27,7 +27,7 @@ import com.cityzipcorp.customer.callbacks.DialogCallback;
 
 public class UiUtils {
     public Activity activity;
-    AVLoadingIndicatorDialog avLoadingIndicatorDialog;
+    private AVLoadingIndicatorDialog avLoadingIndicatorDialog;
     private ProgressDialog progress;
 
     public UiUtils(Activity activity) {
@@ -47,7 +47,7 @@ public class UiUtils {
     }
 
     public void dismissDialog() {
-        if (avLoadingIndicatorDialog != null) {
+        if (null != avLoadingIndicatorDialog) {
             if (avLoadingIndicatorDialog.isShowing()) {
                 avLoadingIndicatorDialog.dismiss();
             }

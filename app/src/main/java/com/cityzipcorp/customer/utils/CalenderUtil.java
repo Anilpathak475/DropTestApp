@@ -33,7 +33,7 @@ public class CalenderUtil {
         return dateFormatter.format(date);
     }
 
-    public static String getAMPMValueFromDate(Date date) {
+    private static String getAMPMValueFromDate(Date date) {
         String dateFormat = "a";
         SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
         return dateFormatter.format(date);
