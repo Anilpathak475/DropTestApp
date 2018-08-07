@@ -1,18 +1,19 @@
 package com.cityzipcorp.customer.activities;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.callbacks.AreaCallback;
+import com.cityzipcorp.customer.callbacks.DialogCallback;
 import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.model.Address;
 import com.cityzipcorp.customer.model.Area;
@@ -26,7 +27,6 @@ import com.cityzipcorp.customer.utils.UiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,6 +61,11 @@ public class AddressActivity extends AppCompatActivity {
     @BindView(R.id.btn_update)
     Button btnUpdateHomeAddress;
 
+    @BindView(R.id.img_refresh)
+    public ImageView imgRefresh;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
     private SharedPreferenceManager sharedPreferenceManager;
     private User user;
     private Address selectedAddress;
@@ -74,10 +79,6 @@ public class AddressActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(getSupportActionBar()).setTitle((Html.fromHtml("<font color=\"#111111\">Set Home Address</font>")));
-        }
-
         getBundleExtra();
         getAreas();
     }
@@ -95,7 +96,12 @@ public class AddressActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Error error) {
                             uiUtils.dismissDialog();
-                            uiUtils.shortToast("Unable to fetch Areas");
+                            uiUtils.notifyDialog("Unable to fetch Areas", new DialogCallback() {
+                                @Override
+                                public void onYes() {
+
+                                }
+                            });
                         }
                     });
         } else {
@@ -140,6 +146,10 @@ public class AddressActivity extends AppCompatActivity {
         txtPinCode.setText(address.getPostalCode());
     }
 
+    @OnClick(R.id.img_refresh)
+    void onRefresh() {
+        getAreas();
+    }
 
     @OnClick(R.id.btn_update)
     void updateHomeAddress() {

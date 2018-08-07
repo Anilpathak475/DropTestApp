@@ -98,7 +98,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.ForgotPassword" />
-        <activity android:name=".activities.AddressActivity"/>
+        <activity
+            android:name=".activities.AddressActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
