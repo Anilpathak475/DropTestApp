@@ -75,6 +75,7 @@ public class AddressActivity extends AppCompatActivity {
     private List<String> areaNames = new ArrayList<>();
     private String macId;
     private Unbinder unbinder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,6 +198,11 @@ public class AddressActivity extends AppCompatActivity {
 
 
     private boolean validateAddress() {
+        if (areaNames.size() == 0) {
+            uiUtils.shortToast("Please refresh and select area");
+            return false;
+        }
+
         if (autoCompleteArea.getText().toString().equalsIgnoreCase("Select Area")) {
             uiUtils.shortToast("Please select area");
             return false;

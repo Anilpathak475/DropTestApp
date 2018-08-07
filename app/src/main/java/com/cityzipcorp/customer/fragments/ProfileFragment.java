@@ -42,7 +42,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
@@ -186,14 +185,18 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         return bundle;
     }
 
-    @OnCheckedChanged(R.id.opt_in_switch)
-    void onOptedInCheckedBoxClicked(CompoundButton button, boolean checked) {
-        if (NetworkUtils.isNetworkAvailable(activity)) {
-            optInChanged(checked);
-        } else {
-            button.setChecked(!checked);
-            uiUtils.noInternetDialog();
-        }
+    void setOnpInCheckListener() {
+        optInSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (NetworkUtils.isNetworkAvailable(activity)) {
+                    optInChanged(b);
+                } else {
+                    optInSwitch.setChecked(!b);
+                    uiUtils.noInternetDialog();
+                }
+            }
+        });
     }
 
     private void optInChanged(final boolean checked) {
@@ -456,6 +459,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             optInSwitch.setChecked(user.getOptedIn());
             activity.isOptIn = user.getOptedIn();
             setOptInDescription(user.getOptedIn());
+            setOnpInCheckListener();
         }
         if (user.getNodalStop() != null) {
             txtNodalAddress.setText(user.getNodalStop().getName());
