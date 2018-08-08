@@ -32,6 +32,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class ForgotPassword extends AppCompatActivity implements ForgotPasswordView {
 
@@ -45,12 +46,13 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
     private UiUtils uiUtils;
     private ForgotPasswordPresenter forgotPasswordPresenter;
     private List<Contract> contracts;
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         getBundleExtra();
         getContracts();
@@ -69,7 +71,7 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
         if (!NetworkUtils.isNetworkAvailable(this)) {
             uiUtils.noInternetDialog();
         } else {
-            UserStore.getInstance(BuildConfig.BASE_URL_CONTRACT).
+            UserStore.getInstance(BuildConfig.BASE_URL_CONTRACT, "").
                     getContracts(new ContractCallback() {
                         @Override
                         public void onSuccess(List<Contract> contracts) {
@@ -170,5 +172,11 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

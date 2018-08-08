@@ -1,5 +1,9 @@
 package com.cityzipcorp.customer.utils;
 
+import android.app.Activity;
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 
 import com.cityzipcorp.customer.BuildConfig;
@@ -17,7 +21,7 @@ public class Utils {
         return new Utils();
     }
 
-    public static Map<String, String> getHeader(String authToken) {
+    public static Map<String, String> getHeader(String authToken, String macId) {
         Field[] fields = Build.VERSION_CODES.class.getFields();
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put(Constants.HEADER_AUTHORIZATION_KEY, Constants.HEADER_AUTHORIZATION_VALUE_PREFIX + authToken);
@@ -26,6 +30,8 @@ public class Utils {
         headerMap.put(Constants.HEADER_MOBILE_OS_VERSION, String.valueOf(android.os.Build.VERSION.SDK_INT));
         headerMap.put(Constants.HEADER_MOBILE_MANUFACTURER, Build.MANUFACTURER);
         headerMap.put(Constants.HEADER_MOBILE_MANUFACTURER_MODEL, Build.MODEL);
+        headerMap.put(Constants.HEADER_MOBILE_UUID, Build.MODEL);
+        headerMap.put(Constants.HEADER_MOBILE_MAC_ADDRESS, macId);
         return headerMap;
     }
 
@@ -56,5 +62,12 @@ public class Utils {
     public UserAgentInterceptor getUserAgent() {
         int sdkVersion = Build.VERSION.SDK_INT;
         return new UserAgentInterceptor("" + sdkVersion, Build.MANUFACTURER, Build.MODEL, "454834548632", "44:44:44:44:44", BuildConfig.VERSION_NAME);
+    }
+
+    public String getMacId(Activity activity) {
+        WifiManager wifiManager = (WifiManager) activity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        assert wifiManager != null;
+        WifiInfo wInfo = wifiManager.getConnectionInfo();
+        return wInfo.getMacAddress();
     }
 }

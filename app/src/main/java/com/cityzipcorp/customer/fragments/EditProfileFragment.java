@@ -41,6 +41,7 @@ import java.io.ByteArrayOutputStream;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by anilpathak on 16/11/17.
@@ -76,12 +77,13 @@ public class EditProfileFragment extends BaseFragment {
     private String userId;
     private User user;
     private ChoosePhoto choosePhoto = null;
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_profile, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         activity.setUpEditProfileView();
         radioGroupGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -110,7 +112,7 @@ public class EditProfileFragment extends BaseFragment {
     private void getProfileInfo() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
             uiUtils.showProgressDialog();
-            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                     getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN)
                             , new UserCallback() {
                                 @Override
@@ -203,7 +205,7 @@ public class EditProfileFragment extends BaseFragment {
 
         uiUtils.showProgressDialog();
         user.setId(userId);
-        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                 updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
                     @Override
                     public void onSuccess(User user) {
@@ -325,5 +327,9 @@ public class EditProfileFragment extends BaseFragment {
         return true;
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+    }
 }

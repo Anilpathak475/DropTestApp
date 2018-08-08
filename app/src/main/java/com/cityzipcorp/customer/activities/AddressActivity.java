@@ -24,6 +24,7 @@ import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
+import com.cityzipcorp.customer.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class AddressActivity extends AppCompatActivity {
 
@@ -71,22 +73,25 @@ public class AddressActivity extends AppCompatActivity {
     private Address selectedAddress;
     private UiUtils uiUtils;
     private List<String> areaNames = new ArrayList<>();
+    private String macId;
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         getBundleExtra();
         getAreas();
+        macId = Utils.getInstance().getMacId(this);
     }
 
     private void getAreas() {
         if (NetworkUtils.isNetworkAvailable(this)) {
             uiUtils.showProgressDialog();
-            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                     getAreas(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new AreaCallback() {
                         @Override
                         public void onSuccess(List<Area> areas) {
@@ -172,7 +177,7 @@ public class AddressActivity extends AppCompatActivity {
                 user.setHomeStop(geoLocateAddress);
 
                 UserStore.getInstance(sharedPreferenceManager.
-                        getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                        getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                         updateProfileInfo(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
                             @Override
                             public void onSuccess(User user) {
@@ -193,6 +198,11 @@ public class AddressActivity extends AppCompatActivity {
 
 
     private boolean validateAddress() {
+        if (areaNames.size() == 0) {
+            uiUtils.shortToast("Please refresh and select area");
+            return false;
+        }
+
         if (autoCompleteArea.getText().toString().equalsIgnoreCase("Select Area")) {
             uiUtils.shortToast("Please select area");
             return false;
@@ -230,5 +240,16 @@ public class AddressActivity extends AppCompatActivity {
         Intent intent = new Intent();
         setResult(RESULT_OK, intent);
         this.finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+        sharedPreferenceManager = null;
+        uiUtils = null;
+        areaNames.clear();
+        areaNames = null;
+        selectedAddress = null;
     }
 }

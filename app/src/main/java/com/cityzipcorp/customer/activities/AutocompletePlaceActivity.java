@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class AutocompletePlaceActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
@@ -55,12 +56,13 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
 
     private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
     private UiUtils uiUtils;
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autocomplete_place);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         buildGoogleApiClient();
         initializeView();
@@ -198,6 +200,14 @@ public class AutocompletePlaceActivity extends AppCompatActivity implements Goog
             Log.v("Google API", "Dis-Connecting");
             googleApiClient.disconnect();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+        googleApiClient.disconnect();
+        uiUtils = null;
     }
 
     @Override

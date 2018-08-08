@@ -39,6 +39,7 @@ import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
+import com.cityzipcorp.customer.utils.Utils;
 import com.etiennelawlor.discreteslider.library.ui.DiscreteSlider;
 import com.etiennelawlor.discreteslider.library.utilities.DisplayUtility;
 import com.google.android.gms.common.ConnectionResult;
@@ -60,13 +61,14 @@ import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
@@ -106,12 +108,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private User user;
     private ClusterManager<NodalStop> mClusterManager;
     private LocationUtils locationUtils;
+    private String macId;
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         initVariables();
         buildGoogleApiClient();
         initLocation();
@@ -123,6 +127,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         uiUtils = new UiUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         address = new com.cityzipcorp.customer.model.Address();
+        macId = Utils.getInstance().getMacId(this);
     }
 
     private void initLocation() {
@@ -162,14 +167,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (i == position) {
                             tv.setTextColor(getResources().getColor(R.color.blue500));
                             String distanceString = tv.getText().toString();
-                            if (position == 0) {
-                                distanceString = distanceString.replace("m", "");
-                            } else {
+                            float distance;
+                            if (distanceString.contains("km")) {
                                 distanceString = distanceString.replace("km", "");
-                                distanceString = distanceString + "000";
+                                distance = Float.parseFloat(distanceString) * 1000;
+                            } else {
+                                distanceString = distanceString.replace("m", "");
+                                distance = Float.parseFloat(distanceString);
                             }
 
-                            getNodalStopsList(Integer.parseInt(distanceString));
+                            getNodalStopsList(distance);
                         } else {
                             tv.setTextColor(getResources().getColor(R.color.black));
                         }
@@ -196,30 +203,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void getNodalStopsList(final int distance) {
+    private void getNodalStopsList(final float distance) {
         if (NetworkUtils.isNetworkAvailable(this)) {
             uiUtils.showProgressDialog();
             LatLngBounds latLngBoundsForApi = toBounds(latLng, distance);
             String boundingBounds = String.valueOf(latLngBoundsForApi.southwest.longitude + "," + latLngBoundsForApi.southwest.latitude + "," + latLngBoundsForApi.northeast.longitude + "," + latLngBoundsForApi.northeast.latitude);
-            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                     getNodalStopList(boundingBounds, sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new NodalStopCallback() {
-                @Override
-                public void onSuccess(List<NodalStop> nodalStopList) {
-                    if (nodalStopList != null) {
-                        addNodalMarkersOnMap(nodalStopList);
-                        LatLngBounds latLngBounds = toBounds(latLng, distance + 300);
-                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(latLngBounds, 20);
-                        googleMap.animateCamera(cu);
-                        uiUtils.dismissDialog();
-                    }
-                }
+                        @Override
+                        public void onSuccess(List<NodalStop> nodalStopList) {
+                            if (nodalStopList != null) {
+                                addNodalMarkersOnMap(nodalStopList);
+                                LatLngBounds latLngBounds = toBounds(latLng, distance + 300);
+                                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(latLngBounds, 20);
+                                googleMap.animateCamera(cu);
+                                uiUtils.dismissDialog();
+                            }
+                        }
 
-                @Override
-                public void onFailure(Error error) {
-                    uiUtils.dismissDialog();
-                    uiUtils.shortToast("Unable to fetch nodal stops");
-                }
-            });
+                        @Override
+                        public void onFailure(Error error) {
+                            uiUtils.dismissDialog();
+                            uiUtils.shortToast("Unable to fetch nodal stops");
+                        }
+                    });
         } else {
             uiUtils.noInternetDialog();
         }
@@ -285,19 +292,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateNodalPoint() {
         if (nodalStop != null) {
             final NodalStopBody nodalStopBody = new NodalStopBody.Builder().setExternalStopId(nodalStop.getId()).setName(nodalStop.getStop().getName()).setCoordinates(nodalStop.getStop().getLocationA().getGeoJsonPoint()).build();
-            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                     updateNodalStop(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                             user.getId(), nodalStopBody, new StatusCallback() {
-                @Override
-                public void onSuccess() {
-                    navigateToProfile();
-                }
+                                @Override
+                                public void onSuccess() {
+                                    navigateToProfile();
+                                }
 
-                @Override
-                public void onFailure(Error error) {
-                    uiUtils.shortToast(error.getMessage());
-                }
-            });
+                                @Override
+                                public void onFailure(Error error) {
+                                    uiUtils.shortToast(error.getMessage());
+                                }
+                            });
         } else {
             uiUtils.shortToast("Please select a point ");
         }
@@ -471,7 +478,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void setMarkerBounce(ClusterManager clusterManager) {
-        ArrayList<Marker> markers = (ArrayList<Marker>) clusterManager.getMarkerCollection().getMarkers();
+        Collection<Marker> markers = clusterManager.getMarkerCollection().getMarkers();
         for (final com.google.android.gms.maps.model.Marker m : markers) {
             final Handler handler = new Handler();
             final long startTime = SystemClock.uptimeMillis();
@@ -535,12 +542,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         float tickMarkRadius = discreteSlider.getTickMarkRadius();
         int width = tickMarkLabelsRelativeLayout.getMeasuredWidth();
 
-        int discreteSliderBackdropLeftMargin = DisplayUtility.dp2px(this, 32);
-        int discreteSliderBackdropRightMargin = DisplayUtility.dp2px(this, 32);
+        int discreteSliderBackdropLeftMargin = DisplayUtility.dp2px(this, 25);
+        int discreteSliderBackdropRightMargin = DisplayUtility.dp2px(this, 25);
         int interval = (width - (discreteSliderBackdropLeftMargin + discreteSliderBackdropRightMargin) - ((int) (tickMarkRadius + tickMarkRadius)))
                 / (tickMarkCount - 1);
 
-        String[] tickMarkLabels = {"500m", "1km", "2km", "5km", "10km"};
+        String[] tickMarkLabels = {"500m", "750m", "1km", "1.25km", "1.5km", "1.7km", "2km"};
         int tickMarkLabelWidth = DisplayUtility.dp2px(this, 45);
 
         for (int i = 0; i < tickMarkCount; i++) {
@@ -550,7 +557,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     tickMarkLabelWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
 
             tv.setText(tickMarkLabels[i]);
-            tv.setTextSize(16);
+            tv.setTextSize(12);
             tv.setGravity(Gravity.CENTER);
             if (i == discreteSlider.getPosition())
                 tv.setTextColor(getResources().getColor(R.color.blue700));
@@ -601,5 +608,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 txtAddressHome.setText(R.string.locatopn_error);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

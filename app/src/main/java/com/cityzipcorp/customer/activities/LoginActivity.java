@@ -2,6 +2,7 @@ package com.cityzipcorp.customer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,6 +26,7 @@ import com.cityzipcorp.customer.mvp.login.LoginPresenter;
 import com.cityzipcorp.customer.mvp.login.LoginPresenterImpl;
 import com.cityzipcorp.customer.mvp.login.LoginView;
 import com.cityzipcorp.customer.store.UserStore;
+import com.cityzipcorp.customer.utils.LocationUtils;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
@@ -44,6 +46,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import io.fabric.sdk.android.Fabric;
 
 
@@ -68,9 +71,12 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     protected TextView btnRegister;
 
     private UiUtils uiUtils;
+    private Unbinder unbinder;
     private LoginPresenter loginPresenter;
     private List<Contract> contracts;
     private SharedPreferenceManager sharedPreferenceManager;
+    private LocationUtils locationUtils;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,21 +86,33 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     }
 
+    private void requestPhoneStatePermission() {
+        locationUtils = new LocationUtils(this);
+        if (!locationUtils.checkReadPhoneStatePermission()) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    locationUtils.requestPhoneStatePermission();
+                }
+            }, 1000);
+        }
+    }
+
     private void getContracts() {
         if (!NetworkUtils.isNetworkAvailable(this)) {
             uiUtils.noInternetDialog();
         } else {
-            UserStore.getInstance(BuildConfig.BASE_URL_CONTRACT).
+            UserStore.getInstance(BuildConfig.BASE_URL_CONTRACT, "").
                     getContracts(new ContractCallback() {
                         @Override
                         public void onSuccess(List<Contract> contracts) {
                             if (contracts.size() > 0) {
                                 setContractAdapter(contracts);
                             } else {
-                                uiUtils.notifyDialog("Unable to get contacts, please try again later ", new DialogCallback() {
+                                uiUtils.notifyDialog("Unable to get contracts, please try again later ", new DialogCallback() {
                                     @Override
                                     public void onYes() {
-                                        finish();
+                                        getContracts();
                                     }
                                 });
                             }
@@ -102,10 +120,10 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
                         @Override
                         public void onFailure(Error error) {
-                            uiUtils.notifyDialog("Unable to get contacts, please try again later ", new DialogCallback() {
+                            uiUtils.notifyDialog("Unable to get contracts, please try again later ", new DialogCallback() {
                                 @Override
                                 public void onYes() {
-                                    finish();
+                                    getContracts();
                                 }
                             });
                         }
@@ -137,10 +155,11 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     private void init() {
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         loginPresenter = new LoginPresenterImpl(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
+        requestPhoneStatePermission();
         checkSession();
         getContracts();
     }
@@ -221,10 +240,26 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         startActivity(intent);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     private void startHomeActivity() {
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+        loginPresenter = null;
+        locationUtils = null;
+        uiUtils = null;
+        contracts = null;
+        sharedPreferenceManager = null;
     }
 
     @Override

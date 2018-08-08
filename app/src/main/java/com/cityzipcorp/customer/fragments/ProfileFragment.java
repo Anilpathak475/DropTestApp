@@ -18,10 +18,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -29,6 +29,7 @@ import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.activities.MapsActivity;
 import com.cityzipcorp.customer.base.BaseFragment;
 import com.cityzipcorp.customer.callbacks.DialogCallback;
+import com.cityzipcorp.customer.callbacks.OptOutDialogCallback;
 import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.model.Address;
 import com.cityzipcorp.customer.model.User;
@@ -41,8 +42,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -108,8 +109,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    @BindView(R.id.opt_in_checkbox)
-    CheckBox optInCheckBox;
+    @BindView(R.id.opt_in_switch)
+    Switch optInSwitch;
 
     @BindView(R.id.weekdays)
     LinearLayout layoutWeekdays;
@@ -141,12 +142,13 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     private User user;
     private boolean onGoingProfileRequest = false;
     private List<String> days;
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         init();
         activity.setUpProfileView();
         return view;
@@ -183,25 +185,31 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         return bundle;
     }
 
-    @OnCheckedChanged(R.id.opt_in_checkbox)
-    void onOptedInCheckedBoxClicked(CompoundButton button, boolean checked) {
-        uiUtils.showProgressDialog();
-        if (NetworkUtils.isNetworkAvailable(activity)) {
-            optInChanged(checked);
-        } else {
-            button.setChecked(!checked);
-            uiUtils.noInternetDialog();
-            uiUtils.dismissDialog();
-        }
+    void setOnpInCheckListener() {
+        optInSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (NetworkUtils.isNetworkAvailable(activity)) {
+                    optInChanged(b);
+                } else {
+                    optInSwitch.setChecked(!b);
+                    uiUtils.noInternetDialog();
+                }
+            }
+        });
     }
 
     private void optInChanged(final boolean checked) {
         if (!checked) {
-            uiUtils.conformationDialog("Are you sure you want to opt out!", new DialogCallback() {
+            uiUtils.optOutConformationDialog("Are you sure you want to opt out!", new OptOutDialogCallback() {
                 @Override
                 public void onYes() {
                     user.setOptedIn(false);
                     updateOptInSelection();
+                }
+
+                public void onNo() {
+                    optInSwitch.setChecked(true);
                 }
             });
         } else {
@@ -211,7 +219,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     }
 
     private void updateOptInSelection() {
-        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+        uiUtils.showProgressDialog();
+        UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                 updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
                     @Override
                     public void onSuccess(User user) {
@@ -223,7 +232,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                     @Override
                     public void onFailure(Error error) {
                         uiUtils.dismissDialog();
-                        optInCheckBox.setChecked(!user.getOptedIn());
+                        optInSwitch.setChecked(!user.getOptedIn());
                         activity.isOptIn = !user.getOptedIn();
                         uiUtils.shortToast("Unable to update profile!");
                     }
@@ -382,7 +391,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                     user.setWeeekdaysOff(selectedDays);
                     uiUtils.showProgressDialog();
 
-                    UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                    UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                             updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
                                 @Override
                                 public void onSuccess(User user) {
@@ -447,9 +456,10 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             txtEmpId.setText(user.getEmployeeId());
         }
         if (user.getOptedIn() != null) {
-            optInCheckBox.setChecked(user.getOptedIn());
+            optInSwitch.setChecked(user.getOptedIn());
             activity.isOptIn = user.getOptedIn();
             setOptInDescription(user.getOptedIn());
+            setOnpInCheckListener();
         }
         if (user.getNodalStop() != null) {
             txtNodalAddress.setText(user.getNodalStop().getName());
@@ -525,7 +535,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         if (!onGoingProfileRequest)
             if (NetworkUtils.isNetworkAvailable(activity)) {
                 onGoingProfileRequest = true;
-                UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                         getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                                 new UserCallback() {
                                     @Override
@@ -645,5 +655,11 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         if (weekOff.equalsIgnoreCase("Sunday")) {
             toggleButtonSun.setChecked(true);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

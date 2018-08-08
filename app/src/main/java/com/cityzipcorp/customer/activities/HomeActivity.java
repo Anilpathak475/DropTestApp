@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.telephony.TelephonyManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +39,7 @@ import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManager;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.cityzipcorp.customer.utils.UiUtils;
+import com.cityzipcorp.customer.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -49,6 +51,7 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static com.cityzipcorp.customer.R.id;
 import static com.cityzipcorp.customer.R.string;
@@ -75,6 +78,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     @BindView(id.btn_update_password)
     Button btnUpdatePassword;
 
+    public String macId;
     public boolean bulkModeActivated = false;
     public boolean isOptIn = true;
     private boolean isInitialLoad = false;
@@ -82,6 +86,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private UiUtils uiUtils;
     private LocationUtils locationUtils;
     private GoogleApiClient googleApiClient;
+    private Unbinder unbinder;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -153,20 +158,21 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private void init() {
         logUser();
         setContentView(R.layout.activity_home);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         buildGoogleApiClient();
         initVariables();
         checkProfileStatus();
         checkLocationStatus();
         updateFcmTokenOnServer();
+
     }
 
     private void checkProfileStatus() {
         if (NetworkUtils.isNetworkAvailable(this)) {
             isInitialLoad = true;
             uiUtils.showProgressDialog();
-            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                     getProfileStatus(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                             new ProfileStatusCallback() {
                                 @Override
@@ -217,14 +223,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         locationUtils = new LocationUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         uiUtils = new UiUtils(this);
-       /* swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(false);
-                onSwipeRefresh();
-            }
-        });*/
-
+        macId = Utils.getInstance().getMacId(this);
     }
 
     private void deleteFcmInstance() {
@@ -517,14 +516,22 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     private void updateFcmTokenOnServer() {
+        TelephonyManager telephonyManager;
+        telephonyManager = (TelephonyManager) getSystemService(Context.
+                TELEPHONY_SERVICE);
         FcmRegistrationToken fcmRegistrationToken = new FcmRegistrationToken();
         fcmRegistrationToken.setName("Customer App");
         fcmRegistrationToken.setCloudMessageType("FCM");
         fcmRegistrationToken.setRegistrationId(sharedPreferenceManager.
                 getValue(SharedPreferenceManagerConstant.FCM_TOKEN));
-        fcmRegistrationToken.setDeviceId("83543303454710011");
+        if (!locationUtils.checkReadPhoneStatePermission()) {
+            fcmRegistrationToken.setDeviceId(telephonyManager.getDeviceId());
+        } else {
+            fcmRegistrationToken.setDeviceId("115566332211440");
+        }
+
         fcmRegistrationToken.setApplicationId("");
-        UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+        UserStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                 registerFcmToken(fcmRegistrationToken,
                         sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
     }
@@ -533,6 +540,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     protected void onDestroy() {
         super.onDestroy();
         unRegisterReceivers();
+        unbinder.unbind();
     }
 
     private void onSwipeRefresh() {

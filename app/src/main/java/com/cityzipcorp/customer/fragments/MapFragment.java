@@ -59,6 +59,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static com.cityzipcorp.customer.utils.Utils.replaceNull;
 
@@ -98,6 +99,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         }
     };
     private FusedLocationProviderClient mFusedLocationClient;
+    private Unbinder unbinder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,7 +112,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         init(savedInstanceState, view);
         return view;
     }
@@ -136,6 +138,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         super.onDestroy();
         mMapView.onDestroy();
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        unbinder.unbind();
     }
 
     @Override
@@ -220,7 +223,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     private void fetchTripDetailsOnMap(Location location) {
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            BoardingPassStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+            BoardingPassStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                     trackMyRide(boardingPass.getId(), String.valueOf(location.getLatitude()),
                             String.valueOf(location.getLongitude()), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                             new TrackRideCallback() {

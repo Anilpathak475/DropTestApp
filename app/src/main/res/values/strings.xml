@@ -46,8 +46,13 @@
     <string name="register">Register</string>
     <string name="select_area">Select Area</string>
     <string name="opt_in_description">Opt-In settings</string>
-    <string name="opt_in_opted_in_description">You are currently opted in, change to opted out by unchecking here</string>
-    <string name="opt_in_opted_out_description">You are currently opted out, change to opted in by checking here</string>
+    <string name="opt_in_opted_in_description">You are now subscribed for transport
+services. In case you need to pause the
+service for a certain period please click here</string>
+    <string name="opt_in_opted_out_description">You are not subscribed for transport
+services. In case you wish to avail the
+transport service for a certain period
+please click here</string>
     <string name="weekdays_off">Weekdays Off</string>
     <string name="landmark">Landmark</string>
     <string name="enter_address_building_no_street_name">Enter Address(Building No/Street name)</string>
@@ -90,7 +95,6 @@
     <string name="car">Car</string>
     <string name="rotate">Rotate</string>
     <string name="border">Border</string>
-    <string name="right">Right</string>
     <string name="open_maps">Open Maps</string>
     <string name="time">Time</string>
     <string name="date">Date</string>
@@ -98,14 +102,12 @@
     <string name="search">Search</string>
     <string name="show_password">Show Password</string>
     <string name="top_logo">Top Logo</string>
+    <string name="logout">Logout</string>
     <string name="please_select_any_of_the_nodal_stops_highlighted_in_pink">Please select any of the nodal stops highlighted in pink</string>
     <string name="tap_here_to_search_location">Tap here to search location</string>
     <string name="contract">Contract</string>
-    <string name="password">Password</string>
     <string name="forgot_password">Forgot Password?</string>
-    <string name="logout">Logout</string>
     <string name="done">Done</string>
-    <string name="bulk">Bulk</string>
     <string name="loading_title">Loading…</string>
     <string name="refresh">Refresh</string>
     <string name="email">Email</string>
@@ -113,7 +115,6 @@
     <string name="cancel">Cancel</string>
     <string name="reason">Reason</string>
     <string name="event_details">Event Details</string>
-    <string name="back">Back</string>
     <string name="search_home_location">Search Home Location</string>
     <string name="search_for_a_locality_or_landmark">Search for a locality or landmark</string>
     <string name="society">Society</string>
@@ -123,5 +124,10 @@
     <string name="days">Selected Dates</string>
     <string name="locatopn_error">Unable to fetch address</string>
     <string name="week_off">Weekly Off</string>
+    <string name="password">Password</string>
+    <string name="back">Back</string>
+    <string name="bulk">Bulk</string>
+    <string name="right">Right</string>
+
 
 </resources>

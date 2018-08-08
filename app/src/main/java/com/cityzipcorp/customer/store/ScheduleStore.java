@@ -14,7 +14,6 @@ import com.cityzipcorp.customer.model.Reason;
 import com.cityzipcorp.customer.model.Schedule;
 import com.cityzipcorp.customer.model.ShiftTiming;
 import com.cityzipcorp.customer.network.ClientGenerator;
-import com.cityzipcorp.customer.utils.Constants;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.UiUtils;
 import com.cityzipcorp.customer.utils.Utils;
@@ -32,23 +31,22 @@ import retrofit2.Response;
 
 public class ScheduleStore {
 
-    private static ScheduleStore instance = null;
-    private ClientGenerator clientGenerator;
 
-    private ScheduleStore(String baseUrl) {
+    private ClientGenerator clientGenerator;
+    private String macId;
+
+    private ScheduleStore(String baseUrl, String macId) {
         clientGenerator = new ClientGenerator(baseUrl);
+        this.macId = macId;
     }
 
-    public static ScheduleStore getInstance(String baseUrl) {
-
-        instance = new ScheduleStore(baseUrl);
-
-        return instance;
+    public static ScheduleStore getInstance(String baseUrl, String macId) {
+        return new ScheduleStore(baseUrl, macId);
     }
 
     public void getSchedule(String authToken, final ScheduleCallback scheduleCallback) {
         ScheduleClient scheduleClient = clientGenerator.createClient(ScheduleClient.class);
-        Call<List<Schedule>> call = scheduleClient.getSchedule(Utils.getHeader(authToken));
+        Call<List<Schedule>> call = scheduleClient.getSchedule(Utils.getHeader(authToken, macId));
         call.enqueue(new Callback<List<Schedule>>() {
             @Override
             public void onResponse(@NonNull Call<List<Schedule>> call,
@@ -70,7 +68,7 @@ public class ScheduleStore {
 
     public void getReason(String accessToken, final ReasonCallback reasonCallback) {
         ScheduleClient scheduleClient = clientGenerator.createClient(ScheduleClient.class);
-        Call<List<Reason>> call = scheduleClient.getReason(Utils.getHeader(accessToken));
+        Call<List<Reason>> call = scheduleClient.getReason(Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<List<Reason>>() {
             @Override
             public void onResponse(Call<List<Reason>> call, Response<List<Reason>> response) {
@@ -94,9 +92,9 @@ public class ScheduleStore {
             ScheduleClient scheduleClient = clientGenerator.createClient(ScheduleClient.class);
             Call<ResponseBody> call;
             if (!TextUtils.isEmpty(schedule.getId())) {
-                call = scheduleClient.updateSchedule(Constants.HEADER_AUTHORIZATION_VALUE_PREFIX + authToken, schedule.getId(), schedule);
+                call = scheduleClient.updateSchedule(Utils.getHeader(authToken, macId), schedule.getId(), schedule);
             } else {
-                call = scheduleClient.createSchedule(Constants.HEADER_AUTHORIZATION_VALUE_PREFIX + authToken, schedule);
+                call = scheduleClient.createSchedule(Utils.getHeader(authToken, macId), schedule);
             }
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -122,7 +120,7 @@ public class ScheduleStore {
 
     public void getShiftTimings(String accessToken, final ShiftCallback shiftCallback) {
         ScheduleClient scheduleClient = clientGenerator.createClient(ScheduleClient.class);
-        Call<ShiftTiming> call = scheduleClient.getShiftTimings(Utils.getHeader(accessToken));
+        Call<ShiftTiming> call = scheduleClient.getShiftTimings(Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<ShiftTiming>() {
             @Override
             public void onResponse(Call<ShiftTiming> call, Response<ShiftTiming> response) {

@@ -128,9 +128,11 @@
                                 android:text="@string/opt_in_opted_in_description"
                                 android:textSize="18sp" />
 
-                            <CheckBox
-                                android:id="@+id/opt_in_checkbox"
+                            <Switch
+                                android:id="@+id/opt_in_switch"
                                 android:layout_width="wrap_content"
+                                android:thumbTint="#2C3E50"
+                                android:trackTint="#707070"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical" />
 

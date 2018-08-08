@@ -1,5 +1,7 @@
 package com.cityzipcorp.customer.store;
 
+import android.support.annotation.NonNull;
+
 import com.cityzipcorp.customer.callbacks.BoardingPassCallback;
 import com.cityzipcorp.customer.callbacks.StatusCallback;
 import com.cityzipcorp.customer.callbacks.TrackRideCallback;
@@ -21,24 +23,24 @@ import retrofit2.Response;
  */
 
 public class BoardingPassStore {
-    private static BoardingPassStore instance = null;
     private ClientGenerator clientGenerator;
+    private String macId;
 
-    private BoardingPassStore(String baseUrl) {
+    private BoardingPassStore(String baseUrl, String macId) {
         clientGenerator = new ClientGenerator(baseUrl);
+        this.macId = macId;
     }
 
-    public static BoardingPassStore getInstance(String baseUrl) {
-        instance = new BoardingPassStore(baseUrl);
-        return instance;
+    public static BoardingPassStore getInstance(String baseUrl, String macId) {
+        return new BoardingPassStore(baseUrl, macId);
     }
 
     public void getBoardingPass(String authToken, final BoardingPassCallback boardingPassCallback) {
         BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
-        Call<BoardingPass> call = boardingPassClient.getBoardingPass(Utils.getHeader(authToken));
+        Call<BoardingPass> call = boardingPassClient.getBoardingPass(Utils.getHeader(authToken, macId));
         call.enqueue(new Callback<BoardingPass>() {
             @Override
-            public void onResponse(Call<BoardingPass> call, Response<BoardingPass> response) {
+            public void onResponse(@NonNull Call<BoardingPass> call, @NonNull Response<BoardingPass> response) {
                 if (response.isSuccessful()) {
                     boardingPassCallback.onSuccess(response.body());
                 } else {
@@ -47,7 +49,7 @@ public class BoardingPassStore {
             }
 
             @Override
-            public void onFailure(Call<BoardingPass> call, Throwable t) {
+            public void onFailure(@NonNull Call<BoardingPass> call, @NonNull Throwable t) {
                 boardingPassCallback.onFailure(new Error(t.getMessage()));
             }
         });
@@ -55,10 +57,10 @@ public class BoardingPassStore {
 
     public void sosAlert(SosBody sosBody, String boardingPassId, String accessToken, final StatusCallback statusCallback) {
         BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
-        Call<ResponseBody> call = boardingPassClient.sosAlert(sosBody, boardingPassId, Utils.getHeader(accessToken));
+        Call<ResponseBody> call = boardingPassClient.sosAlert(sosBody, boardingPassId, Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
                 } else {
@@ -67,7 +69,7 @@ public class BoardingPassStore {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 statusCallback.onFailure(new Error(t.getMessage()));
             }
         });
@@ -75,10 +77,10 @@ public class BoardingPassStore {
 
     public void markAttendance(Attendance attendance, String boardingPassId, String accessToken, final StatusCallback statusCallback) {
         BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
-        Call<ResponseBody> call = boardingPassClient.markAttendance(attendance, boardingPassId, Utils.getHeader(accessToken));
+        Call<ResponseBody> call = boardingPassClient.markAttendance(attendance, boardingPassId, Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
                 } else {
@@ -87,7 +89,7 @@ public class BoardingPassStore {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 statusCallback.onFailure(new Error(t));
             }
         });
@@ -95,10 +97,10 @@ public class BoardingPassStore {
 
     public void trackMyRide(String boardingPassId, String lat, String lng, String accessToken, final TrackRideCallback trackRideCallback) {
         BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
-        Call<TrackRide> call = boardingPassClient.trackMyRide(boardingPassId, lat, lng, Utils.getHeader(accessToken));
+        Call<TrackRide> call = boardingPassClient.trackMyRide(boardingPassId, lat, lng, Utils.getHeader(accessToken, macId));
         call.enqueue(new Callback<TrackRide>() {
             @Override
-            public void onResponse(Call<TrackRide> call, Response<TrackRide> response) {
+            public void onResponse(@NonNull Call<TrackRide> call, @NonNull Response<TrackRide> response) {
                 if (response.isSuccessful()) {
                     trackRideCallback.onSuccess(response.body());
                 } else if (response.code() == 412) {
@@ -109,7 +111,7 @@ public class BoardingPassStore {
             }
 
             @Override
-            public void onFailure(Call<TrackRide> call, Throwable t) {
+            public void onFailure(@NonNull Call<TrackRide> call, @NonNull Throwable t) {
                 trackRideCallback.onFailure(new Error("Unable to Fetch Ride Details"));
             }
         });
