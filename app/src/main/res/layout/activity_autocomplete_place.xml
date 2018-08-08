@@ -25,6 +25,7 @@
             android:layout_marginTop="15dp"
             android:contentDescription="@string/back"
             android:src="@drawable/ic_left_arrow_back"
+
             />
 
         <TextView
@@ -46,6 +47,8 @@
         android:layout_marginRight="15dp"
         android:layout_marginTop="-25dp"
         android:background="@color/blue500"
+        android:backgroundTint="@color/white"
+        android:elevation="4dp"
         app:cardCornerRadius="2dp"
         app:contentPadding="7dp">
 
@@ -66,10 +69,10 @@
                 android:id="@+id/edt_search"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:textColor="@color/black"
-                android:background="@color/white"
                 android:hint="@string/search_for_a_locality_or_landmark"
-                android:inputType="textAutoComplete" />
+                android:background="@color/white"
+                android:inputType="textAutoComplete"
+                android:textColor="@color/black" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 

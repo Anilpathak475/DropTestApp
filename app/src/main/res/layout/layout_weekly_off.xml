@@ -86,7 +86,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@color/app_theme_red"
-            android:foreground="?attr/selectableItemBackground"
             android:text="@string/update"
             android:textColor="@color/white" />
     </LinearLayout>

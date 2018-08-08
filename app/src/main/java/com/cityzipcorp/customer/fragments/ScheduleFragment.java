@@ -622,7 +622,6 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         previousDate = null;
         c = null;
         handler = null;
-        scheduleList = null;
         dateMapList = null;
         editedBackgroundColor = null;
         currentBackgroundColor = null;
