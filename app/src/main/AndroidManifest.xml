@@ -79,18 +79,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="dev-customer.cityzipcorp.in"
-                    android:pathPrefix="/access/set-new-password"
-                    android:scheme="http" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="preprod-customer.cityzipcorp.in"
+                    android:host="*.cityzipcorp.in"
                     android:pathPrefix="/access/set-new-password"
                     android:scheme="http" />
             </intent-filter>
@@ -103,24 +92,15 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="dev-customer.cityzipcorp.in"
-                    android:pathPrefix="/access/registration"
-                    android:scheme="http" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="preprod-customer.cityzipcorp.in"
+                    android:host="*.cityzipcorp.in"
                     android:pathPrefix="/access/registration"
                     android:scheme="http" />
             </intent-filter>
         </activity>
         <activity android:name=".activities.ForgotPassword" />
-        <activity android:name=".activities.AddressActivity"></activity>
+        <activity
+            android:name=".activities.AddressActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

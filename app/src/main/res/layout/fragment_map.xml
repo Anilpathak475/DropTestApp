@@ -62,9 +62,6 @@
                     android:id="@+id/txt_vehicle_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@id/txt_vehicle_no"
                     android:layout_weight="1"
                     android:textColor="@color/cardview_dark_background"
                     android:textSize="@dimen/ts_regular"
@@ -74,15 +71,14 @@
                     android:id="@+id/layout_otp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/txt_vehicle_no"
-                    android:layout_toEndOf="@id/txt_vehicle_name"
                     android:layout_weight="1">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingEnd="5dp"
-                        android:text="OTP:"
+                        android:paddingStart="1dp"
+                        android:text="@string/otp"
 
                         android:textColor="@color/text_color_light_grey"
                         android:textSize="16sp" />
@@ -100,13 +96,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/layout_details_otp">
+                android:layout_below="@id/layout_details_otp"
+                android:baselineAligned="false">
 
                 <LinearLayout
                     android:id="@+id/layout_last_updated"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
                     android:layout_marginBottom="5dp"
                     android:layout_weight="1">
 
@@ -114,7 +110,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingEnd="5dp"
-                        android:text="Last Updated:"
+                        android:paddingStart="1dp"
+                        android:text="@string/last_updated"
                         android:textColor="@color/text_color_light_grey"
                         android:textSize="16sp" />
 
@@ -131,14 +128,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:layout_toEndOf="@id/layout_last_updated"
                     android:layout_weight="1">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingEnd="5dp"
-                        android:text="ETA:"
+                        android:paddingStart="1dp"
+                        android:text="@string/eta"
 
                         android:textColor="@color/text_color_light_grey"
                         android:textSize="16sp" />

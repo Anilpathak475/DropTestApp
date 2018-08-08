@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cityzipcorp.customer.R;
@@ -79,11 +78,9 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.DayEve
     }
 
     private void setValues(DayEventViewHolder holder, Schedule schedule) {
-        // DateTime eventDate = schedule.getDate();
         if (schedule.getInTimeUpdate() == null && schedule.getOutTimeUpdate() == null) {
             holder.layoutData.setVisibility(View.GONE);
             holder.layoutNoData.setVisibility(View.VISIBLE);
-
         } else {
             holder.layoutData.setVisibility(View.VISIBLE);
             holder.layoutNoData.setVisibility(View.GONE);
@@ -140,7 +137,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.DayEve
         @BindView(R.id.layout_data)
         LinearLayout layoutData;
         @BindView(R.id.layout_no_data)
-        RelativeLayout layoutNoData;
+        LinearLayout layoutNoData;
 
         private DayEventViewHolder(View view) {
             super(view);

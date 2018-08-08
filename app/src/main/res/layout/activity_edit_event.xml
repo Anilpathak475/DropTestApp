@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#5C5C5C"
-        android:elevation="4dp"
         android:minHeight="?attr/actionBarSize"
         app:contentInsetEnd="0dp"
         app:contentInsetStart="0dp">
@@ -28,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginStart="-10dp"
-                android:text="Event Details"
+                android:text="@string/event_details"
                 android:textColor="@color/white"
 
                 android:textSize="@dimen/ts_xx_large" />
@@ -50,8 +49,7 @@
             android:id="@+id/txt_day"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thursday"
-            android:textSize="28dp"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
         <TextView
@@ -59,7 +57,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
-            android:text="3 November"
             android:textSize="20sp"
             android:textStyle="normal" />
 
@@ -91,7 +88,7 @@
                 android:layout_marginTop="5dp"
                 android:text="@string/in_time"
                 android:textAlignment="center"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="normal" />
 
             <Spinner
@@ -106,9 +103,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="15dp"
-                android:text="Reason"
+                android:text="@string/reason"
                 android:textSize="17sp"
                 android:textStyle="normal" />
 
@@ -125,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
-                android:text="Cancel "
+                android:text="@string/cancel"
                 android:textSize="17sp"
                 android:textStyle="normal" />
 
@@ -148,7 +145,7 @@
                 android:layout_marginTop="5dp"
                 android:text="@string/out_time"
                 android:textAlignment="center"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="normal" />
 
             <Spinner
@@ -163,9 +160,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="15dp"
-                android:text="Reason"
+                android:text="@string/reason"
                 android:textSize="17sp"
                 android:textStyle="normal" />
 
@@ -181,8 +178,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
-                android:buttonTint="@color/app_theme_red"
-                android:text="Cancel Event"
+                android:text="@string/cancel_event"
                 android:textSize="17sp"
                 android:textStyle="normal" />
 
@@ -198,6 +194,6 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="#FF6969"
-        android:text="Update"
+        android:text="@string/update"
         android:textColor="@color/white" />
 </RelativeLayout>

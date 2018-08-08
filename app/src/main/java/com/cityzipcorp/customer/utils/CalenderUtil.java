@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by anilpathak on 03/11/17.
@@ -33,7 +33,7 @@ public class CalenderUtil {
         return dateFormatter.format(date);
     }
 
-    public static String getAMPMValueFromDate(Date date) {
+    private static String getAMPMValueFromDate(Date date) {
         String dateFormat = "a";
         SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
         return dateFormatter.format(date);
@@ -75,35 +75,23 @@ public class CalenderUtil {
         return timeZone.getID();
     }
 
-    public static List<LinkedHashMap<String, Schedule>> getAllDays(Date date, List<Schedule> scheduleList) {
+    public static List<List<Date>> getAllDays(Date date) {
 
-        List<LinkedHashMap<String, Schedule>> allDays = new ArrayList<>(3);
-
+        List<List<Date>> allDays = new ArrayList<>(3);
         Calendar currentDate = Calendar.getInstance();
         currentDate.setTime(date);
-        currentDate.set(Calendar.DAY_OF_MONTH, scheduleList.get(0).getDate().getDate());
+        currentDate.set(Calendar.DAY_OF_MONTH, date.getDate());
         int day = currentDate.getFirstDayOfWeek();
         currentDate.set(Calendar.DAY_OF_MONTH, day);
         currentDate.setFirstDayOfWeek(Calendar.SUNDAY);
         currentDate.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         while (allDays.size() < 3) {
-            LinkedHashMap<String, Schedule> scheduleHashMap = new LinkedHashMap<>();
+            List<Date> dates = new ArrayList<>();
             for (int i = 1; i < 8; i++) {
-                Schedule schedule = null;
-                for (Schedule scheduleFromList : scheduleList) {
-                    Calendar dateFromSchedule = Calendar.getInstance();
-                    dateFromSchedule.setTime(scheduleFromList.getDate());
-                    if (currentDate.get(Calendar.DATE) == dateFromSchedule.get(Calendar.DATE)) {
-                        if (currentDate.get(Calendar.MONTH) == dateFromSchedule.get(Calendar.MONTH)) {
-                            schedule = scheduleFromList;
-                        }
-                    }
-                }
-                scheduleHashMap.put(CalenderUtil.getDateStringFromDate(currentDate.getTime()), schedule);
+                dates.add(currentDate.getTime());
                 currentDate.add(Calendar.DAY_OF_MONTH, 1);
             }
-            allDays.add(scheduleHashMap);
-
+            allDays.add(dates);
         }
         return allDays;
     }
@@ -117,11 +105,6 @@ public class CalenderUtil {
             return null;
         }
 
-    }
-
-    public static String getDateStringFromDate(Date date) {
-        DateFormat df = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
-        return df.format(date);
     }
 
     public static HashMap<Integer, Integer> getAllDatesFromList(List<Schedule> scheduleList) {
@@ -155,18 +138,9 @@ public class CalenderUtil {
         return false;
     }
 
-
-    public static List<String> convertShiftTimeTo12HrsFormat(List<String> shiftTimes) {
-        List<String> convertedShiftTimes = new ArrayList<>();
-        for (String shiftTime : shiftTimes) {
-            try {
-                DateFormat f1 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH); //HH for hour of the day (0 - 23)
-                Date d = f1.parse(shiftTime);
-                convertedShiftTimes.add(getTime(d));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return convertedShiftTimes;
+    public static long getTimeDiff(Date dateOne, Date dateTwo) {
+        long timeDiff = Math.abs(dateOne.getTime() - dateTwo.getTime());
+        return TimeUnit.MILLISECONDS.toMinutes(timeDiff) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(timeDiff));
     }
+
 }

@@ -3,6 +3,7 @@ package com.cityzipcorp.customer.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 
 import com.cityzipcorp.customer.BuildConfig;
 import com.cityzipcorp.customer.R;
-import com.cityzipcorp.customer.base.BaseActivity;
 import com.cityzipcorp.customer.callbacks.ContractCallback;
 import com.cityzipcorp.customer.callbacks.DialogCallback;
 import com.cityzipcorp.customer.model.Contract;
@@ -47,7 +47,7 @@ import butterknife.OnClick;
 import io.fabric.sdk.android.Fabric;
 
 
-public class LoginActivity extends BaseActivity implements LoginView {
+public class LoginActivity extends AppCompatActivity implements LoginView {
 
     @BindView(R.id.edt_user_name)
     protected EditText edtUserName;
@@ -91,7 +91,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
                             if (contracts.size() > 0) {
                                 setContractAdapter(contracts);
                             } else {
-                                uiUtils.getAlertDialogForNotify("Unable to get contacts, please try again later ", new DialogCallback() {
+                                uiUtils.notifyDialog("Unable to get contacts, please try again later ", new DialogCallback() {
                                     @Override
                                     public void onYes() {
                                         finish();
@@ -102,7 +102,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
 
                         @Override
                         public void onFailure(Error error) {
-                            uiUtils.getAlertDialogForNotify("Unable to get contacts, please try again later ", new DialogCallback() {
+                            uiUtils.notifyDialog("Unable to get contacts, please try again later ", new DialogCallback() {
                                 @Override
                                 public void onYes() {
                                     finish();
@@ -138,10 +138,10 @@ public class LoginActivity extends BaseActivity implements LoginView {
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        checkSession();
         uiUtils = new UiUtils(this);
         loginPresenter = new LoginPresenterImpl(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
+        checkSession();
         getContracts();
     }
 
@@ -154,26 +154,30 @@ public class LoginActivity extends BaseActivity implements LoginView {
 
     @OnClick(R.id.btn_login)
     void onLogin() {
-        validateCaptcha();
+        if (spnContract.getSelectedItemPosition() > 0) {
+            validateCaptcha();
+        } else {
+            uiUtils.shortToast("Please select contract");
+        }
     }
 
     private void performLogin(String captchaToken) {
-        if (spnContract.getSelectedItemPosition() > 0) {
-            Contract contract = contracts.get(spnContract.getSelectedItemPosition() - 1);
-            sharedPreferenceManager.saveValue(SharedPreferenceManagerConstant.BASE_URL, contract.getHost());
 
-            String email = edtUserName.getText().toString();
-            String password = edtPassword.getText().toString();
-            UserCredential userCredential = new UserCredential();
-            userCredential.setEmail(email);
-            userCredential.setPassword(password);
-            userCredential.setCaptchaResuktToken(captchaToken);
-            if (NetworkUtils.isNetworkAvailable(this)) {
-                loginPresenter.validate(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), userCredential);
-            } else {
-                uiUtils.noInternetDialog();
-            }
+        Contract contract = contracts.get(spnContract.getSelectedItemPosition() - 1);
+        sharedPreferenceManager.saveValue(SharedPreferenceManagerConstant.BASE_URL, contract.getHost());
+
+        String email = edtUserName.getText().toString();
+        String password = edtPassword.getText().toString();
+        UserCredential userCredential = new UserCredential();
+        userCredential.setEmail(email);
+        userCredential.setPassword(password);
+        userCredential.setCaptchaResuktToken(captchaToken);
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            loginPresenter.validate(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), userCredential);
+        } else {
+            uiUtils.noInternetDialog();
         }
+
     }
 
 

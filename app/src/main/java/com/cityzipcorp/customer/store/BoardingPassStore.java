@@ -6,7 +6,7 @@ import com.cityzipcorp.customer.callbacks.TrackRideCallback;
 import com.cityzipcorp.customer.clients.BoardingPassClient;
 import com.cityzipcorp.customer.model.Attendance;
 import com.cityzipcorp.customer.model.BoardingPass;
-import com.cityzipcorp.customer.model.GeoJsonPoint;
+import com.cityzipcorp.customer.model.SosBody;
 import com.cityzipcorp.customer.model.TrackRide;
 import com.cityzipcorp.customer.network.ClientGenerator;
 import com.cityzipcorp.customer.utils.Utils;
@@ -53,9 +53,9 @@ public class BoardingPassStore {
         });
     }
 
-    public void sosAlert(GeoJsonPoint geoJsonPoint, String boardingPassId, String accessToken, final StatusCallback statusCallback) {
+    public void sosAlert(SosBody sosBody, String boardingPassId, String accessToken, final StatusCallback statusCallback) {
         BoardingPassClient boardingPassClient = clientGenerator.createClient(BoardingPassClient.class);
-        Call<ResponseBody> call = boardingPassClient.sosAlert(geoJsonPoint, boardingPassId, Utils.getHeader(accessToken));
+        Call<ResponseBody> call = boardingPassClient.sosAlert(sosBody, boardingPassId, Utils.getHeader(accessToken));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

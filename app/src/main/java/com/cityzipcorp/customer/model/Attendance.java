@@ -9,11 +9,18 @@ import java.util.Date;
  */
 
 public class Attendance {
-    @SerializedName("attended_location")
-    GeoJsonPoint geoJsonPoint;
     private boolean attended;
     @SerializedName("attended_at")
     private Date attendedAt;
+    @SerializedName("vehicle_id")
+    private String vehicleId;
+
+    @SerializedName("vehicle_number")
+    private String vehicleNumber;
+
+    public void setVehicleNumber(String vehicleNumber) {
+        this.vehicleNumber = vehicleNumber;
+    }
 
     public boolean isAttended() {
         return attended;
@@ -31,13 +38,8 @@ public class Attendance {
         this.attendedAt = attendedAt;
     }
 
-    public GeoJsonPoint getGeoJsonPoint() {
-        return geoJsonPoint;
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
     }
-
-    public void setGeoJsonPoint(GeoJsonPoint geoJsonPoint) {
-        this.geoJsonPoint = geoJsonPoint;
-    }
-
 
 }

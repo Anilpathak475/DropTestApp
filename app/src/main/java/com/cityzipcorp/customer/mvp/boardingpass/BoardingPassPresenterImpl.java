@@ -67,9 +67,9 @@ public class BoardingPassPresenterImpl implements BoardingPassPresenter, Boardin
     }
 
     @Override
-    public void markAttendance(String baseUrl, Location location, String passId, String accessToken) {
+    public void markAttendance(String baseUrl, String vehicleId, String passId, String accessToken) {
         boardingPassView.showProgress();
-        boardingPassInteractor.markAttendance(baseUrl, location, passId, accessToken, this);
+        boardingPassInteractor.markAttendance(baseUrl, vehicleId, passId, accessToken, this);
     }
 
     @Override

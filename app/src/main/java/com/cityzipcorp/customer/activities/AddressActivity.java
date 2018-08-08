@@ -7,10 +7,13 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.callbacks.AreaCallback;
+import com.cityzipcorp.customer.callbacks.DialogCallback;
 import com.cityzipcorp.customer.callbacks.UserCallback;
 import com.cityzipcorp.customer.model.Address;
 import com.cityzipcorp.customer.model.Area;
@@ -31,8 +34,14 @@ import butterknife.OnClick;
 
 public class AddressActivity extends AppCompatActivity {
 
-    @BindView(R.id.edt_selected_address)
-    EditText edtSelectedAddress;
+    @BindView(R.id.edt_society)
+    EditText edtSociety;
+
+    @BindView(R.id.edt_street_address)
+    EditText edtStreetAddress;
+
+    @BindView(R.id.edt_locality)
+    EditText edtLocality;
 
     @BindView(R.id.edt_landmark)
     EditText edtLandmark;
@@ -52,10 +61,16 @@ public class AddressActivity extends AppCompatActivity {
     @BindView(R.id.btn_update)
     Button btnUpdateHomeAddress;
 
+    @BindView(R.id.img_refresh)
+    public ImageView imgRefresh;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
     private SharedPreferenceManager sharedPreferenceManager;
     private User user;
     private Address selectedAddress;
     private UiUtils uiUtils;
+    private List<String> areaNames = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,27 +90,35 @@ public class AddressActivity extends AppCompatActivity {
                     getAreas(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new AreaCallback() {
                         @Override
                         public void onSuccess(List<Area> areas) {
-                            List<String> areaNames = new ArrayList<>();
-                            int selectedIndex = -1;
-                            for (Area area : areas) {
-                                areaNames.add(area.getAreaName());
-                                if (selectedAddress.getArea().equalsIgnoreCase(area.getAreaName())) {
-                                    selectedIndex = areaNames.indexOf(area.getAreaName());
-                                }
-                            }
-                            setAdapter(areaNames, selectedIndex);
-                            uiUtils.dismissDialog();
+                            createAddress(areas);
                         }
 
                         @Override
                         public void onFailure(Error error) {
                             uiUtils.dismissDialog();
-                            uiUtils.shortToast("Unable to fetch Areas");
+                            uiUtils.notifyDialog("Unable to fetch Areas", new DialogCallback() {
+                                @Override
+                                public void onYes() {
+
+                                }
+                            });
                         }
                     });
         } else {
             uiUtils.noInternetDialog();
         }
+    }
+
+    private void createAddress(List<Area> areas) {
+        int selectedIndex = -1;
+        for (Area area : areas) {
+            areaNames.add(area.getAreaName().toUpperCase());
+            if (selectedAddress.getArea().equalsIgnoreCase(area.getAreaName())) {
+                selectedIndex = areaNames.indexOf(area.getAreaName());
+            }
+        }
+        setAdapter(areaNames, selectedIndex);
+        uiUtils.dismissDialog();
     }
 
     private void setAdapter(List<String> areaNames, int selectedIndex) {
@@ -118,21 +141,15 @@ public class AddressActivity extends AppCompatActivity {
 
     private void setValues(Address address) {
         selectedAddress = address;
-        String selectedAddress = address.getSociety() + " " + address.getLocality() + " " + address.getStreetAddress();
-        selectedAddress = selectedAddress.replace("null", "");
-        selectedAddress = selectedAddress.replace(address.getArea(), "");
-        selectedAddress = selectedAddress.replace(address.getCity(), "");
-        selectedAddress = selectedAddress.replace(address.getCountry(), "");
-        selectedAddress = selectedAddress.replace(address.getPostalCode(), "");
-        selectedAddress = selectedAddress.replace(address.getLandmark(), "");
-        selectedAddress = selectedAddress.replace(address.getArea(), "");
-        edtSelectedAddress.setText(selectedAddress);
         txtCity.setText(address.getCity());
-        edtLandmark.setText(address.getLandmark());
         txtState.setText(address.getState());
         txtPinCode.setText(address.getPostalCode());
     }
 
+    @OnClick(R.id.img_refresh)
+    void onRefresh() {
+        getAreas();
+    }
 
     @OnClick(R.id.btn_update)
     void updateHomeAddress() {
@@ -140,11 +157,12 @@ public class AddressActivity extends AppCompatActivity {
             if (NetworkUtils.isNetworkAvailable(this)) {
                 Address address = new Address();
                 address.setArea(autoCompleteArea.getText().toString());
-                address.setCity(txtCity.getText().toString());
-                address.setSociety(selectedAddress.getSociety());
-                address.setState(selectedAddress.getState());
+                address.setLocality(edtLocality.getText().toString());
+                address.setSociety(edtSociety.getText().toString());
                 address.setLandmark(edtLandmark.getText().toString());
-                address.setLocality(selectedAddress.getLocality());
+                address.setStreetAddress(edtStreetAddress.getText().toString());
+                address.setCity(txtCity.getText().toString());
+                address.setState(selectedAddress.getState());
                 address.setCountry(selectedAddress.getCountry());
                 User user = new User();
                 user.setId(this.user.getId());
@@ -179,16 +197,32 @@ public class AddressActivity extends AppCompatActivity {
             uiUtils.shortToast("Please select area");
             return false;
         }
-        if (edtSelectedAddress.getText().toString().equalsIgnoreCase("")) {
-            uiUtils.shortToast("Please enter address");
+        if (edtLandmark.getText().toString().equalsIgnoreCase("")) {
+            uiUtils.shortToast("Please enter landmark");
             return false;
         }
-
+        if (edtStreetAddress.getText().toString().equalsIgnoreCase("")) {
+            uiUtils.shortToast("Please enter street address");
+            return false;
+        }
+        if (edtSociety.getText().toString().equalsIgnoreCase("")) {
+            uiUtils.shortToast("Please enter society");
+            return false;
+        }
+        if (edtLocality.getText().toString().equalsIgnoreCase("")) {
+            uiUtils.shortToast("Please enter locality");
+            return false;
+        }
         if (edtLandmark.getText().toString().equalsIgnoreCase("")) {
             uiUtils.shortToast("Please enter landmark");
             return false;
         }
 
+        if (!areaNames.contains(autoCompleteArea.getText().toString())) {
+            uiUtils.shortToast("Please select area");
+            autoCompleteArea.getText().clear();
+            return false;
+        }
         return true;
     }
 

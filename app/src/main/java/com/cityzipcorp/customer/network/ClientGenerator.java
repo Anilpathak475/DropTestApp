@@ -1,18 +1,11 @@
 package com.cityzipcorp.customer.network;
 
 
-import com.cityzipcorp.customer.utils.CalenderUtil;
-import com.cityzipcorp.customer.utils.Constants;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.cityzipcorp.customer.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
-
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -38,20 +31,7 @@ public class ClientGenerator {
                 .client(
                         new OkHttpClient.Builder()
                                 .retryOnConnectionFailure(true)
-                                .addInterceptor(new Interceptor() {
-                                    @Override
-                                    public Response intercept(Chain chain) throws IOException {
-                                        Request original = chain.request();
-
-                                        Request.Builder builder = original.newBuilder();
-                                        builder.addHeader("Content-Type", "application/json");
-                                        builder.addHeader(Constants.HEADER_TIMEZONE_KEY, CalenderUtil.getCurrentTimeZone());
-                                        builder.addHeader("User-Agent", System.getProperty("http.agent"));
-
-                                        return chain.proceed(builder.build());
-                                    }
-                                })
-                                .addNetworkInterceptor(new StethoInterceptor())
+                                .addNetworkInterceptor(Utils.getInstance().getUserAgent())
                                 .build()
                 )
                 .addConverterFactory(GsonConverterFactory.create(gson))

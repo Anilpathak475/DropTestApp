@@ -1,0 +1,63 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  desc "Submit a new Preprod Beta Build to Crashlytics Beta"
+  lane :preprod_beta do
+    ensure_git_status_clean
+    ensure_git_branch(branch: "preprod")
+    gradle(task: "incrementVersionCode")
+    gradle(task: "clean assemblepreprodrelease")
+    crashlytics
+    git_add
+    git_commit(
+      path: "app/version.properties",
+      message: ":rocket: Increment version code :rocket: [ci skip]",
+    )
+    push_to_git_remote(
+      remote: "origin",         # optional, default: "origin"
+      local_branch: "preprod",  # optional, aliased by "branch", default: "master"
+      remote_branch: "preprod", # optional, default is set to local_branch
+    )
+  end
+
+  desc "Submit a new Staging Beta Build to Crashlytics Beta"
+  lane :staging_beta do
+   ## ensure_git_status_clean
+    ##ensure_git_branch(branch: "develop")
+    gradle(task: "incrementVersionCode")
+    gradle(task: "clean assemblestagingrelease")
+    crashlytics
+    git_add
+    git_commit(
+      path: "app/version.properties",
+      message: ":rocket: Increment version code :rocket: [ci skip]",
+    )
+    push_to_git_remote(
+      remote: "origin",         # optional, default: "origin"
+      local_branch: "develop",  # optional, aliased by "branch", default: "master"
+      remote_branch: "develop", # optional, default is set to local_branch
+    )
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    gradle(task: "clean assembleRelease")
+    upload_to_play_store
+  end
+end

@@ -1,19 +1,18 @@
 package com.cityzipcorp.customer.fragments;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -30,6 +29,7 @@ import android.widget.TextView;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.base.BaseFragment;
+import com.cityzipcorp.customer.callbacks.DialogCallback;
 import com.cityzipcorp.customer.model.BoardingPass;
 import com.cityzipcorp.customer.model.GeoJsonPoint;
 import com.cityzipcorp.customer.model.TrackRide;
@@ -42,9 +42,14 @@ import com.cityzipcorp.customer.utils.LocationUtils;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,7 +59,8 @@ import butterknife.OnClick;
  * Created by anilpathak on 02/11/17.
  */
 
-public class BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefreshLayout.OnRefreshListener {
+public class
+BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefreshLayout.OnRefreshListener, LocationListener {
 
     @BindView(R.id.layout_vehicle_details)
     LinearLayout layoutVehicleDetails;
@@ -108,6 +114,8 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
     private BoardingPass boardingPass;
     private BoardingPassPresenter boardingPassPresenter;
     private LocationUtils locationUtils;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private boolean sosRequested = false;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -131,6 +139,13 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
         ButterKnife.bind(this, view);
         locationUtils = new LocationUtils(activity);
         buildGoogleApiClient();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
+        locationUtils.enableGps(googleApiClient);
+        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        if (locationUtils.checkLocationPermission()) {
+            assert locationManager != null;
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0, this);
+        }
 
         init();
 
@@ -167,10 +182,16 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
         if (NetworkUtils.isNetworkAvailable(activity)) {
             if (locationUtils.checkLocationPermission()) {
                 if (locationUtils.isLocationEnabled()) {
-                    Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-                    getRideDetails(location);
-
-
+                    mFusedLocationClient.getLastLocation()
+                            .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    // Got last known location. In some rare situations, this can be null.
+                                    if (location != null) {
+                                        getRideDetails(location);
+                                    }
+                                }
+                            });
                 } else {
                     locationUtils.enableGps(googleApiClient);
                 }
@@ -270,52 +291,67 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     @OnClick(R.id.btn_sos)
     void onClickSos() {
-        if (ActivityCompat.checkSelfPermission(activity,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(activity,
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        if (NetworkUtils.isNetworkAvailable(activity)) {
-            boardingPassPresenter.sendSos(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
-                    location, boardingPass.getId(), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+        if (locationUtils.checkLocationPermission()) {
+            if (locationUtils.isLocationEnabled()) {
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations, this can be null.
+                                if (location != null) {
+                                    if (NetworkUtils.isNetworkAvailable(activity)) {
+                                        sosRequested = false;
+                                        boardingPassPresenter.sendSos(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
+                                                location, boardingPass.getId(), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
+                                    } else {
+                                        uiUtils.noInternetDialog();
+                                    }
+                                }
+                            }
+                        });
+
+            }
         } else {
-            uiUtils.noInternetDialog();
+            uiUtils.notifyDialog("Please enable location to perform sos", new DialogCallback() {
+                @Override
+                public void onYes() {
+                    sosRequested = true;
+                    locationUtils.enableGps(googleApiClient);
+                }
+            });
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() == null) {
-                uiUtils.shortToast("Cancelled");
-            } else {
-                markAttendance();
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == locationUtils.LOCATION_REQUEST_CODE) {
+            if (sosRequested) {
+                onClickSos();
             }
         } else {
-            super.onActivityResult(requestCode, resultCode, data);
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            if (result != null) {
+                if (result.getContents() == null) {
+                    uiUtils.shortToast("Cancelled");
+                } else {
+                    String vehicleId = result.getContents();
+                    markAttendance(vehicleId);
+                }
+            }
         }
     }
 
-    private void markAttendance() {
-        if (ActivityCompat.checkSelfPermission(activity,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(activity,
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+    private void markAttendance(String vehicleId) {
         if (NetworkUtils.isNetworkAvailable(activity)) {
             boardingPassPresenter.markAttendance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL),
-                    location, boardingPass.getId(),
+                    vehicleId, boardingPass.getId(),
                     sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
         } else {
             uiUtils.noInternetDialog();
         }
-
     }
+
 
     @Override
     public void showProgress() {
@@ -360,13 +396,22 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
 
     @Override
     public void trackDetailSuccess(TrackRide trackRide) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("track", trackRide);
-        bundle.putParcelable("boardingPass", boardingPass);
-        MapFragment mapFragment = new MapFragment();
-        mapFragment.setArguments(bundle);
-        activity.replaceFragment(mapFragment, getString(R.string.map_fragment));
-        activity.backAllowed = true;
+        Date recordedTime = trackRide.getRecordedAt();
+        if (recordedTime != null) {
+            if (CalenderUtil.getTimeDiff(recordedTime, Calendar.getInstance().getTime()) < 30) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("track", trackRide);
+                bundle.putParcelable("boardingPass", boardingPass);
+                MapFragment mapFragment = new MapFragment();
+                mapFragment.setArguments(bundle);
+                activity.replaceFragment(mapFragment, getString(R.string.map_fragment));
+                activity.backAllowed = true;
+            } else {
+                uiUtils.shortToast("Trip not Started yet!");
+            }
+        } else {
+            uiUtils.shortToast("Trip not Started yet!");
+        }
     }
 
     @Override
@@ -404,5 +449,27 @@ public class BoardingPassFragment extends BaseFragment implements BoardingPassVi
         rotate.setInterpolator(new LinearInterpolator());
         rotate.setRepeatCount(Animation.INFINITE); //Repeat animation indefinitely
         imgVehicle.startAnimation(rotate);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (sosRequested) {
+            onClickSos();
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
     }
 }

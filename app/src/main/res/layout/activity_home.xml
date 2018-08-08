@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/too_bar_color"
-        android:elevation="4dp"
         android:minHeight="?attr/actionBarSize"
         app:contentInsetEnd="0dp"
         app:contentInsetStart="0dp">
@@ -27,6 +26,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="15dp"
+                android:contentDescription="@string/refresh"
                 android:background="@drawable/ic_refresh_black_24dp"
                 android:visibility="gone" />
 
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginStart="-10dp"
-                android:text="Loading..."
+                android:text="@string/loading_title"
                 android:textColor="@color/white"
                 android:textSize="@dimen/ts_xx_large" />
 
@@ -56,8 +56,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="#5C5C5C"
-                android:stateListAnimator="@null"
-                android:text="Bulk"
+                android:text="@string/bulk"
                 android:textColor="@color/white"
                 android:visibility="gone" />
 
@@ -68,8 +67,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="#5C5C5C"
-                android:stateListAnimator="@null"
-                android:text="Done"
+                android:text="@string/done"
                 android:textColor="@color/white"
 
                 android:visibility="gone" />
@@ -81,8 +79,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="#5C5C5C"
-                android:stateListAnimator="@null"
-                android:text="Update"
+                android:text="Set Home Address"
                 android:textColor="@color/white"
                 android:visibility="gone" />
 
@@ -94,6 +91,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/ic_power_button"
+                android:contentDescription="@string/logout"
                 android:visibility="gone" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
@@ -113,8 +111,7 @@
             android:id="@+id/card_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:elevation="10dp">
+            android:layout_alignParentBottom="true">
 
             <android.support.design.widget.BottomNavigationView
                 android:id="@+id/navigation"

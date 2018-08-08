@@ -1,5 +1,6 @@
 package com.cityzipcorp.customer.fragments;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -10,15 +11,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.activities.MapsActivity;
@@ -30,6 +35,9 @@ import com.cityzipcorp.customer.model.User;
 import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.SharedPreferenceManagerConstant;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,6 +58,9 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @BindView(R.id.card_home_address)
     CardView cardAddress;
 
+    @BindView(R.id.layout_week_off)
+    CardView cardWeeklyOff;
+
     @BindView(R.id.card_group_shifts)
     CardView cardGroupAndShifts;
 
@@ -67,6 +78,9 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @BindView(R.id.txt_nodal_address)
     TextView txtNodalAddress;
+
+    @BindView(R.id.txt_no_week_off)
+    TextView txtNoWeekOff;
 
     @BindView(R.id.txt_comp_name)
     TextView txtCompanyName;
@@ -97,13 +111,36 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     @BindView(R.id.opt_in_checkbox)
     CheckBox optInCheckBox;
 
+    @BindView(R.id.weekdays)
+    LinearLayout layoutWeekdays;
+
     @BindView(R.id.opt_in_description)
     TextView optInDesc;
 
+    @BindView(R.id.t_btn_mon)
+    ToggleButton toggleButtonMon;
+
+    @BindView(R.id.t_btn_tue)
+    ToggleButton toggleButtonTue;
+
+    @BindView(R.id.t_btn_wed)
+    ToggleButton toggleButtonWed;
+
+    @BindView(R.id.t_btn_thu)
+    ToggleButton toggleButtonThu;
+
+    @BindView(R.id.t_btn_fri)
+    ToggleButton toggleButtonFri;
+    @BindView(R.id.t_btn_sat)
+    ToggleButton toggleButtonSat;
+    @BindView(R.id.t_btn_sun)
+    ToggleButton toggleButtonSun;
     boolean isAllowedToCLickOnGroup = false;
     int ADDRESS_CODE_HOME = 101;
     int ADDRESS_CODE_NODAL = 102;
     private User user;
+    private boolean onGoingProfileRequest = false;
+    private List<String> days;
 
     @Nullable
     @Override
@@ -148,32 +185,46 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @OnCheckedChanged(R.id.opt_in_checkbox)
     void onOptedInCheckedBoxClicked(CompoundButton button, boolean checked) {
-
-            uiUtils.showProgressDialog();
-
-            if (NetworkUtils.isNetworkAvailable(activity)) {
-                updateOptInSelection(checked);
-            } else {
-                button.setChecked(!checked);
-                uiUtils.noInternetDialog();
-                uiUtils.dismissDialog();
-            }
+        uiUtils.showProgressDialog();
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            optInChanged(checked);
+        } else {
+            button.setChecked(!checked);
+            uiUtils.noInternetDialog();
+            uiUtils.dismissDialog();
+        }
     }
 
-    private void updateOptInSelection(final boolean checked) {
-        user.setOptedIn(checked);
+    private void optInChanged(final boolean checked) {
+        if (!checked) {
+            uiUtils.conformationDialog("Are you sure you want to opt out!", new DialogCallback() {
+                @Override
+                public void onYes() {
+                    user.setOptedIn(false);
+                    updateOptInSelection();
+                }
+            });
+        } else {
+            user.setOptedIn(true);
+            updateOptInSelection();
+        }
+    }
+
+    private void updateOptInSelection() {
         UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
                 updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
                     @Override
                     public void onSuccess(User user) {
                         uiUtils.dismissDialog();
                         setOptInDescription(user.getOptedIn());
+                        activity.isOptIn = user.getOptedIn();
                     }
 
                     @Override
                     public void onFailure(Error error) {
                         uiUtils.dismissDialog();
-                        optInCheckBox.setChecked(!checked);
+                        optInCheckBox.setChecked(!user.getOptedIn());
+                        activity.isOptIn = !user.getOptedIn();
                         uiUtils.shortToast("Unable to update profile!");
                     }
                 });
@@ -207,6 +258,152 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         activity.backAllowed = true;
     }
 
+    @OnClick(R.id.layout_week_off)
+    void onClickWeeklyOff() {
+        days = new ArrayList<>();
+        final Dialog dialog = new Dialog(activity);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        Window window = dialog.getWindow();
+        assert window != null;
+        lp.copyFrom(window.getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.gravity = Gravity.CENTER;
+        window.setAttributes(lp);
+        dialog.setContentView(R.layout.layout_weekly_off);
+        ToggleButton tBtnMon = dialog.findViewById(R.id.t_btn_mon);
+        ToggleButton tBtnTue = dialog.findViewById(R.id.t_btn_tue);
+        ToggleButton tBtnWed = dialog.findViewById(R.id.t_btn_wed);
+        ToggleButton tBtnThu = dialog.findViewById(R.id.t_btn_thu);
+        ToggleButton tBtnFri = dialog.findViewById(R.id.t_btn_fri);
+        ToggleButton tBtnSat = dialog.findViewById(R.id.t_btn_sat);
+        ToggleButton tBtnSun = dialog.findViewById(R.id.t_btn_sun);
+        Button btnSubmit = dialog.findViewById(R.id.btn_submit);
+        String[] weeklyOff = user.getWeeekdaysOff();
+        if (weeklyOff != null && user.getWeeekdaysOff().length > 0) {
+            for (String weekOff : weeklyOff) {
+                days.add(weekOff);
+                ToggleButton toggleButton = dialog.findViewById(getDayId(weekOff));
+                toggleButton.setChecked(true);
+            }
+        }
+        tBtnMon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                String day = "Monday";
+                if (b) {
+                    days.add(day);
+                } else {
+                    if (days.contains(day))
+                        days.remove(day);
+                }
+            }
+        });
+        tBtnTue.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                String day = "Tuesday";
+                if (b) {
+                    days.add(day);
+                } else {
+                    if (days.contains(day))
+                        days.remove(day);
+                }
+            }
+        });
+        tBtnWed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                String day = "Wednesday";
+                if (b) {
+                    days.add(day);
+                } else {
+                    if (days.contains(day))
+                        days.remove(day);
+                }
+            }
+        });
+        tBtnThu.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                String day = "Thursday";
+                if (b) {
+                    days.add(day);
+                } else {
+                    if (days.contains(day))
+                        days.remove(day);
+                }
+            }
+        });
+
+        tBtnFri.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                String day = "Friday";
+                if (b) {
+                    days.add(day);
+                } else {
+                    if (days.contains(day))
+                        days.remove(day);
+                }
+            }
+        });
+        tBtnSat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                String day = "Saturday";
+                if (b) {
+                    days.add(day);
+                } else {
+                    if (days.contains(day))
+                        days.remove(day);
+                }
+            }
+        });
+        tBtnSun.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                String day = "Sunday";
+                if (b) {
+                    days.add(day);
+                } else {
+                    if (days.contains(day))
+                        days.remove(day);
+                }
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (days.size() > 0) {
+                    String[] selectedDays = days.toArray(new String[days.size()]);
+                    user.setWeeekdaysOff(selectedDays);
+                    uiUtils.showProgressDialog();
+
+                    UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                            updateProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), user, new UserCallback() {
+                                @Override
+                                public void onSuccess(User user) {
+                                    dialog.dismiss();
+                                    getProfileInfo();
+                                }
+
+                                @Override
+                                public void onFailure(Error error) {
+                                    uiUtils.dismissDialog();
+                                    uiUtils.shortToast("Unable to update week off!");
+                                }
+                            });
+                } else {
+                    uiUtils.shortToast("Please select 1 day for week off");
+                }
+            }
+        });
+        dialog.show();
+    }
+
     @OnClick(R.id.card_nodal_address)
     void onClickNodal() {
         if (!NetworkUtils.isNetworkAvailable(activity)) {
@@ -234,9 +431,12 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         }
         if (user.getHomeStop() != null && user.getAddress() != null) {
             Address address = user.getAddress();
-            String addressFromObj = address.getLocality() + ", "
+            String addressFromObj = address.getSociety() + ", "
+                    + address.getLocality() + ", "
+                    + address.getStreetAddress() + ", "
                     + address.getLandmark() + ", "
                     + address.getArea() + ", "
+                    + address.getCity() + ", "
                     + address.getPostalCode();
             txtHomeAddress.setText(addressFromObj);
         }
@@ -248,6 +448,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         }
         if (user.getOptedIn() != null) {
             optInCheckBox.setChecked(user.getOptedIn());
+            activity.isOptIn = user.getOptedIn();
             setOptInDescription(user.getOptedIn());
         }
         if (user.getNodalStop() != null) {
@@ -265,8 +466,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             txtShiftName.setText(user.getShift().getName());
             isAllowedToCLickOnGroup = true;
         }
-
-
+        weeklyOff(user);
         if (!sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA).equalsIgnoreCase("")) {
             user.setProfilePicUri(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.IMAGE_DATA));
             String encodedImage = user.getProfilePicUri();
@@ -275,14 +475,14 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             imgProfile.setImageBitmap(decodedByte);
         }
         if (user.getHomeStop() == null) {
-            uiUtils.getAlertDialogWithMessage("Please set home stop", new DialogCallback() {
+            uiUtils.conformationDialog("Please set home stop", new DialogCallback() {
                 @Override
                 public void onYes() {
                     onClickHome();
                 }
             });
         } else if (user.getNodalStop() == null) {
-            uiUtils.getAlertDialogWithMessage("Please set nodal stop", new DialogCallback() {
+            uiUtils.conformationDialog("Please set nodal stop", new DialogCallback() {
                 @Override
                 public void onYes() {
                     onClickNodal();
@@ -290,6 +490,27 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             });
         }
 
+    }
+
+    private void weeklyOff(User user) {
+        toggleButtonMon.setChecked(false);
+        toggleButtonTue.setChecked(false);
+        toggleButtonWed.setChecked(false);
+        toggleButtonThu.setChecked(false);
+        toggleButtonFri.setChecked(false);
+        toggleButtonSat.setChecked(false);
+        toggleButtonSun.setChecked(false);
+        String[] weeklyOff = user.getWeeekdaysOff();
+        if (weeklyOff != null && user.getWeeekdaysOff().length > 0) {
+            layoutWeekdays.setVisibility(View.VISIBLE);
+            txtNoWeekOff.setVisibility(View.GONE);
+            for (String weekOff : weeklyOff) {
+                setWeeklyOffs(weekOff);
+            }
+        } else {
+            layoutWeekdays.setVisibility(View.GONE);
+            txtNoWeekOff.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setOptInDescription(boolean optedIn) {
@@ -301,39 +522,43 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     }
 
     private void getProfileInfo() {
-        if (NetworkUtils.isNetworkAvailable(activity)) {
-            UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
-                    getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
-                            new UserCallback() {
-                                @Override
-                                public void onSuccess(User user) {
-                                    if (user != null) {
-                                        try {
-                                            uiUtils.dismissDialog();
-                                            setValues(user);
-                                            noDataLayout.setVisibility(View.GONE);
-                                            layoutMain.setVisibility(View.VISIBLE);
-                                            swipeRefreshLayout.setRefreshing(false);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                            swipeRefreshLayout.setRefreshing(false);
-                                            uiUtils.dismissDialog();
+        if (!onGoingProfileRequest)
+            if (NetworkUtils.isNetworkAvailable(activity)) {
+                onGoingProfileRequest = true;
+                UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL)).
+                        getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
+                                new UserCallback() {
+                                    @Override
+                                    public void onSuccess(User user) {
+                                        if (user != null) {
+                                            onGoingProfileRequest = false;
+                                            try {
+                                                uiUtils.dismissDialog();
+                                                setValues(user);
+                                                noDataLayout.setVisibility(View.GONE);
+                                                layoutMain.setVisibility(View.VISIBLE);
+                                                swipeRefreshLayout.setRefreshing(false);
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                                swipeRefreshLayout.setRefreshing(false);
+                                                uiUtils.dismissDialog();
+                                            }
                                         }
                                     }
-                                }
 
-                                @Override
-                                public void onFailure(Error error) {
-                                    swipeRefreshLayout.setRefreshing(false);
-                                    uiUtils.dismissDialog();
-                                    uiUtils.shortToast("Unable to fetch profile details!");
-                                }
-                            });
-        } else {
-            uiUtils.noInternetDialog();
-            uiUtils.dismissDialog();
-            swipeRefreshLayout.setRefreshing(false);
-        }
+                                    @Override
+                                    public void onFailure(Error error) {
+                                        onGoingProfileRequest = false;
+                                        swipeRefreshLayout.setRefreshing(false);
+                                        uiUtils.dismissDialog();
+                                        uiUtils.shortToast("Unable to fetch profile details!");
+                                    }
+                                });
+            } else {
+                uiUtils.noInternetDialog();
+                uiUtils.dismissDialog();
+                swipeRefreshLayout.setRefreshing(false);
+            }
     }
 
     @OnClick(R.id.card_change_password)
@@ -368,5 +593,57 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         getProfileInfo();
+    }
+
+    private int getDayId(String day) {
+        int id = 0;
+        switch (day) {
+            case "Monday":
+                id = R.id.t_btn_mon;
+                break;
+            case "Tuesday":
+                id = R.id.t_btn_tue;
+                break;
+            case "Wednesday":
+                id = R.id.t_btn_wed;
+                break;
+            case "Thursday":
+                id = R.id.t_btn_thu;
+                break;
+            case "Friday":
+                id = R.id.t_btn_fri;
+                break;
+            case "Saturday":
+                id = R.id.t_btn_sat;
+                break;
+            case "Sunday":
+                id = R.id.t_btn_sun;
+                break;
+        }
+        return id;
+    }
+
+    private void setWeeklyOffs(String weekOff) {
+        if (weekOff.equalsIgnoreCase("Monday")) {
+            toggleButtonMon.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Tuesday")) {
+            toggleButtonTue.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Wednesday")) {
+            toggleButtonWed.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Thursday")) {
+            toggleButtonThu.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Friday")) {
+            toggleButtonFri.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Saturday")) {
+            toggleButtonSat.setChecked(true);
+        }
+        if (weekOff.equalsIgnoreCase("Sunday")) {
+            toggleButtonSun.setChecked(true);
+        }
     }
 }

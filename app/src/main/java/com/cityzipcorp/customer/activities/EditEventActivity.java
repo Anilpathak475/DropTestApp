@@ -34,10 +34,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,8 +96,6 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     private TimeUpdate inTimeUpdate;
     private TimeUpdate outTimeUpdate;
     private UiUtils uiUtils;
-    private ScheduleStore scheduleStore;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +160,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
                 }
             });
         } else {
-
+            uiUtils.noInternetDialog();
         }
     }
 
@@ -174,13 +170,13 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
             if (bundle.containsKey(Constants.EDIT_INTENT_EXTRA_DATA)) {
                 schedule = (Schedule) bundle.get(Constants.EDIT_INTENT_EXTRA_DATA);
                 String timeToDisplay = bundle.getString(Constants.EDIT_INTENT_EXTRA_TIME);
-                if (timeToDisplay.equalsIgnoreCase("InTime")) {
+                if (timeToDisplay != null && timeToDisplay.equalsIgnoreCase("InTime")) {
                     tabLayout.getTabAt(0).select();
                     layoutInTime.setVisibility(View.VISIBLE);
-                } else if (timeToDisplay.equalsIgnoreCase("OutTime")) {
+                } else if (timeToDisplay != null && timeToDisplay.equalsIgnoreCase("OutTime")) {
                     tabLayout.getTabAt(1).select();
                     layoutOutTime.setVisibility(View.VISIBLE);
-                } else if (timeToDisplay.equalsIgnoreCase("NoTrip")) {
+                } else if (timeToDisplay != null && timeToDisplay.equalsIgnoreCase("NoTrip")) {
                     // Sets default
                     setDefaultValues();
                     tabLayout.getTabAt(0).select();
@@ -201,31 +197,6 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
                     e.printStackTrace();
                     chkCancelOutTime.setVisibility(View.GONE);
                 }
-            } else if (bundle.containsKey("dateMap")) {
-                HashMap<String, Schedule> bulkList = (HashMap<String, Schedule>) bundle.getSerializable("dateMap");
-                Set<String> dateSet = bulkList.keySet();
-                String dateToDisplay = "";
-                for (String key : dateSet) {
-                    Date date = CalenderUtil.getDateFromString(key);
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(date);
-                    dateToDisplay = dateToDisplay + calendar.get(Calendar.DATE) + " " + CalenderUtil.getMonth(date) + ", ";
-                       /* if(index == 0 ) {
-                            Date date = CalenderUtil.getDateFromString(key);
-                            dateToDisplay = date.getDate() +" "+CalenderUtil.getMonth(date);
-                        }
-                        if(index == dateSet.size()-1) {
-                            Date date = CalenderUtil.getDateFromString(key);
-                            dateToDisplay = dateToDisplay + " - "+date.getDate() +" "+CalenderUtil.getMonth(date);
-                        }*/
-                }
-                txtDate.setText(dateToDisplay);
-                tabLayout.getTabAt(0).select();
-                layoutInTime.setVisibility(View.VISIBLE);
-                txtDay.setText("Selected Dates");
-            } else {
-                inTimeUpdate = new TimeUpdate();
-                outTimeUpdate = new TimeUpdate();
             }
         }
     }

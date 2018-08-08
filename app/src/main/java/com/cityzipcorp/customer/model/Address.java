@@ -38,7 +38,7 @@ public class Address implements Parcelable {
     public Address() {
     }
 
-    protected Address(Parcel in) {
+    private Address(Parcel in) {
         this.id = in.readString();
         this.society = in.readString();
         this.locality = in.readString();

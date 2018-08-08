@@ -5,12 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
-import com.cityzipcorp.customer.model.GeoJsonPoint;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -25,7 +24,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 public class LocationUtils {
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
     private Activity activity;
-
+    public int LOCATION_REQUEST_CODE = 1000;
     public LocationUtils(Activity activity) {
         this.activity = activity;
     }
@@ -47,7 +46,7 @@ public class LocationUtils {
     }
 
     public void enableGps(GoogleApiClient googleApiClient) {
-        LocationRequest locationRequest = LocationRequest.create();
+        final LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(30 * 1000);
         locationRequest.setFastestInterval(5 * 1000);
@@ -64,9 +63,7 @@ public class LocationUtils {
                 final LocationSettingsStates state = result.getLocationSettingsStates();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-                        //initializeLocationService();
+                        Log.d("Location call back", "enabled");
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         // Location settings are not satisfied. But could be fixed by showing the user
@@ -74,7 +71,7 @@ public class LocationUtils {
                         try {
                             // Show the dialog by calling startResolutionForResult(),
                             // and check the result in onActivityResult().
-                            status.startResolutionForResult(activity, 1000);
+                            status.startResolutionForResult(activity, LOCATION_REQUEST_CODE);
                         } catch (IntentSender.SendIntentException e) {
                             // Ignore the error.
                         }
@@ -86,26 +83,5 @@ public class LocationUtils {
                 }
             }
         });
-    }
-
-    public GeoJsonPoint getLocation(GoogleApiClient googleApiClient) {
-
-        GeoJsonPoint geoJsonPoint = null;
-        if (!checkLocationPermission()) {
-            requestLocationPermission();
-        } else {
-            if (!isLocationEnabled()) {
-                enableGps(googleApiClient);
-            }
-        }
-        Location mLastLocation = LocationServices.FusedLocationApi
-                .getLastLocation(googleApiClient);
-
-        if (mLastLocation != null) {
-            geoJsonPoint = new GeoJsonPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        } else {
-            geoJsonPoint = new GeoJsonPoint(0, 0);
-        }
-        return geoJsonPoint;
     }
 }

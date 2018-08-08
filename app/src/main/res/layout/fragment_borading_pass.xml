@@ -1,4 +1,5 @@
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -23,7 +24,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
                 android:elevation="9dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -34,23 +35,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="25dp"
                         android:layout_marginTop="10dp"
                         android:orientation="horizontal"
                         android:padding="10dp"
-                        android:paddingStart="20dp">
+                        tools:ignore="UseCompoundDrawables">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:background="@drawable/ic_calendar_red" />
+                            android:background="@drawable/ic_calendar_red"
+                            android:contentDescription="@string/date" />
 
                         <TextView
                             android:id="@+id/txt_date"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingStart="20dp"
+                            android:layout_marginStart="20dp"
                             android:textAlignment="textStart"
                             android:textSize="32sp"
                             android:textStyle="bold" />
@@ -61,22 +63,22 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
                         android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="25dp"
                         android:orientation="horizontal"
-                        android:padding="10dp"
-                        android:paddingStart="20dp">
+                        android:padding="10dp">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:background="@drawable/ic_clock_circular_outline" />
+                            android:background="@drawable/ic_clock_circular_outline"
+                            android:contentDescription="@string/time" />
 
                         <TextView
                             android:id="@+id/txt_start_time"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingStart="20dp"
+                            android:layout_marginStart="20dp"
                             android:textAlignment="textStart"
                             android:textSize="32sp"
                             android:textStyle="bold" />
@@ -95,25 +97,25 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
                         android:orientation="horizontal"
                         android:paddingBottom="10dp"
-                        android:paddingStart="20dp"
                         android:paddingTop="10dp">
 
                         <ImageView
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_gravity="center_vertical"
-                            android:background="@drawable/ic_google_maps" />
+                            android:background="@drawable/ic_google_maps"
+                            android:contentDescription="@string/open_maps" />
 
                         <TextView
                             android:id="@+id/txt_address"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
                             android:layout_weight="4"
-                            android:paddingStart="20dp"
                             android:textSize="18sp" />
 
                         <ImageView
@@ -121,7 +123,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginEnd="10dp"
-                            android:background="@drawable/ic_right_arrow" />
+                            android:background="@drawable/ic_right_arrow"
+                            android:contentDescription="@string/right" />
 
                     </LinearLayout>
 
@@ -130,6 +133,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="-20dp"
                         android:background="@drawable/ic_zig_zag"
+                        android:contentDescription="@string/border"
                         android:elevation="10dp" />
 
                     <LinearLayout
@@ -152,13 +156,15 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/spinner_bg"
+                                android:contentDescription="@string/rotate"
                                 android:fillAfter="true"
                                 android:fillEnabled="true" />
 
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/car" />
+                                android:background="@drawable/car"
+                                android:contentDescription="@string/car" />
                         </RelativeLayout>
 
                         <View
@@ -167,7 +173,6 @@
                             android:layout_height="match_parent"
                             android:layout_marginEnd="10dp"
                             android:layout_marginStart="20dp"
-                            android:layout_toEndOf="@+id/img_car"
                             android:background="@drawable/ic_divider" />
 
                         <LinearLayout
@@ -181,8 +186,6 @@
                                 android:id="@+id/txt_vehicle_no"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentTop="true"
-                                android:layout_alignStart="@+id/textView"
                                 android:layout_marginTop="4dp"
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/ts_xx_large"
@@ -204,7 +207,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="OTP: "
+                                    android:text="@string/otp"
                                     android:textColor="@color/white"
                                     android:textSize="16sp" />
 
@@ -226,7 +229,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:background="#FF6969"
-                        android:text="Track My Ride"
+                        android:text="@string/track_my_ride"
                         android:textColor="@color/white"
                         android:textSize="@dimen/ts_regular"
                         android:textStyle="bold" />
@@ -236,7 +239,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:background="#FF6969"
-                        android:text="SOS"
+                        android:text="@string/sos"
                         android:textColor="@color/white"
                         android:textSize="@dimen/ts_regular"
                         android:textStyle="bold"
@@ -250,20 +253,22 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/card_boarding_pass"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:ignore="UseCompoundDrawables">
 
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="30dp"
+                    android:contentDescription="@string/open_camera"
                     android:background="@drawable/ic_open_camera" />
 
                 <TextView
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Scan QR"
+                    android:text="@string/scan_qr"
                     android:textAlignment="center"
                     android:textColor="#121212"
                     android:textSize="14sp" />
@@ -276,7 +281,7 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="No Boarding pass Assigned to you!"
+                android:text="@string/no_boarding_pass_assigned_to_you"
                 android:visibility="gone" />
 
             <LinearLayout
@@ -294,14 +299,14 @@
                     android:layout_height="wrap_content"
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
-                    android:text="Your Attendance has been marked." />
+                    android:text="@string/your_attendance_has_been_marked" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="20dp"
                     android:paddingStart="20dp"
-                    android:text="Enjoy your ride!" />
+                    android:text="@string/enjoy_your_ride" />
 
             </LinearLayout>
         </RelativeLayout>
