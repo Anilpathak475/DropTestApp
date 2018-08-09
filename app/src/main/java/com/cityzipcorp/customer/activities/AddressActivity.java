@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.cityzipcorp.customer.R;
 import com.cityzipcorp.customer.callbacks.AreaCallback;
@@ -66,7 +65,7 @@ public class AddressActivity extends AppCompatActivity {
     @BindView(R.id.img_refresh)
     public ImageView imgRefresh;
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    android.support.v7.widget.Toolbar toolbar;
 
     private SharedPreferenceManager sharedPreferenceManager;
     private User user;
@@ -84,8 +83,8 @@ public class AddressActivity extends AppCompatActivity {
         uiUtils = new UiUtils(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         getBundleExtra();
-        getAreas();
         macId = Utils.getInstance().getMacId(this);
+        getAreas();
     }
 
     private void getAreas() {
@@ -95,7 +94,16 @@ public class AddressActivity extends AppCompatActivity {
                     getAreas(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), new AreaCallback() {
                         @Override
                         public void onSuccess(List<Area> areas) {
-                            createAddress(areas);
+                            if (areas != null) {
+                                if (areas.size() > 0) {
+                                    createAddress(areas);
+                                } else {
+                                    List<String> area = new ArrayList<>();
+                                    area.add("Select Area");
+                                    setAdapter(areaNames, 0);
+                                }
+                            }
+
                         }
 
                         @Override
@@ -146,9 +154,14 @@ public class AddressActivity extends AppCompatActivity {
 
     private void setValues(Address address) {
         selectedAddress = address;
+        edtLandmark.setText(address.getLandmark());
+        edtSociety.setText(address.getSociety());
+        edtStreetAddress.setText(address.getStreetAddress());
+        edtLocality.setText(address.getLocality());
         txtCity.setText(address.getCity());
         txtState.setText(address.getState());
         txtPinCode.setText(address.getPostalCode());
+
     }
 
     @OnClick(R.id.img_refresh)
@@ -169,6 +182,7 @@ public class AddressActivity extends AppCompatActivity {
                 address.setCity(txtCity.getText().toString());
                 address.setState(selectedAddress.getState());
                 address.setCountry(selectedAddress.getCountry());
+                address.setPostalCode(txtPinCode.getText().toString());
                 User user = new User();
                 user.setId(this.user.getId());
                 GeoLocateAddress geoLocateAddress = new GeoLocateAddress();

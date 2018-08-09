@@ -33,6 +33,7 @@ import com.cityzipcorp.customer.callbacks.ScheduleAdapterChildCallback;
 import com.cityzipcorp.customer.callbacks.ScheduleCallback;
 import com.cityzipcorp.customer.model.Schedule;
 import com.cityzipcorp.customer.model.TimeUpdate;
+import com.cityzipcorp.customer.model.UpdateSchedule;
 import com.cityzipcorp.customer.store.ScheduleStore;
 import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.Constants;
@@ -230,10 +231,14 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     public void outTimeClick(int position) {
         TimeUpdate outTime = scheduleList.get(position).getOutTimeUpdate();
         Calendar calendar = Calendar.getInstance();
-        if (!CalenderUtil.getDifferenceBetweenDates(calendar.getTime(), outTime.getTimestamp())) {
-            startEditActivity(position, "OutTime");
+        if (outTime != null && outTime.getTimestamp() != null) {
+            if (!CalenderUtil.getDifferenceBetweenDates(calendar.getTime(), outTime.getTimestamp())) {
+                startEditActivity(position, "OutTime");
+            } else {
+                uiUtils.shortToast("Cooling period started");
+            }
         } else {
-            uiUtils.shortToast("Cooling period started");
+            startEditActivity(position, "OutTime");
         }
     }
 
@@ -247,10 +252,9 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
             uiUtils.noInternetDialog();
             return;
         }
-        Log.d(TAG, String.valueOf(position));
-        Schedule schedule = scheduleList.get(position);
+        UpdateSchedule updateSchedule = new UpdateSchedule(scheduleList.get(position));
         Intent intent = new Intent(activity, EditEventActivity.class);
-        intent.putExtra(Constants.EDIT_INTENT_EXTRA_DATA, schedule);
+        intent.putExtra(Constants.EDIT_INTENT_EXTRA_DATA, updateSchedule);
         intent.putExtra(Constants.EDIT_INTENT_EXTRA_TIME, timeValue);
         activity.startActivityForResult(intent, 101);
     }
@@ -289,7 +293,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                     txtMonthName.setVisibility(View.VISIBLE);
                     txtMonthName.setText(CalenderUtil.getMonth(dateFromString.getTime()));
                     if (activity != null)
-                        activity.setTitle(CalenderUtil.getFullMonthName(dateFromString.getTime()));
+                        activity.setTitle(CalenderUtil.getMonth(dateFromString.getTime()));
 
                 }
                 final Schedule schedule = getScheduleFromDate(date);
@@ -499,7 +503,6 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
             @Override
             public Schedule getSectionData(int position) {
                 return scheduleList.get(position);
-                /*return CalenderUtil.getDay(eventDate) + ", " + CalenderUtil.getMonthAndDate(eventDate);*/
             }
         };
     }

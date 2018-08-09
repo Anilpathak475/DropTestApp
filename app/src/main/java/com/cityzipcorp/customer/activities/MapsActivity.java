@@ -200,6 +200,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             final GeoLocateAddress geoLocateAddress = user.getHomeStop();
             double[] coordinates = geoLocateAddress.getPoint().getCoordinates();
             latLng = new LatLng(coordinates[1], coordinates[0]);
+            if (user.getHomeStop() != null && user.getAddress() != null) {
+                com.cityzipcorp.customer.model.Address address = user.getAddress();
+                String addressFromObj = address.getSociety() + ", "
+                        + address.getLocality() + ", "
+                        + address.getStreetAddress() + ", "
+                        + address.getLandmark() + ", "
+                        + address.getArea() + ", "
+                        + address.getCity() + ", "
+                        + address.getPostalCode();
+                txtAddressHome.setText(addressFromObj);
+            }
         }
     }
 
@@ -342,9 +353,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 initView();
             }
         });
-        googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+       /* googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
             @Override
             public void onCameraMove() {
+
+        });*/
+        googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
                 if (ADDRESS_TYPE == 0) {
                     if (impMapPin.getVisibility() == View.GONE) {
                         impMapPin.setVisibility(View.VISIBLE);

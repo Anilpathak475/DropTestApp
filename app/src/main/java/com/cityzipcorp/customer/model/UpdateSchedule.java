@@ -12,26 +12,26 @@ import java.util.Date;
  * Created by anilpathak on 06/11/17.
  */
 
-public class Schedule implements Parcelable {
+public class UpdateSchedule implements Parcelable {
 
-    public static final Parcelable.Creator<Schedule> CREATOR = new Parcelable.Creator<Schedule>() {
+    public static final Creator<UpdateSchedule> CREATOR = new Creator<UpdateSchedule>() {
         @Override
-        public Schedule createFromParcel(Parcel source) {
-            return new Schedule(source);
+        public UpdateSchedule createFromParcel(Parcel source) {
+            return new UpdateSchedule(source);
         }
 
         @Override
-        public Schedule[] newArray(int size) {
-            return new Schedule[size];
+        public UpdateSchedule[] newArray(int size) {
+            return new UpdateSchedule[size];
         }
     };
     private String id = "";
     private Date currentDate;
     @SerializedName("date")
-    String dateString;
-    @SerializedName("out_time")
+    private String dateString;
+    @SerializedName("out_time_update")
     private TimeUpdate outTimeUpdate;
-    @SerializedName("in_time")
+    @SerializedName("in_time_update")
     private TimeUpdate inTimeUpdate;
 
     @SerializedName("off_type")
@@ -40,14 +40,20 @@ public class Schedule implements Parcelable {
     @SerializedName("off_reason")
     private String offReason;
 
-    public Schedule() {
-
+    public UpdateSchedule(Schedule schedule) {
+        this.id = schedule.getId();
+        this.currentDate = schedule.getDate();
+        this.inTimeUpdate = schedule.getInTimeUpdate();
+        outTimeUpdate = schedule.getOutTimeUpdate();
+        offReason = schedule.getOffReason();
+        offType = schedule.getOffType();
+        dateString = schedule.dateString;
     }
 
-    protected Schedule(Parcel in) {
+    protected UpdateSchedule(Parcel in) {
         this.id = in.readString();
         this.dateString = in.readString();
-        this.currentDate = (java.util.Date) in.readSerializable();
+        this.currentDate = (Date) in.readSerializable();
         this.outTimeUpdate = in.readParcelable(TimeUpdate.class.getClassLoader());
         this.inTimeUpdate = in.readParcelable(TimeUpdate.class.getClassLoader());
     }
@@ -93,15 +99,15 @@ public class Schedule implements Parcelable {
         return inTimeUpdate;
     }
 
+    public void setInTimeUpdate(TimeUpdate inTimeUpdate) {
+        this.inTimeUpdate = inTimeUpdate;
+    }
+
     public String getOffType() {
         return offType;
     }
 
     public String getOffReason() {
         return offReason;
-    }
-
-    public void setInTimeUpdate(TimeUpdate inTimeUpdate) {
-        this.inTimeUpdate = inTimeUpdate;
     }
 }

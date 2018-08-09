@@ -17,9 +17,9 @@ import com.cityzipcorp.customer.base.BaseActivity;
 import com.cityzipcorp.customer.callbacks.ReasonCallback;
 import com.cityzipcorp.customer.callbacks.ShiftCallback;
 import com.cityzipcorp.customer.model.Reason;
-import com.cityzipcorp.customer.model.Schedule;
 import com.cityzipcorp.customer.model.ShiftTiming;
 import com.cityzipcorp.customer.model.TimeUpdate;
+import com.cityzipcorp.customer.model.UpdateSchedule;
 import com.cityzipcorp.customer.store.ScheduleStore;
 import com.cityzipcorp.customer.utils.CalenderUtil;
 import com.cityzipcorp.customer.utils.Constants;
@@ -94,7 +94,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     private List<String> outTimes = new ArrayList<>();
 
     private List<String> reasonList = new ArrayList<>();
-    private Schedule schedule;
+    private UpdateSchedule schedule;
     private TimeUpdate inTimeUpdate;
     private TimeUpdate outTimeUpdate;
     private UiUtils uiUtils;
@@ -173,8 +173,9 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if (bundle.containsKey(Constants.EDIT_INTENT_EXTRA_DATA)) {
-                schedule = (Schedule) bundle.get(Constants.EDIT_INTENT_EXTRA_DATA);
+                schedule = (UpdateSchedule) bundle.get(Constants.EDIT_INTENT_EXTRA_DATA);
                 String timeToDisplay = bundle.getString(Constants.EDIT_INTENT_EXTRA_TIME);
+                setDateAndDay();
                 if (timeToDisplay != null && timeToDisplay.equalsIgnoreCase("InTime")) {
                     tabLayout.getTabAt(0).select();
                     layoutInTime.setVisibility(View.VISIBLE);
@@ -186,9 +187,11 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
                     setDefaultValues();
                     tabLayout.getTabAt(0).select();
                 }
+
                 try {
                     inTimeUpdate = schedule.getInTimeUpdate();
-                    setInTimeValues();
+                    if (inTimeUpdate != null)
+                        setInTimeValues();
                 } catch (Exception e) {
                     chkCancelInTime.setVisibility(View.GONE);
                     e.printStackTrace();
@@ -197,7 +200,8 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
                 }
                 try {
                     outTimeUpdate = schedule.getOutTimeUpdate();
-                    setOutTimeValues();
+                    if (outTimeUpdate != null)
+                        setOutTimeValues();
                 } catch (Exception e) {
                     e.printStackTrace();
                     chkCancelOutTime.setVisibility(View.GONE);
@@ -233,7 +237,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
 
     }
 
-    private void updateInTime(Schedule schedule) throws ParseException {
+    private void updateInTime(UpdateSchedule schedule) throws ParseException {
         if (validateInTimeValues()) {
             TimeUpdate inTimeUpDate = new TimeUpdate();
             inTimeUpDate.setTimestamp(getTimeFromString(spnInTime.getSelectedItem().toString(), schedule.getDate()));
@@ -245,7 +249,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
         }
     }
 
-    private void updateOutTime(Schedule schedule) throws ParseException {
+    private void updateOutTime(UpdateSchedule schedule) throws ParseException {
         if (validateOutTimeValues()) {
             TimeUpdate outTimeUpdate = new TimeUpdate();
             outTimeUpdate.setTimestamp(getTimeFromString(spnOutTime.getSelectedItem().toString(), schedule.getDate()));
@@ -267,14 +271,12 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
         return calendar.getTime();
     }
 
-    private void updateSchedule(Schedule schedule) {
+    private void updateSchedule(UpdateSchedule schedule) {
         ScheduleStore.getInstance(sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.BASE_URL), macId).
                 updateSchedule(this, schedule, sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN));
     }
 
     private void setInTimeValues() {
-        txtDate.setText(CalenderUtil.getMonthAndDate(schedule.getDate()));
-        txtDay.setText(CalenderUtil.getDay(schedule.getDate()));
         Date inTimeDate = inTimeUpdate.getTimestamp();
         String time = CalenderUtil.get24hrsTime(inTimeDate);
         int indexOfList = inTimes.indexOf(time);
@@ -291,8 +293,6 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
     }
 
     private void setOutTimeValues() {
-        txtDate.setText(CalenderUtil.getMonthAndDate(schedule.getDate()));
-        txtDay.setText(CalenderUtil.getDay(schedule.getDate()));
         Date outTimeDate = outTimeUpdate.getTimestamp();
         String time = CalenderUtil.get24hrsTime(outTimeDate);
         int indexOfList = outTimes.indexOf(time);
@@ -306,6 +306,11 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
         if (!TextUtils.isEmpty(reason)) {
             spnCancelReasonOutTime.setSelection(reasonList.indexOf(reason));
         }
+    }
+
+    private void setDateAndDay() {
+        txtDate.setText(CalenderUtil.getMonthAndDate(schedule.getDate()));
+        txtDay.setText(CalenderUtil.getDay(schedule.getDate()));
     }
 
     @Override
@@ -334,15 +339,17 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
             uiUtils.shortToast("Please Select Time");
             return false;
         }
-        if (spnInTime.getSelectedItem().toString().equalsIgnoreCase(CalenderUtil.get24hrsTime(schedule.getInTimeUpdate().getTimestamp()))) {
-            if (schedule.getInTimeUpdate().isCancelled()) {
-                if (chkCancelInTime.isChecked()) {
+        if (schedule.getInTimeUpdate() != null) {
+            if (spnInTime.getSelectedItem().toString().equalsIgnoreCase(CalenderUtil.get24hrsTime(schedule.getInTimeUpdate().getTimestamp()))) {
+                if (schedule.getInTimeUpdate().isCancelled()) {
+                    if (chkCancelInTime.isChecked()) {
+                        uiUtils.shortToast("Please select different time to update event");
+                        return false;
+                    }
+                } else if (!chkCancelInTime.isChecked()) {
                     uiUtils.shortToast("Please select different time to update event");
                     return false;
                 }
-            } else if (!chkCancelInTime.isChecked()) {
-                uiUtils.shortToast("Please select different time to update event");
-                return false;
             }
         }
         if (spnCancelReasonInTime.getSelectedItem().toString().
@@ -358,10 +365,12 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
             uiUtils.shortToast("Please Select Time");
             return false;
         }
-        if (spnOutTime.getSelectedItem().toString().equalsIgnoreCase(CalenderUtil.get24hrsTime(schedule.getOutTimeUpdate().getTimestamp()))) {
-            if (!chkCancelOutTime.isChecked()) {
-                uiUtils.shortToast("Please select different time to update event");
-                return false;
+        if (schedule.getOutTimeUpdate() != null) {
+            if (spnOutTime.getSelectedItem().toString().equalsIgnoreCase(CalenderUtil.get24hrsTime(schedule.getOutTimeUpdate().getTimestamp()))) {
+                if (!chkCancelOutTime.isChecked()) {
+                    uiUtils.shortToast("Please select different time to update event");
+                    return false;
+                }
             }
         }
         if (spnCancelReasonOutTime.getSelectedItem().toString()

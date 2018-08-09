@@ -28,7 +28,8 @@ public class InstantAutoComplete extends android.support.v7.widget.AppCompatAuto
                                   Rect previouslyFocusedRect) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         if (focused) {
-            performFiltering(getText(), 0);
+            if (getText() != null)
+                performFiltering(getText(), 0);
         }
     }
 

@@ -3,6 +3,7 @@ package com.cityzipcorp.customer.clients;
 import com.cityzipcorp.customer.model.Reason;
 import com.cityzipcorp.customer.model.Schedule;
 import com.cityzipcorp.customer.model.ShiftTiming;
+import com.cityzipcorp.customer.model.UpdateSchedule;
 
 import java.util.List;
 import java.util.Map;
@@ -29,10 +30,10 @@ public interface ScheduleClient {
     Call<List<Reason>> getReason(@HeaderMap Map<String, String> headers);
 
     @PATCH("/api/v1/schedule_updates/{id}/")
-    Call<ResponseBody> updateSchedule(@HeaderMap Map<String, String> headers, @Path("id") String id, @Body Schedule schedule);
+    Call<ResponseBody> updateSchedule(@HeaderMap Map<String, String> headers, @Path("id") String id, @Body UpdateSchedule schedule);
 
     @POST("/api/v1/schedule_updates/")
-    Call<ResponseBody> createSchedule(@HeaderMap Map<String, String> headers, @Body Schedule schedule);
+    Call<ResponseBody> createSchedule(@HeaderMap Map<String, String> headers, @Body UpdateSchedule schedule);
 
     @GET("/api/v1/shifts/times/")
     Call<ShiftTiming> getShiftTimings(@HeaderMap Map<String, String> headers);

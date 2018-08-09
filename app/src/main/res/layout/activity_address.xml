@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginStart="-10dp"
-                android:text="@string/loading_title"
+                android:text="Home Address"
                 android:textColor="@color/white"
                 android:textSize="@dimen/ts_xx_large" />
 

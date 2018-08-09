@@ -159,7 +159,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         uiUtils = new UiUtils(this);
         loginPresenter = new LoginPresenterImpl(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
-        requestPhoneStatePermission();
         checkSession();
         getContracts();
     }
@@ -168,6 +167,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         SharedPreferenceManager sharedPreferenceManager = new SharedPreferenceManager(this);
         if (!sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN).equalsIgnoreCase("")) {
             startHomeActivity();
+        } else {
+            requestPhoneStatePermission();
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.cityzipcorp.customer.callbacks.ReasonCallback;
@@ -13,6 +14,7 @@ import com.cityzipcorp.customer.clients.ScheduleClient;
 import com.cityzipcorp.customer.model.Reason;
 import com.cityzipcorp.customer.model.Schedule;
 import com.cityzipcorp.customer.model.ShiftTiming;
+import com.cityzipcorp.customer.model.UpdateSchedule;
 import com.cityzipcorp.customer.network.ClientGenerator;
 import com.cityzipcorp.customer.utils.NetworkUtils;
 import com.cityzipcorp.customer.utils.UiUtils;
@@ -85,7 +87,7 @@ public class ScheduleStore {
 
     }
 
-    public void updateSchedule(final Activity activity, Schedule schedule, String authToken) {
+    public void updateSchedule(final Activity activity, UpdateSchedule schedule, String authToken) {
         UiUtils uiUtils = new UiUtils(activity);
         if (NetworkUtils.isNetworkAvailable(activity)) {
 
@@ -103,13 +105,14 @@ public class ScheduleStore {
                         activity.setResult(Activity.RESULT_OK, new Intent().putExtra("status", "success"));
                         activity.finish();
                     } else {
-                        Toast.makeText(activity, "Error code is " + response.code(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Unable to update schedule", Toast.LENGTH_SHORT).show();
+                        Log.d("Error code", response.code() + " " + response.message());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Toast.makeText(activity, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "Unable to update schedule", Toast.LENGTH_LONG).show();
                 }
             });
         } else {

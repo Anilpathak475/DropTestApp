@@ -22,7 +22,6 @@ import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 public class LocationUtils {
-    private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
     private Activity activity;
     public int LOCATION_REQUEST_CODE = 1000;
     public LocationUtils(Activity activity) {
