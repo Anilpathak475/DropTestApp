@@ -17,9 +17,26 @@ default_platform(:android)
 
 platform :android do
 
+  desc "Submit a new Staging Beta Build to Crashlytics Beta"
+  lane :staging_beta do
+    ensure_git_branch(branch: "develop")
+    gradle(task: "incrementVersionCode")
+    gradle(task: "clean assemblestagingrelease")
+    crashlytics
+    git_add
+    git_commit(
+      path: "app/version.properties",
+      message: ":rocket: Increment version code :rocket: [ci skip]",
+    )
+    push_to_git_remote(
+      remote: "origin",         # optional, default: "origin"
+      local_branch: "develop",  # optional, aliased by "branch", default: "master"
+      remote_branch: "develop", # optional, default is set to local_branch
+    )
+  end
+
   desc "Submit a new Preprod Beta Build to Crashlytics Beta"
   lane :preprod_beta do
-    ensure_git_status_clean
     ensure_git_branch(branch: "preprod")
     gradle(task: "incrementVersionCode")
     gradle(task: "clean assemblepreprodrelease")
@@ -33,25 +50,6 @@ platform :android do
       remote: "origin",         # optional, default: "origin"
       local_branch: "preprod",  # optional, aliased by "branch", default: "master"
       remote_branch: "preprod", # optional, default is set to local_branch
-    )
-  end
-
-  desc "Submit a new Staging Beta Build to Crashlytics Beta"
-  lane :staging_beta do
-   ## ensure_git_status_clean
-    ##ensure_git_branch(branch: "develop")
-    gradle(task: "incrementVersionCode")
-    gradle(task: "clean assemblestagingrelease")
-    crashlytics
-    git_add
-    git_commit(
-      path: "app/version.properties",
-      message: ":rocket: Increment version code :rocket: [ci skip]",
-    )
-    push_to_git_remote(
-      remote: "origin",         # optional, default: "origin"
-      local_branch: "develop",  # optional, aliased by "branch", default: "master"
-      remote_branch: "develop", # optional, default is set to local_branch
     )
   end
 
