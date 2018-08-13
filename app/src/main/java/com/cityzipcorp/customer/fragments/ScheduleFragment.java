@@ -155,6 +155,7 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                                 public void onFailure(Error error) {
                                     Log.d("Logger ", error.getLocalizedMessage());
                                     setDefaultSchedule();
+                                    uiUtils.shortToast(error.getLocalizedMessage());
                                     uiUtils.dismissDialog();
                                 }
                             });

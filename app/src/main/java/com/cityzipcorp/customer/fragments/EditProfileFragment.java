@@ -131,7 +131,7 @@ public class EditProfileFragment extends BaseFragment {
                                 @Override
                                 public void onFailure(Error error) {
                                     uiUtils.dismissDialog();
-                                    uiUtils.shortToast("Unable to fetch profile details!");
+                                    uiUtils.shortToast(error.getMessage());
                                 }
                             });
         } else {
@@ -217,7 +217,7 @@ public class EditProfileFragment extends BaseFragment {
                     @Override
                     public void onFailure(Error error) {
                         uiUtils.dismissDialog();
-                        uiUtils.shortToast("Unable to update profile!");
+                        uiUtils.shortToast(error.getMessage());
                     }
                 });
     }

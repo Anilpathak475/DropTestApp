@@ -109,7 +109,7 @@ public class AddressActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Error error) {
                             uiUtils.dismissDialog();
-                            uiUtils.notifyDialog("Unable to fetch Areas", new DialogCallback() {
+                            uiUtils.notifyDialog(error.getLocalizedMessage(), new DialogCallback() {
                                 @Override
                                 public void onYes() {
 

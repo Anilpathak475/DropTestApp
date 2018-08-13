@@ -83,13 +83,13 @@ public class UserStore {
                 if (response.isSuccessful()) {
                     userCallback.onSuccess(response.body());
                 } else {
-                    userCallback.onFailure(new Error(""));
+                    userCallback.onFailure(new Error("Unable to get profile information"));
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                userCallback.onFailure(new Error(t));
+                userCallback.onFailure(new Error("Unable to get profile information"));
             }
         });
     }
@@ -103,35 +103,14 @@ public class UserStore {
                 if (response.isSuccessful()) {
                     userCallback.onSuccess(response.body());
                 } else {
-                    userCallback.onFailure(new Error("Request ended with " + response.code() + " status"));
+                    userCallback.onFailure(new Error("Unable to update details at this time. Please try again after some time"));
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                userCallback.onFailure(new Error(t));
-            }
-        });
-    }
+                userCallback.onFailure(new Error("Unable to update details at this time. Please try again after some time"));
 
-    public void updateOptInInfo(String authToken, User user, final UserCallback userCallback) {
-
-        UserClient userClient = clientGenerator.createClient(UserClient.class);
-        Call<User> call = userClient.updateProfile(Utils.getHeader(authToken, macId), user.getId(), user);
-
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    userCallback.onSuccess(response.body());
-                } else {
-                    userCallback.onFailure(new Error("Request ended with " + response.code() + " status"));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                userCallback.onFailure(new Error(t));
             }
         });
     }
@@ -145,13 +124,14 @@ public class UserStore {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
                 } else {
-                    statusCallback.onFailure(new Error("Request ended with " + response.code() + " status"));
+                    statusCallback.onFailure(new Error("Unable to update details at this time. Please try again after some time"));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                statusCallback.onFailure(new Error(t));
+                statusCallback.onFailure(new Error("Unable to update details at this time. Please try again after some time"));
+
             }
         });
     }
@@ -165,13 +145,13 @@ public class UserStore {
                 if (response.isSuccessful()) {
                     nodalStopCallback.onSuccess(response.body());
                 } else {
-                    nodalStopCallback.onFailure(new Error("Request ended with " + response.code() + " status"));
+                    nodalStopCallback.onFailure(new Error("Unable to get stops at this time. Please try again after some time"));
                 }
             }
 
             @Override
             public void onFailure(Call<List<NodalStop>> call, Throwable t) {
-                nodalStopCallback.onFailure(new Error(t));
+                nodalStopCallback.onFailure(new Error("Unable to get stops at this time. Please try again after some time"));
             }
         });
     }
@@ -187,13 +167,13 @@ public class UserStore {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
                 } else {
-                    statusCallback.onFailure(new Error("Request ended with " + response.code() + " status"));
+                    statusCallback.onFailure(new Error("Unable to update stop at this time. Please try again after some time"));
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                statusCallback.onFailure(new Error(t));
+                statusCallback.onFailure(new Error("Unable to update stop at this time. Please try again after some time"));
             }
         });
     }
@@ -208,13 +188,13 @@ public class UserStore {
                 if (response.isSuccessful()) {
                     groupCallBack.onSuccess(response.body());
                 } else {
-                    groupCallBack.onFailure(new Error("Request ended with " + response.code() + " status"));
+                    groupCallBack.onFailure(new Error("Unable to get shifts. Please try again after some time"));
                 }
             }
 
             @Override
             public void onFailure(Call<List<Group>> call, Throwable t) {
-                groupCallBack.onFailure(new Error(t.getMessage()));
+                groupCallBack.onFailure(new Error("Unable to get shifts. Please try again after some time"));
             }
         });
     }

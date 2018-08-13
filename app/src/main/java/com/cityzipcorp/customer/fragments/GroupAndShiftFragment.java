@@ -179,7 +179,7 @@ public class GroupAndShiftFragment extends BaseFragment {
                     @Override
                     public void onFailure(Error error) {
                         uiUtils.dismissDialog();
-                        uiUtils.shortToast("Unable to fetch profile details!");
+                        uiUtils.shortToast(error.getLocalizedMessage());
                     }
                 });
     }
@@ -231,7 +231,7 @@ public class GroupAndShiftFragment extends BaseFragment {
                                 @Override
                                 public void onFailure(Error error) {
                                     uiUtils.dismissDialog();
-                                    uiUtils.shortToast("No groups and shift");
+                                    uiUtils.shortToast(error.getMessage());
                                 }
                             });
         } else {
@@ -265,7 +265,7 @@ public class GroupAndShiftFragment extends BaseFragment {
                                 @Override
                                 public void onFailure(Error error) {
                                     uiUtils.dismissDialog();
-                                    uiUtils.shortToast("Unable to update details");
+                                    uiUtils.shortToast(error.getMessage());
                                 }
                             });
         } else {

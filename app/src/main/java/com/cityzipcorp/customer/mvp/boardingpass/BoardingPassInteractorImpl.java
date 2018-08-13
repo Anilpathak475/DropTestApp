@@ -31,7 +31,7 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
 
             @Override
             public void onFailure(Error error) {
-                listener.setError("Error while capturing sos request");
+                listener.setError(error.getLocalizedMessage());
             }
         });
     }
@@ -43,14 +43,12 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
             public void onSuccess(BoardingPass boardingPass) {
                 if (boardingPass != null) {
                     boardingPassDetailsCallback.onSuccess(boardingPass);
-                } else {
-                    boardingPassDetailsCallback.showPassError("unable to fetch boarding pass");
                 }
             }
 
             @Override
             public void onFailure(Error error) {
-                boardingPassDetailsCallback.showPassError("unable to fetch boarding pass");
+                boardingPassDetailsCallback.showPassError(error.getLocalizedMessage());
             }
         });
     }
@@ -72,8 +70,6 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
                     public void onSuccess(TrackRide trackRide) {
                         if (trackRide != null) {
                             trackMyRideCallback.onSuccess(trackRide);
-                        } else {
-                            trackMyRideCallback.showTrackError("Unable to Fetch Ride Details");
                         }
                     }
 
@@ -95,7 +91,7 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
 
             @Override
             public void onFailure(Error error) {
-                boardingPassCommonCallback.setError("Unable to mark attendance");
+                boardingPassCommonCallback.setError(error.getLocalizedMessage());
             }
         });
     }

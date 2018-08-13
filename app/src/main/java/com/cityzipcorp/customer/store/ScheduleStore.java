@@ -56,13 +56,13 @@ public class ScheduleStore {
                 if (response.isSuccessful()) {
                     scheduleCallback.onSuccess(response.body());
                 } else {
-                    scheduleCallback.onFailure(new Error(response.errorBody().toString()));
+                    scheduleCallback.onFailure(new Error("Unable to get schedule at this time. Please try again later"));
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Schedule>> call, @NonNull Throwable t) {
-                scheduleCallback.onFailure(new Error(t));
+                scheduleCallback.onFailure(new Error("Unable to get schedule at this time. Please try again later"));
             }
         });
 
@@ -75,13 +75,13 @@ public class ScheduleStore {
             @Override
             public void onResponse(Call<List<Reason>> call, Response<List<Reason>> response) {
                 if (response.isSuccessful()) {
-                    reasonCallback.onSuccess(response.body());
+                    reasonCallback.onFailure(new Error("Unable to get reason at this time. Please try again later"));
                 }
             }
 
             @Override
             public void onFailure(Call<List<Reason>> call, Throwable t) {
-                reasonCallback.onFailure(new Error(t));
+                reasonCallback.onFailure(new Error("Unable to get reason at this time. Please try again later"));
             }
         });
 

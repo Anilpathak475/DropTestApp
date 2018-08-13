@@ -234,7 +234,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                         uiUtils.dismissDialog();
                         optInSwitch.setChecked(!user.getOptedIn());
                         activity.isOptIn = !user.getOptedIn();
-                        uiUtils.shortToast("Unable to update profile!");
+                        uiUtils.shortToast(error.getLocalizedMessage());
                     }
                 });
     }
@@ -402,7 +402,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                                 @Override
                                 public void onFailure(Error error) {
                                     uiUtils.dismissDialog();
-                                    uiUtils.shortToast("Unable to update week off!");
+                                    uiUtils.shortToast(error.getLocalizedMessage());
                                 }
                             });
                 } else {
@@ -561,7 +561,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                                         onGoingProfileRequest = false;
                                         swipeRefreshLayout.setRefreshing(false);
                                         uiUtils.dismissDialog();
-                                        uiUtils.shortToast("Unable to fetch profile details!");
+                                        uiUtils.shortToast(error.getLocalizedMessage());
                                     }
                                 });
             } else {

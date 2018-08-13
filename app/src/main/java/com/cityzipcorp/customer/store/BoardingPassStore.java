@@ -41,16 +41,16 @@ public class BoardingPassStore {
         call.enqueue(new Callback<BoardingPass>() {
             @Override
             public void onResponse(@NonNull Call<BoardingPass> call, @NonNull Response<BoardingPass> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body() != null) {
                     boardingPassCallback.onSuccess(response.body());
                 } else {
-                    boardingPassCallback.onFailure(new Error(String.valueOf(response.code())));
+                    boardingPassCallback.onFailure(new Error("Unable to get boarding pass"));
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<BoardingPass> call, @NonNull Throwable t) {
-                boardingPassCallback.onFailure(new Error(t.getMessage()));
+                boardingPassCallback.onFailure(new Error("Unable to get boarding pass"));
             }
         });
     }
@@ -64,13 +64,13 @@ public class BoardingPassStore {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
                 } else {
-                    statusCallback.onFailure(new Error(String.valueOf(response.code())));
+                    statusCallback.onFailure(new Error("Unable to update sos request"));
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                statusCallback.onFailure(new Error(t.getMessage()));
+                statusCallback.onFailure(new Error("Unable to update sos request"));
             }
         });
     }
@@ -83,14 +83,16 @@ public class BoardingPassStore {
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
+                } else if (response.code() == 404) {
+                    statusCallback.onFailure(new Error("Scanned Qr code is invalid. Please try again later!"));
                 } else {
-                    statusCallback.onFailure(new Error(String.valueOf(response.code())));
+                    statusCallback.onFailure(new Error("Unable to mark attendance"));
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                statusCallback.onFailure(new Error(t));
+                statusCallback.onFailure(new Error("Unable to mark attendance"));
             }
         });
     }
