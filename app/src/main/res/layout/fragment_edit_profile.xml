@@ -86,6 +86,7 @@
             android:imeOptions="actionNext"
             android:inputType="textEmailAddress"
             android:maxLines="1"
+            android:enabled="false"
             android:paddingStart="10dp"
             android:textColorHint="@color/disabel_date" />
 

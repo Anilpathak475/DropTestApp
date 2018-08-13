@@ -35,7 +35,7 @@ public class SetNewPasswordInteracterImpl implements SetNewPasswordInteractor {
             return false;
         }
         if (!newPassword.equalsIgnoreCase(confirmPassword)) {
-            listener.onPasswordError("Password do not matched");
+            listener.onPasswordError("Passwords do not match!");
             return false;
         }
         return true;

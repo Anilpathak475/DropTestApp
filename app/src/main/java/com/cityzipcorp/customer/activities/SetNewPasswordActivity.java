@@ -46,7 +46,7 @@ public class SetNewPasswordActivity extends AppCompatActivity implements SetNewP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user_password);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         presenter = new SetNewPasswordPresenterImpl(this);
         uiUtils = new UiUtils(this);
         getExtras();
@@ -98,7 +98,7 @@ public class SetNewPasswordActivity extends AppCompatActivity implements SetNewP
 
     @Override
     public void navigateToLogin() {
-        uiUtils.notifyDialog("Password has been set successfully. click ok login!", new DialogCallback() {
+        uiUtils.notifyDialog("Password has been set successfully. Click ok login!", new DialogCallback() {
             @Override
             public void onYes() {
                 Intent intent = new Intent(SetNewPasswordActivity.this, LoginActivity.class);

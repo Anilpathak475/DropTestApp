@@ -78,7 +78,7 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
                             if (contracts.size() > 0) {
                                 setContractAdapter(contracts);
                             } else {
-                                uiUtils.notifyDialog("Unable to get contacts, please try again later ", new DialogCallback() {
+                                uiUtils.notifyDialog("Unable to get contracts, please try again later ", new DialogCallback() {
                                     @Override
                                     public void onYes() {
                                         finish();
@@ -89,7 +89,7 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
 
                         @Override
                         public void onFailure(Error error) {
-                            uiUtils.notifyDialog("Unable to get contacts, please try again later ", new DialogCallback() {
+                            uiUtils.notifyDialog("Unable to get contracts, please try again later ", new DialogCallback() {
                                 @Override
                                 public void onYes() {
                                     finish();
@@ -163,7 +163,7 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
 
     @Override
     public void success() {
-        uiUtils.notifyDialog("Conformation email has been sent to your email : " + edtEmail.getText().toString(), new DialogCallback() {
+        uiUtils.notifyDialog("Confirmation email has been sent to your email: " + edtEmail.getText().toString(), new DialogCallback() {
             @Override
             public void onYes() {
                 Intent intent = new Intent(ForgotPassword.this, LoginActivity.class);
