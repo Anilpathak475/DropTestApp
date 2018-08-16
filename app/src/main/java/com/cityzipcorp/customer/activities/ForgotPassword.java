@@ -45,7 +45,7 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
     String action;
     private UiUtils uiUtils;
     private ForgotPasswordPresenter forgotPasswordPresenter;
-    private List<Contract> contracts;
+    private List<Contract> contracts = new ArrayList<>();
     private Unbinder unbinder;
 
     @Override
@@ -55,8 +55,8 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordV
         unbinder = ButterKnife.bind(this);
         uiUtils = new UiUtils(this);
         getBundleExtra();
-        getContracts();
         forgotPasswordPresenter = new ForgotPasswordPresenterImpl(this);
+        getContracts();
     }
 
     private void getBundleExtra() {

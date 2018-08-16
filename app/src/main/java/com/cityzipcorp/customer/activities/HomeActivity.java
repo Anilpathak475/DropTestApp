@@ -224,6 +224,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         sharedPreferenceManager = new SharedPreferenceManager(this);
         uiUtils = new UiUtils(this);
         macId = Utils.getInstance().getMacId(this);
+        navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     private void deleteFcmInstance() {
@@ -235,7 +236,6 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     public void setUpBottomNavigationView(int index) {
-        navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         addFragmentByIndex(index);
         navigationView.setVisibility(View.VISIBLE);
         navigationView.getMenu().getItem(index).setChecked(true);
@@ -422,10 +422,14 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     private void clearBackStack() {
-        FragmentManager manager = getSupportFragmentManager();
-        if (manager.getBackStackEntryCount() > 0) {
-            FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(0);
-            manager.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        try {
+            FragmentManager manager = getSupportFragmentManager();
+            if (manager.getBackStackEntryCount() > 0) {
+                FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(0);
+                manager.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

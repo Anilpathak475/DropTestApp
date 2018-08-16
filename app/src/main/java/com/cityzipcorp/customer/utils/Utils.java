@@ -25,6 +25,7 @@ public class Utils {
         Field[] fields = Build.VERSION_CODES.class.getFields();
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put(Constants.HEADER_AUTHORIZATION_KEY, Constants.HEADER_AUTHORIZATION_VALUE_PREFIX + authToken);
+        headerMap.put(Constants.HEADER_TIMEZONE_KEY, "Asia/Kolkata");
         headerMap.put(Constants.HEADER_MOBILE_OS, fields[Build.VERSION.SDK_INT + 1].getName());
         headerMap.put(Constants.HEADER_MOBILE_APP_VERSION, BuildConfig.VERSION_NAME);
         headerMap.put(Constants.HEADER_MOBILE_OS_VERSION, String.valueOf(android.os.Build.VERSION.SDK_INT));

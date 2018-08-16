@@ -33,6 +33,7 @@ import com.cityzipcorp.customer.callbacks.DialogCallback;
 import com.cityzipcorp.customer.model.Attendance;
 import com.cityzipcorp.customer.model.BoardingPass;
 import com.cityzipcorp.customer.model.GeoJsonPoint;
+import com.cityzipcorp.customer.model.NextTrip;
 import com.cityzipcorp.customer.model.TrackRide;
 import com.cityzipcorp.customer.mvp.boardingpass.BoardingPassPresenter;
 import com.cityzipcorp.customer.mvp.boardingpass.BoardingPassPresenterImpl;
@@ -111,6 +112,12 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
+
+    @BindView(R.id.card_next_trip)
+    CardView cardNextTrip;
+
+    @BindView(R.id.txt_next_trip_details)
+    TextView txtNextTripDetails;
 
     private GoogleApiClient googleApiClient;
     private BoardingPass boardingPass;
@@ -246,6 +253,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     private void setPassDetails(BoardingPass boardingPass) {
         try {
+            cardNextTrip.setVisibility(View.GONE);
             swipeRefreshLayout.setRefreshing(false);
             this.boardingPass = boardingPass;
             if (activity != null)
@@ -420,9 +428,14 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
         swipeRefreshLayout.setRefreshing(false);
         cardBoardingPass.setVisibility(View.GONE);
         scanLayout.setVisibility(View.GONE);
-        txtNoBoardingPass.setVisibility(View.VISIBLE);
+        getNextTrip();
     }
 
+    @Override
+    public void noTrip() {
+        cardNextTrip.setVisibility(View.GONE);
+        txtNoBoardingPass.setVisibility(View.VISIBLE);
+    }
 
     @Override
     public void setTrackError(String error) {
@@ -464,6 +477,17 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
         } else {
             uiUtils.shortToast("Trip not Started yet!");
         }
+    }
+
+    @Override
+    public void nextTripSuccess(NextTrip nextTrip) {
+        cardNextTrip.setVisibility(View.VISIBLE);
+        String tripType = nextTrip.getTripType().equals("pick_up") ? "Pickup" : "Drop";
+        String tripDetails = tripType + "," +
+                " " + CalenderUtil.getDay(nextTrip.getTimestamp()) +
+                " " + CalenderUtil.getMonthAndDate(nextTrip.getTimestamp()) +
+                " " + CalenderUtil.getTime(nextTrip.getTimestamp());
+        txtNextTripDetails.setText(tripDetails);
     }
 
     @Override
@@ -528,9 +552,21 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     @Override
     public void onProviderEnabled(String s) {
 
+
     }
 
     @Override
     public void onProviderDisabled(String s) {
     }
+
+    private void getNextTrip() {
+        if (NetworkUtils.isNetworkAvailable(activity)) {
+            boardingPassPresenter.getNextTrip(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), activity.macId);
+        } else {
+            uiUtils.noInternetDialog();
+
+        }
+    }
+
+
 }

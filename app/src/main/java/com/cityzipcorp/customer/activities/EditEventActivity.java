@@ -161,7 +161,7 @@ public class EditEventActivity extends BaseActivity implements TabLayout.OnTabSe
                         @Override
                         public void onFailure(Error error) {
                             uiUtils.dismissDialog();
-                            uiUtils.shortToast("Something went wrong!");
+                            uiUtils.shortToast(error.getMessage());
                         }
                     });
         } else {

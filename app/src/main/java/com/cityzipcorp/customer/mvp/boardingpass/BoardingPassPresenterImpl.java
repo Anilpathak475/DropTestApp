@@ -4,9 +4,10 @@ import android.location.Location;
 
 import com.cityzipcorp.customer.model.Attendance;
 import com.cityzipcorp.customer.model.BoardingPass;
+import com.cityzipcorp.customer.model.NextTrip;
 import com.cityzipcorp.customer.model.TrackRide;
 
-public class BoardingPassPresenterImpl implements BoardingPassPresenter, BoardingPassInteractor.BoardingPassCommonCallback, BoardingPassInteractor.BoardingPassDetailsCallback, BoardingPassInteractor.TrackMyRideCallback, BoardingPassInteractor.BoardingPassAttendanceCallback {
+public class BoardingPassPresenterImpl implements BoardingPassPresenter, BoardingPassInteractor.BoardingPassCommonCallback, BoardingPassInteractor.BoardingPassDetailsCallback, BoardingPassInteractor.TrackMyRideCallback, BoardingPassInteractor.BoardingPassAttendanceCallback, BoardingPassInteractor.NextTripCallback {
 
     private BoardingPassView boardingPassView;
     private BoardingPassInteractorImpl boardingPassInteractor;
@@ -20,6 +21,16 @@ public class BoardingPassPresenterImpl implements BoardingPassPresenter, Boardin
     public void setError(String error) {
         boardingPassView.hideProgress();
         boardingPassView.setError(error);
+    }
+
+    @Override
+    public void onTripFound() {
+        boardingPassView.noTrip();
+    }
+
+    @Override
+    public void onNextTripSuccess(NextTrip nextTrip) {
+        boardingPassView.nextTripSuccess(nextTrip);
     }
 
     @Override
@@ -59,6 +70,11 @@ public class BoardingPassPresenterImpl implements BoardingPassPresenter, Boardin
     @Override
     public void getBoardingPass(String baseUrl, String accessToken, String macId) {
         boardingPassInteractor.getBoardingPass(baseUrl, accessToken, macId, this);
+    }
+
+    @Override
+    public void getNextTrip(String baseUrl, String accessToken, String macId) {
+        boardingPassInteractor.getNextTrip(baseUrl, accessToken, macId, this);
     }
 
     @Override

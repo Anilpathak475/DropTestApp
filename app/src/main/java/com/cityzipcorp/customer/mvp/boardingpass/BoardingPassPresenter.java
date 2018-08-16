@@ -11,6 +11,8 @@ public interface BoardingPassPresenter {
 
     void getBoardingPass(String baseUrl, String accessToken, String macId);
 
+    void getNextTrip(String baseUrl, String accessToken, String macId);
+
     void getRideDetails(String baseUrl, Location location, String passId, String accessToken, String macId);
 
     void markAttendance(String baseUrl, Attendance attendance, String passId, String accessToken, String macId);

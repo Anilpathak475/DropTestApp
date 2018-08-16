@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     private UiUtils uiUtils;
     private Unbinder unbinder;
     private LoginPresenter loginPresenter;
-    private List<Contract> contracts;
+    private List<Contract> contracts = new ArrayList<>();
     private SharedPreferenceManager sharedPreferenceManager;
     private LocationUtils locationUtils;
 
@@ -83,7 +83,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         init();
-
     }
 
     private void requestPhoneStatePermission() {
@@ -160,7 +159,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         loginPresenter = new LoginPresenterImpl(this);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         checkSession();
-        getContracts();
     }
 
     private void checkSession() {
@@ -168,7 +166,11 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         if (!sharedPreferenceManager.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN).equalsIgnoreCase("")) {
             startHomeActivity();
         } else {
+            if (contracts.size() == 0) {
+                getContracts();
+            }
             requestPhoneStatePermission();
+
         }
     }
 

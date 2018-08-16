@@ -6,6 +6,7 @@ import android.util.Log;
 import com.cityzipcorp.customer.callbacks.AreaCallback;
 import com.cityzipcorp.customer.callbacks.ContractCallback;
 import com.cityzipcorp.customer.callbacks.GroupCallBack;
+import com.cityzipcorp.customer.callbacks.NextTripCallback;
 import com.cityzipcorp.customer.callbacks.NodalStopCallback;
 import com.cityzipcorp.customer.callbacks.ProfileStatusCallback;
 import com.cityzipcorp.customer.callbacks.StatusCallback;
@@ -17,6 +18,7 @@ import com.cityzipcorp.customer.model.ChangePassword;
 import com.cityzipcorp.customer.model.Contract;
 import com.cityzipcorp.customer.model.FcmRegistrationToken;
 import com.cityzipcorp.customer.model.Group;
+import com.cityzipcorp.customer.model.NextTrip;
 import com.cityzipcorp.customer.model.NodalStop;
 import com.cityzipcorp.customer.model.NodalStopBody;
 import com.cityzipcorp.customer.model.ProfileStatus;
@@ -305,5 +307,24 @@ public class UserStore {
         });
     }
 
+    public void getNextTrip(String accessToken, final NextTripCallback nextTripCallback) {
+        UserClient userClient = clientGenerator.createClient(UserClient.class);
+        Call<NextTrip> call = userClient.getNextTrip(Utils.getHeader(accessToken, macId));
+        call.enqueue(new Callback<NextTrip>() {
+            @Override
+            public void onResponse(@NonNull Call<NextTrip> call, @NonNull Response<NextTrip> response) {
+                if (response.isSuccessful()) {
+                    nextTripCallback.onSuccess(response.body());
+                } else {
+                    nextTripCallback.onFailure(new Error("NO Trips found"));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<NextTrip> call, @NonNull Throwable t) {
+                nextTripCallback.onFailure(new Error("Unable to Fetch Ride Details"));
+            }
+        });
+    }
 
 }

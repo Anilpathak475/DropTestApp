@@ -75,6 +75,8 @@ public class ScheduleStore {
             @Override
             public void onResponse(Call<List<Reason>> call, Response<List<Reason>> response) {
                 if (response.isSuccessful()) {
+                    reasonCallback.onSuccess(response.body());
+                } else {
                     reasonCallback.onFailure(new Error("Unable to get reason at this time. Please try again later"));
                 }
             }

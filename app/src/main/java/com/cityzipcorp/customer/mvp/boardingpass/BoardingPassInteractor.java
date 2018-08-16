@@ -4,6 +4,7 @@ import android.location.Location;
 
 import com.cityzipcorp.customer.model.Attendance;
 import com.cityzipcorp.customer.model.BoardingPass;
+import com.cityzipcorp.customer.model.NextTrip;
 import com.cityzipcorp.customer.model.TrackRide;
 
 public interface BoardingPassInteractor {
@@ -12,6 +13,8 @@ public interface BoardingPassInteractor {
     void getBoardingPass(String baseUrl, String accessToken, String macId, BoardingPassDetailsCallback boardingPassDetailsCallback);
 
     void getRideDetails(String baseUrl, Location location, String passId, String accessToken, String macId, TrackMyRideCallback trackMyRideCallback);
+
+    void getNextTrip(String baseUrl, String accessToken, String macId, NextTripCallback netTripCallback);
 
     void markAttendance(String baseUrl, Attendance attendance, String passId, String accessToken, String macId, BoardingPassAttendanceCallback boardingPassCommonCallback);
 
@@ -25,6 +28,12 @@ public interface BoardingPassInteractor {
         void setError(String error);
 
         void onAttendanceSuccess();
+    }
+
+    interface NextTripCallback {
+        void onTripFound();
+
+        void onNextTripSuccess(NextTrip nextTrip);
     }
 
     interface BoardingPassDetailsCallback {

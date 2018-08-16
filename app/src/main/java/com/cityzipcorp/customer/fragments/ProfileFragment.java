@@ -550,7 +550,6 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                                                 swipeRefreshLayout.setRefreshing(false);
                                             } catch (Exception e) {
                                                 e.printStackTrace();
-                                                swipeRefreshLayout.setRefreshing(false);
                                                 uiUtils.dismissDialog();
                                             }
                                         }

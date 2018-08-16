@@ -4,6 +4,7 @@ import com.cityzipcorp.customer.model.Area;
 import com.cityzipcorp.customer.model.ChangePassword;
 import com.cityzipcorp.customer.model.FcmRegistrationToken;
 import com.cityzipcorp.customer.model.Group;
+import com.cityzipcorp.customer.model.NextTrip;
 import com.cityzipcorp.customer.model.NodalStop;
 import com.cityzipcorp.customer.model.ProfileStatus;
 import com.cityzipcorp.customer.model.User;
@@ -63,5 +64,7 @@ public interface UserClient {
     @GET("/api/v1/areas/")
     Call<List<Area>> getAreas(@HeaderMap Map<String, String> headers);
 
+    @GET("/api/v1/users/next_trip/")
+    Call<NextTrip> getNextTrip(@HeaderMap Map<String, String> headers);
 
 }

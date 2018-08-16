@@ -8,9 +8,11 @@ import com.cityzipcorp.customer.callbacks.TrackRideCallback;
 import com.cityzipcorp.customer.model.Attendance;
 import com.cityzipcorp.customer.model.BoardingPass;
 import com.cityzipcorp.customer.model.GeoJsonPoint;
+import com.cityzipcorp.customer.model.NextTrip;
 import com.cityzipcorp.customer.model.SosBody;
 import com.cityzipcorp.customer.model.TrackRide;
 import com.cityzipcorp.customer.store.BoardingPassStore;
+import com.cityzipcorp.customer.store.UserStore;
 
 public class BoardingPassInteractorImpl implements BoardingPassInteractor {
 
@@ -78,6 +80,21 @@ public class BoardingPassInteractorImpl implements BoardingPassInteractor {
                         trackMyRideCallback.showTrackError(error.getLocalizedMessage());
                     }
                 });
+    }
+
+    @Override
+    public void getNextTrip(String baseUrl, String accessToken, String macId, final NextTripCallback nextTripCallback) {
+        UserStore.getInstance(baseUrl, macId).getNextTrip(accessToken, new com.cityzipcorp.customer.callbacks.NextTripCallback() {
+            @Override
+            public void onSuccess(NextTrip nextTrip) {
+                nextTripCallback.onNextTripSuccess(nextTrip);
+            }
+
+            @Override
+            public void onFailure(Error error) {
+                nextTripCallback.onTripFound();
+            }
+        });
     }
 
     @Override
