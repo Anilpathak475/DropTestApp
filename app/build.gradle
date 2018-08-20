@@ -106,7 +106,7 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$supportVersion"
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     implementation 'com.brandongogetap:stickyheaders:0.5.0'
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
@@ -118,7 +118,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-tasks:15.0.1'
     implementation 'com.github.lawloretienne:discreteslider:0.0.9'
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
-    implementation 'com.google.firebase:firebase-messaging:17.0.0'
+    implementation 'com.google.firebase:firebase-messaging:17.3.0'
     implementation 'com.google.zxing:core:3.3.2'
     implementation 'com.google.firebase:firebase-core:16.0.1'
 
@@ -137,6 +137,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'org.jetbrains:annotations-java5:15.0'
 }
 
 task incrementVersionCode {

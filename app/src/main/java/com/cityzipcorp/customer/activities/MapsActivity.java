@@ -96,6 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.tick_mark_labels_rl)
     RelativeLayout tickMarkLabelsRelativeLayout;
 
+    private boolean isFirstLoad = true;
     private SharedPreferenceManager sharedPreferenceManager;
     private NodalStop nodalStop;
     private GoogleMap googleMap;
@@ -353,31 +354,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 initView();
             }
         });
-       /* googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
-            @Override
-            public void onCameraMove() {
-
-        });*/
-        googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-            @Override
-            public void onCameraIdle() {
-                if (ADDRESS_TYPE == 0) {
-                    if (impMapPin.getVisibility() == View.GONE) {
-                        impMapPin.setVisibility(View.VISIBLE);
-                    }
-                    btnSetHome.setVisibility(View.VISIBLE);
-                    Log.d("Camera position change" + "", googleMap.getCameraPosition() + "");
-                    latLng = googleMap.getCameraPosition().target;
-                    try {
-                        new FetchAddress().execute(latLng);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        if (ADDRESS_TYPE == 0) {
+            googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+                @Override
+                public void onCameraIdle() {
+                    setCameraProperties();
                 }
-            }
-        });
+            });
+        }
         MapStyleOptions mapStyleOptions = MapStyleOptions.loadRawResourceStyle(this, R.raw.grey_map_style);
         map.setMapStyle(mapStyleOptions);
+    }
+
+    private void setCameraProperties() {
+        btnSetHome.setVisibility(View.VISIBLE);
+        if (!isFirstLoad) {
+            if (impMapPin.getVisibility() == View.GONE) {
+                impMapPin.setVisibility(View.VISIBLE);
+            }
+            Log.d("Camera position change" + "", googleMap.getCameraPosition() + "");
+            latLng = googleMap.getCameraPosition().target;
+            try {
+                new FetchAddress().execute(latLng);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            setCurrentAddressAndMarker();
+        }
+    }
+
+    private void setCurrentAddressAndMarker() {
+        if (user.getHomeStop() != null) {
+            impMapPin.setVisibility(View.GONE);
+            latLng = user.getHomeStop().getPoint().getLocation();
+            com.cityzipcorp.customer.model.Address userAddress = user.getAddress();
+            String addressFromObj = userAddress.getSociety() + ", "
+                    + userAddress.getLocality() + ", "
+                    + userAddress.getStreetAddress() + ", "
+                    + userAddress.getLandmark() + ", "
+                    + userAddress.getArea() + ", "
+                    + userAddress.getCity() + ", "
+                    + userAddress.getPostalCode();
+            txtAddressHome.setText(addressFromObj);
+            address = userAddress;
+            isFirstLoad = false;
+        } else {
+            isFirstLoad = false;
+            setCameraProperties();
+        }
     }
 
     @Override

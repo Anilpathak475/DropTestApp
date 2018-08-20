@@ -84,7 +84,7 @@ public class BoardingPassStore {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
                 } else if (response.code() == 404) {
-                    statusCallback.onFailure(new Error("Scanned Qr code is invalid. Please try again later!"));
+                    statusCallback.onFailure(new Error("Scanned QR code is invalid. Please try again later!"));
                 } else {
                     statusCallback.onFailure(new Error("Unable to mark attendance"));
                 }

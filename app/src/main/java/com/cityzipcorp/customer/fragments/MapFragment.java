@@ -252,11 +252,11 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             txtVehicleName.setText(replaceNull(boardingPass.getVehicleColor() + " " + boardingPass.getVehicleType() + " " + boardingPass.getVehicleModel()));
             txtVehicleNo.setText(boardingPass.getVehicleNumber());
 
-            if (boardingPass.getOtp().equalsIgnoreCase("")) {
-                layoutOtp.setVisibility(View.GONE);
-            } else {
+            if (boardingPass.isOtp()) {
                 layoutOtp.setVisibility(View.VISIBLE);
                 txtOtp.setText(String.format(" %s", boardingPass.getOtp()));
+            } else {
+                layoutOtp.setVisibility(View.GONE);
             }
             if (trackRide.getEta() >= 0) {
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(trackRide.getEta());

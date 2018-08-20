@@ -256,17 +256,17 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
             cardNextTrip.setVisibility(View.GONE);
             this.boardingPass = boardingPass;
             if (activity != null)
-                activity.setTitle("Pass ID :#" + boardingPass.getId().substring(0, 8).toUpperCase());
+                activity.setTitle("Pass ID: #" + boardingPass.getId().substring(0, 8).toUpperCase());
             txtVehicleName.setText(replaceNull(boardingPass.getVehicleColor() + " " + boardingPass.getVehicleType() + " " + boardingPass.getVehicleModel()));
             txtVehicleNo.setText(boardingPass.getVehicleNumber());
-            if (boardingPass.getExpectedAttendanceMethod().equalsIgnoreCase("otp")) {
+            if (boardingPass.isOtp()) {
                 layoutOtp.setVisibility(View.VISIBLE);
                 scanLayout.setVisibility(View.GONE);
             } else {
                 layoutOtp.setVisibility(View.GONE);
                 scanLayout.setVisibility(View.VISIBLE);
             }
-            txtOtp.setText(boardingPass.getOtp());
+            txtOtp.setText(String.format(" %s", boardingPass.getOtp()));
             txtAddress.setText(boardingPass.getStopAddress());
             txtAddress.setText(boardingPass.getStopAddress());
             txtDate.setText(CalenderUtil.getPassDateFromDate(boardingPass.getStopTimestamp()));

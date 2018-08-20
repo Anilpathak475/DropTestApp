@@ -128,6 +128,7 @@ please click here</string>
     <string name="back">Back</string>
     <string name="bulk">Bulk</string>
     <string name="right">Right</string>
+    <string name="trip_notice">Changes will reflect in trips starting after 24 hours</string>
 
 
 </resources>

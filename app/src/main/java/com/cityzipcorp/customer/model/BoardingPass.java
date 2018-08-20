@@ -94,10 +94,6 @@ public class BoardingPass implements Parcelable {
         return vehicleColor;
     }
 
-    public String getExpectedAttendanceMethod() {
-        return expectedAttendanceMethod;
-    }
-
     public Date getStopTimestamp() {
         return stopTimestamp;
     }
@@ -168,5 +164,9 @@ public class BoardingPass implements Parcelable {
         dest.writeByte(this.attended ? (byte) 1 : (byte) 0);
         dest.writeLong(this.attendedAt != null ? this.attendedAt.getTime() : -1);
         dest.writeParcelable(this.geoJsonPoint, flags);
+    }
+
+    public boolean isOtp() {
+        return expectedAttendanceMethod.equalsIgnoreCase("otp");
     }
 }
