@@ -254,16 +254,17 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     private void setPassDetails(BoardingPass boardingPass) {
         try {
             cardNextTrip.setVisibility(View.GONE);
-            swipeRefreshLayout.setRefreshing(false);
             this.boardingPass = boardingPass;
             if (activity != null)
                 activity.setTitle("Pass ID :#" + boardingPass.getId().substring(0, 8).toUpperCase());
             txtVehicleName.setText(replaceNull(boardingPass.getVehicleColor() + " " + boardingPass.getVehicleType() + " " + boardingPass.getVehicleModel()));
             txtVehicleNo.setText(boardingPass.getVehicleNumber());
-            if (boardingPass.getOtp().equalsIgnoreCase("")) {
-                layoutOtp.setVisibility(View.GONE);
-            } else {
+            if (boardingPass.getExpectedAttendanceMethod().equalsIgnoreCase("otp")) {
                 layoutOtp.setVisibility(View.VISIBLE);
+                scanLayout.setVisibility(View.GONE);
+            } else {
+                layoutOtp.setVisibility(View.GONE);
+                scanLayout.setVisibility(View.VISIBLE);
             }
             txtOtp.setText(boardingPass.getOtp());
             txtAddress.setText(boardingPass.getStopAddress());
@@ -271,7 +272,6 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
             txtDate.setText(CalenderUtil.getPassDateFromDate(boardingPass.getStopTimestamp()));
             txtStartTime.setText(CalenderUtil.getTime(boardingPass.getStopTimestamp()));
             cardBoardingPass.setVisibility(View.VISIBLE);
-            scanLayout.setVisibility(View.VISIBLE);
             startAnimation();
             if (boardingPass.getAttendedAt() != null) {
                 attendanceSuccess();
@@ -425,7 +425,8 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     @Override
     public void setPassError(String error) {
-        swipeRefreshLayout.setRefreshing(false);
+        if (swipeRefreshLayout != null)
+            swipeRefreshLayout.setRefreshing(false);
         cardBoardingPass.setVisibility(View.GONE);
         scanLayout.setVisibility(View.GONE);
         getNextTrip();
@@ -449,7 +450,8 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     @Override
     public void passDetailSuccess(BoardingPass boardingPass) {
-        swipeRefreshLayout.setRefreshing(false);
+        if (swipeRefreshLayout != null)
+            swipeRefreshLayout.setRefreshing(false);
         setPassDetails(boardingPass);
     }
 
@@ -509,12 +511,12 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     }
 
     private boolean getScreenShotStatus() {
-        boolean isAllowed = true;
+        boolean isAllowed = false;
         if (activity.getPackageName().equalsIgnoreCase("com.cityzipcorp.customer.staging")) {
-            isAllowed = false;
+            isAllowed = true;
         }
         if (activity.getPackageName().equalsIgnoreCase("com.cityzipcorp.customer.preprod")) {
-            isAllowed = false;
+            isAllowed = true;
         }
         return isAllowed;
     }

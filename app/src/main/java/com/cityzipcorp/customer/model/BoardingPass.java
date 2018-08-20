@@ -56,6 +56,8 @@ public class BoardingPass implements Parcelable {
     private Date attendedAt;
     @SerializedName("attended_location")
     private GeoJsonPoint geoJsonPoint;
+    @SerializedName("expected_attendance_method")
+    private String expectedAttendanceMethod;
 
     public BoardingPass() {
     }
@@ -84,132 +86,44 @@ public class BoardingPass implements Parcelable {
         this.geoJsonPoint = in.readParcelable(GeoJsonPoint.class.getClassLoader());
     }
 
-    public boolean isAttended() {
-        return attended;
-    }
-
-    public void setAttended(boolean attended) {
-        this.attended = attended;
-    }
-
     public Date getAttendedAt() {
         return attendedAt;
-    }
-
-    public void setAttendedAt(Date attendedAt) {
-        this.attendedAt = attendedAt;
-    }
-
-    public GeoJsonPoint getGeoJsonPoint() {
-        return geoJsonPoint;
-    }
-
-    public void setGeoJsonPoint(GeoJsonPoint geoJsonPoint) {
-        this.geoJsonPoint = geoJsonPoint;
     }
 
     public String getVehicleColor() {
         return vehicleColor;
     }
 
-    public void setVehicleColor(String vehicleColor) {
-        this.vehicleColor = vehicleColor;
-    }
-
-    public String getTripName() {
-        return tripName;
-    }
-
-    public void setTripName(String tripName) {
-        this.tripName = tripName;
+    public String getExpectedAttendanceMethod() {
+        return expectedAttendanceMethod;
     }
 
     public Date getStopTimestamp() {
         return stopTimestamp;
     }
 
-    public void setStopTimestamp(Date stopTimestamp) {
-        this.stopTimestamp = stopTimestamp;
-    }
-
     public GeoJsonPoint getStopLocation() {
         return stopLocation;
-    }
-
-    public void setStopLocation(GeoJsonPoint geoJsonPoint) {
-        this.stopLocation = geoJsonPoint;
     }
 
     public String getVehicleModel() {
         return vehicleModel;
     }
 
-    public void setVehicleModel(String vehicleModel) {
-        this.vehicleModel = vehicleModel;
-    }
-
     public String getStopAddress() {
         return stopAddress;
-    }
-
-    public void setStopAddress(String stopAddress) {
-        this.stopAddress = stopAddress;
     }
 
     public String getVehicleType() {
         return vehicleType;
     }
 
-    public void setVehicleType(String vehicleType) {
-        this.vehicleType = vehicleType;
-    }
-
-    public String getDriverName() {
-        return driverName;
-    }
-
-    public void setDriverName(String driverName) {
-        this.driverName = driverName;
-    }
-
-    public String getDriverPhoneNumber() {
-        return driverPhoneNumber;
-    }
-
-    public void setDriverPhoneNumber(String driverPhoneNumber) {
-        this.driverPhoneNumber = driverPhoneNumber;
-    }
-
     public String getTripType() {
         return tripType;
     }
 
-    public void setTripType(String tripType) {
-        this.tripType = tripType;
-    }
-
-    public String getDutyId() {
-        return dutyId;
-    }
-
-    public void setDutyId(String dutyId) {
-        this.dutyId = dutyId;
-    }
-
     public String getVehicleNumber() {
         return vehicleNumber;
-    }
-
-    public void setVehicleNumber(String vehicleNumber) {
-        this.vehicleNumber = vehicleNumber;
-    }
-
-    public String getStopId() {
-        return stopId;
-    }
-
-    public void setStopId(String stopId) {
-        this.stopId = stopId;
     }
 
     public String getId() {
@@ -218,14 +132,6 @@ public class BoardingPass implements Parcelable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getStopType() {
-        return stopType;
-    }
-
-    public void setStopType(String stopType) {
-        this.stopType = stopType;
     }
 
     public String getOtp() {

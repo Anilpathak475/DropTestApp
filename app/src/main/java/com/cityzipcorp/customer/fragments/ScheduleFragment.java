@@ -141,8 +141,10 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                                 public void onSuccess(List<Schedule> schedules) {
                                     if (schedules.size() > 0) {
                                         scheduleList = schedules;
-                                        createCalenderFromList();
-                                        setAdapter();
+                                        if (layoutInflater != null)
+                                            createCalenderFromList();
+                                        if (recyclerView != null)
+                                            setAdapter();
                                         uiUtils.dismissDialog();
                                     } else {
                                         setDefaultSchedule();
@@ -169,7 +171,8 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         Schedule schedule = new Schedule();
         schedule.setDate(Calendar.getInstance().getTime());
         scheduleList.add(schedule);
-        createCalenderFromList();
+        if (layoutInflater != null)
+            createCalenderFromList();
     }
 
     private void setAdapter() {
@@ -188,11 +191,13 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
                     };
                     handler.postDelayed(r, 2000);
                 } else {
-                    if (scheduleList.size() != 0) {
+                    if (scheduleList.size() > 0 && recyclerView != null) {
                         try {
                             LinearLayoutManager layoutManager = ((LinearLayoutManager)
                                     recyclerView.getLayoutManager());
-                            setSelectedDateInTableFromScroll(scheduleList.get(layoutManager.findFirstVisibleItemPosition()).getDate());
+                            Date headerDate = scheduleList.get(layoutManager.findFirstVisibleItemPosition()).getDate();
+                            if (headerDate != null)
+                                setSelectedDateInTableFromScroll(headerDate);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -270,7 +275,8 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void createCalenderFromList() {
         List<List<Date>> mapList = CalenderUtil.getAllDays(scheduleList.get(0).getDate());
-        tableLayout.removeAllViews();
+        if (tableLayout != null)
+            tableLayout.removeAllViews();
         bulkDateList.clear();
         dateMapList.clear();
         addWeekDaysInTable();
@@ -441,7 +447,8 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         txtS.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         txtS.setText("S");
         tableRow.addView(txtS);
-        tableLayout.addView(tableRow);
+        if (tableLayout != null)
+            tableLayout.addView(tableRow);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -626,10 +633,10 @@ public class ScheduleFragment extends BaseFragment implements ScheduleAdapterChi
         previousDate = null;
         c = null;
         handler = null;
-        dateMapList = null;
+        dateMapList.clear();
         editedBackgroundColor = null;
         currentBackgroundColor = null;
         cancelledBackgroundColor = null;
-        bulkDateList = null;
+        bulkDateList.clear();
     }
 }

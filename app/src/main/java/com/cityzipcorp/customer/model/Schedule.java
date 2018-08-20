@@ -85,10 +85,6 @@ public class Schedule implements Parcelable {
         return outTimeUpdate;
     }
 
-    public void setOutTimeUpdate(TimeUpdate outTimeUpdate) {
-        this.outTimeUpdate = outTimeUpdate;
-    }
-
     public TimeUpdate getInTimeUpdate() {
         return inTimeUpdate;
     }
@@ -99,9 +95,5 @@ public class Schedule implements Parcelable {
 
     public String getOffReason() {
         return offReason;
-    }
-
-    public void setInTimeUpdate(TimeUpdate inTimeUpdate) {
-        this.inTimeUpdate = inTimeUpdate;
     }
 }
