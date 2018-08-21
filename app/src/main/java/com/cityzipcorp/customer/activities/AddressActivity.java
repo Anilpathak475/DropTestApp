@@ -123,22 +123,23 @@ public class AddressActivity extends AppCompatActivity {
     }
 
     private void createAddress(List<Area> areas) {
-        int selectedIndex = -1;
+
         for (Area area : areas) {
-            areaNames.add(area.getAreaName().toUpperCase());
-            if (selectedAddress.getArea().equalsIgnoreCase(area.getAreaName())) {
-                selectedIndex = areaNames.indexOf(area.getAreaName());
-            }
+            areaNames.add(area.getAreaName());
         }
+        int selectedIndex = areaNames.indexOf(selectedAddress.getArea());
         setAdapter(areaNames, selectedIndex);
+
         uiUtils.dismissDialog();
+
     }
 
     private void setAdapter(List<String> areaNames, int selectedIndex) {
         autoCompleteArea.setAdapter(new ArrayAdapter<>(this, R.layout.spinner_item, areaNames));
-        if (selectedIndex > 0) {
+        if (selectedIndex > -1) {
             autoCompleteArea.setSelection(selectedIndex);
         }
+        autoCompleteArea.setText(areaNames.get(selectedIndex));
     }
 
     private void getBundleExtra() {
@@ -161,7 +162,6 @@ public class AddressActivity extends AppCompatActivity {
         txtCity.setText(address.getCity());
         txtState.setText(address.getState());
         txtPinCode.setText(address.getPostalCode());
-
     }
 
     @OnClick(R.id.img_refresh)

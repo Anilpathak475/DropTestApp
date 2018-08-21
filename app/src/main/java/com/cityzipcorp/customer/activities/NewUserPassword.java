@@ -46,7 +46,7 @@ public class NewUserPassword extends AppCompatActivity implements SetNewPassword
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user_password);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         presenter = new SetNewPasswordPresenterImpl(this);
         uiUtils = new UiUtils(this);
         getExtras();

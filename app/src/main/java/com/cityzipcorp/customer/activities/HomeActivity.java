@@ -31,6 +31,7 @@ import com.cityzipcorp.customer.fragments.GroupAndShiftFragment;
 import com.cityzipcorp.customer.fragments.ProfileFragment;
 import com.cityzipcorp.customer.fragments.ScheduleFragment;
 import com.cityzipcorp.customer.model.FcmRegistrationToken;
+import com.cityzipcorp.customer.model.NotificationType;
 import com.cityzipcorp.customer.model.ProfileStatus;
 import com.cityzipcorp.customer.store.UserStore;
 import com.cityzipcorp.customer.utils.Constants;
@@ -126,9 +127,45 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            NotificationType notificationType = NotificationType.valueOf(message);
+            switch (notificationType) {
+                case opt:
+                    otpChanged();
+                    break;
+                case am:
+                case nbp:
+                case ubp:
+                    boardingPassChanged();
+                    break;
+                default:
 
+                    break;
+            }
         }
     };
+
+    private void boardingPassChanged() {
+        backAllowed = false;
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(getFragmentTag());
+        if (fragment instanceof BoardingPassFragment) {
+            BoardingPassFragment dashboardFragment = (BoardingPassFragment) fragment;
+            dashboardFragment.onMessageEvent();
+        } else {
+            replaceFragment(new BoardingPassFragment(), getString(string.boarding_pass));
+        }
+    }
+
+    private void otpChanged() {
+        backAllowed = false;
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(getFragmentTag());
+        if (fragment instanceof ProfileFragment) {
+            ProfileFragment dashboardFragment = (ProfileFragment) fragment;
+            dashboardFragment.onMessageEvent();
+        } else {
+            replaceFragment(new ProfileFragment(), getString(string.profile));
+        }
+    }
 
     private BroadcastReceiver dataReceiver = new BroadcastReceiver() {
         @Override

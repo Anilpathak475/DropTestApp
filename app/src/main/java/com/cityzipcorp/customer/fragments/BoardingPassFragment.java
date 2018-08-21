@@ -200,6 +200,9 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
         vehicleNumber = null;
     }
 
+    public void onMessageEvent() {
+        getPassDetails();
+    }
     @OnClick(R.id.btn_track_my_ride)
     void trackMyRide() {
         if (NetworkUtils.isNetworkAvailable(activity)) {

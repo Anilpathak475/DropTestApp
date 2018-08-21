@@ -22,6 +22,7 @@ public class MsgService extends FirebaseMessagingService {
     private static final String TAG = "DriverFCMService";
 
     static void updateMyActivity(Context context, String message) {
+
         Intent intent = new Intent("fcm_data");
         intent.putExtra("message", message);
         context.sendBroadcast(intent);

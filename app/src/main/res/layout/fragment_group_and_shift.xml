@@ -46,4 +46,13 @@
         android:background="@color/app_theme_red"
         android:text="@string/update"
         android:textColor="@color/white" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="@string/trip_notice"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_dark_grey" />
 </LinearLayout>

@@ -199,6 +199,9 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         });
     }
 
+    public void onMessageEvent() {
+        getProfileInfo();
+    }
     private void optInChanged(final boolean checked) {
         if (!checked) {
             uiUtils.optOutConformationDialog("Are you sure you want to opt out!", new OptOutDialogCallback() {
@@ -535,6 +538,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         if (!onGoingProfileRequest)
             if (NetworkUtils.isNetworkAvailable(activity)) {
                 onGoingProfileRequest = true;
+                optInSwitch.setOnCheckedChangeListener(null);
                 UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                         getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                                 new UserCallback() {

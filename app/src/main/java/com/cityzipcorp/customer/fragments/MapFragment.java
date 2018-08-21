@@ -83,6 +83,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @BindView(R.id.center_map)
     ImageButton centerMap;
 
+    private boolean isMarkerRotating = false;
     private Marker vehicleMarker;
     private Marker serviceMarker;
     private LocationUtils locationUtils;
@@ -290,9 +291,10 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                     vehicleMarker = googleMap.addMarker(new MarkerOptions().
                             position(latLng).
                             title("Vehicle Location").icon(BitmapDescriptorFactory.
-                            fromBitmap(getBitmapBySize(R.drawable.track_bus_pin))));
+                            fromBitmap(getCarBitmap(R.drawable.cab_marker))));
 
                 } else {
+                    //   float rotation = (float) bearingBetweenLocations(vehicleMarker.getPosition(), latLng);
                     animateMarker(vehicleMarker, latLng, false);
                 }
                 builder.include(latLng);
@@ -368,6 +370,18 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         return Bitmap.createScaledBitmap(bitmap, 80, 120, false);
     }
 
+    private Bitmap getCarBitmap(int iconResID) {
+        Drawable drawable = ContextCompat.getDrawable(activity, iconResID);
+        assert drawable != null;
+        drawable = (DrawableCompat.wrap(drawable)).mutate();
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return Bitmap.createScaledBitmap(bitmap, 30, 60, false);
+    }
+
     public void animateMarker(final Marker marker, final LatLng toPosition,
                               final boolean hideMarker) {
         final Handler handler = new Handler();
@@ -405,7 +419,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         });
     }
 
-   /* private double bearingBetweenLocations(LatLng latLng1, LatLng latLng2) {
+    private double bearingBetweenLocations(LatLng latLng1, LatLng latLng2) {
 
         double PI = 3.14159;
         double lat1 = latLng1.latitude * PI / 180;
@@ -427,7 +441,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         return brng;
     }
 
-    private void rotateMarker(final Marker marker, final float toRotation) {
+    private void rotateMarker(final Marker marker, final float toRotation, final LatLng latLng) {
         if (!isMarkerRotating) {
             final Handler handler = new Handler();
             final long start = SystemClock.uptimeMillis();
@@ -453,9 +467,10 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                     } else {
                         isMarkerRotating = false;
                     }
+                    marker.setPosition(latLng);
                 }
             });
         }
-    }*/
+    }
 
 }

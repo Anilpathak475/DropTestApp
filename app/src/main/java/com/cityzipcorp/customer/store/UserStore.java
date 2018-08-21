@@ -231,15 +231,15 @@ public class UserStore {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Log.d("FCM Sync Status", "Fcm registration successfully");
+                    Log.d("NotificationType Sync Status", "Fcm registration successfully");
                 } else {
-                    Log.d(" FCM Sync Status", "Fcm registration failure wu=ith status code" + response.code());
+                    Log.d(" NotificationType Sync Status", "Fcm registration failure wu=ith status code" + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                Log.d(" FCM Sync Status", "Fcm registration failure");
+                Log.d(" NotificationType Sync Status", "Fcm registration failure");
             }
         });
     }
