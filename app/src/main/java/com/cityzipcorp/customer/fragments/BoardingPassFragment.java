@@ -128,6 +128,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     private boolean attendanceMarked = false;
     private String vehicleNumber;
     private Unbinder unbinder;
+
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

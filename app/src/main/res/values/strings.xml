@@ -131,4 +131,16 @@ please click here</string>
     <string name="trip_notice">Changes will reflect in trips starting after 24 hours</string>
 
 
+
+    <!-- Notification settings string -->
+    <string name="channel_name">CityZipCorp</string>
+    <string name="content_title">CityZip</string>
+    <string name="channel_description">Notification for CityZipCorp</string>
+
+    <!-- Notification strings -->
+    <string name="nbp">A new boarding pass has been issued to you. Please see the app for more details.</string>
+    <string name="ubp">Your boading pass has been updated</string>
+    <string name="am">Your attendance has been marked by the driver</string>
+    <string name="opt">You have been opted out from the transport service</string>
+
 </resources>
