@@ -429,11 +429,23 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     @Override
     public void setPassError(String error) {
-        if (swipeRefreshLayout != null)
-            swipeRefreshLayout.setRefreshing(false);
+        this.boardingPass = null;
+        this.clearUI();
+
+        getNextTrip();
+    }
+
+    private void clearUI() {
         cardBoardingPass.setVisibility(View.GONE);
         scanLayout.setVisibility(View.GONE);
-        getNextTrip();
+        layoutAttendance.setVisibility(View.GONE);
+        btnSOS.setVisibility(View.GONE);
+        btnTrackMyRide.setVisibility(View.GONE);
+
+        if (activity != null)
+            activity.setTitle("");
+
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
