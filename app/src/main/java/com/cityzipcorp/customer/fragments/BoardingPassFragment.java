@@ -204,6 +204,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     public void onMessageEvent() {
         getPassDetails();
     }
+
     @OnClick(R.id.btn_track_my_ride)
     void trackMyRide() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
@@ -500,11 +501,11 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     @Override
     public void nextTripSuccess(NextTrip nextTrip) {
         cardNextTrip.setVisibility(View.VISIBLE);
-        String tripType = nextTrip.getTripType().equals("pick_up") ? "Pickup" : "Drop";
+        String tripType = nextTrip.getTripType().equals("pick_up") ? "Pick up" : "Drop";
         String tripDetails = tripType + "," +
                 " " + CalenderUtil.getDay(nextTrip.getTimestamp()) +
                 " " + CalenderUtil.getMonthAndDate(nextTrip.getTimestamp()) +
-                " " + CalenderUtil.getTime(nextTrip.getTimestamp());
+                ", " + CalenderUtil.getTime(nextTrip.getTimestamp());
         txtNextTripDetails.setText(tripDetails);
     }
 
