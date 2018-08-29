@@ -138,8 +138,8 @@ public class AddressActivity extends AppCompatActivity {
         autoCompleteArea.setAdapter(new ArrayAdapter<>(this, R.layout.spinner_item, areaNames));
         if (selectedIndex > -1) {
             autoCompleteArea.setSelection(selectedIndex);
+            autoCompleteArea.setText(areaNames.get(selectedIndex));
         }
-        autoCompleteArea.setText(areaNames.get(selectedIndex));
     }
 
     private void getBundleExtra() {
