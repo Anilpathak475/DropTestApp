@@ -202,6 +202,7 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
     public void onMessageEvent() {
         getProfileInfo();
     }
+
     private void optInChanged(final boolean checked) {
         if (!checked) {
             uiUtils.optOutConformationDialog("Are you sure you want to opt out!", new OptOutDialogCallback() {
@@ -450,7 +451,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                     + address.getArea() + ", "
                     + address.getCity() + ", "
                     + address.getPostalCode();
-            txtHomeAddress.setText(addressFromObj);
+            if (txtHomeAddress != null)
+                txtHomeAddress.setText(addressFromObj);
         }
         if (user.getCompanyName() != null) {
             txtCompanyName.setText(user.getCompanyName());

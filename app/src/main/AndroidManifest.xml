@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.cityzipcorp.customer">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -49,10 +50,17 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="portrait"
+            tools:replace="screenOrientation" />
+        <activity
             android:name=".activities.MapsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".activities.AutocompletePlaceActivity"
+            android:screenOrientation="portrait"
+
             android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
@@ -73,7 +81,9 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activities.SetNewPasswordActivity">
+        <activity
+            android:name=".activities.SetNewPasswordActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -86,7 +96,11 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.NewUserPassword">
+        <activity
+            android:name=".activities.NewUserPassword"
+            android:screenOrientation="portrait"
+
+            >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -99,9 +113,12 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ForgotPassword" />
+        <activity
+            android:name=".activities.ForgotPassword"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.AddressActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <provider

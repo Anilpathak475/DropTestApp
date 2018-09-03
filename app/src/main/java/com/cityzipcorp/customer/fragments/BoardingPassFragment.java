@@ -300,7 +300,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     @OnClick(R.id.scan_layout)
     void onScanPass() {
-        new IntentIntegrator(activity).initiateScan();
+        new IntentIntegrator(activity).setOrientationLocked(false).initiateScan();
     }
 
     @OnClick(R.id.layout_pickup_address)
@@ -432,27 +432,32 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
     public void setPassError(String error) {
         this.boardingPass = null;
         this.clearUI();
-
         getNextTrip();
     }
 
     private void clearUI() {
-        cardBoardingPass.setVisibility(View.GONE);
-        scanLayout.setVisibility(View.GONE);
-        layoutAttendance.setVisibility(View.GONE);
-        btnSOS.setVisibility(View.GONE);
-        btnTrackMyRide.setVisibility(View.GONE);
-
+        if (cardBoardingPass != null)
+            cardBoardingPass.setVisibility(View.GONE);
+        if (scanLayout != null)
+            scanLayout.setVisibility(View.GONE);
+        if (layoutAttendance != null)
+            layoutAttendance.setVisibility(View.GONE);
+        if (btnSOS != null)
+            btnSOS.setVisibility(View.GONE);
+        if (btnTrackMyRide != null)
+            btnTrackMyRide.setVisibility(View.GONE);
         if (activity != null)
             activity.setTitle("");
-
-        swipeRefreshLayout.setRefreshing(false);
+        if (swipeRefreshLayout != null)
+            swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void noTrip() {
-        cardNextTrip.setVisibility(View.GONE);
-        txtNoBoardingPass.setVisibility(View.VISIBLE);
+        if (cardNextTrip != null)
+            cardNextTrip.setVisibility(View.GONE);
+        if (txtNoBoardingPass != null)
+            txtNoBoardingPass.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -500,21 +505,29 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     @Override
     public void nextTripSuccess(NextTrip nextTrip) {
-        cardNextTrip.setVisibility(View.VISIBLE);
         String tripType = nextTrip.getTripType().equals("pick_up") ? "Pick up" : "Drop";
         String tripDetails = tripType + "," +
                 " " + CalenderUtil.getDay(nextTrip.getTimestamp()) +
                 " " + CalenderUtil.getMonthAndDate(nextTrip.getTimestamp()) +
                 ", " + CalenderUtil.getTime(nextTrip.getTimestamp());
-        txtNextTripDetails.setText(tripDetails);
+
+        if (cardNextTrip != null)
+            cardNextTrip.setVisibility(View.VISIBLE);
+        if (txtNextTripDetails != null)
+            txtNextTripDetails.setText(tripDetails);
+
     }
 
     @Override
     public void attendanceSuccess() {
-        scanLayout.setVisibility(View.GONE);
-        btnTrackMyRide.setVisibility(View.GONE);
-        layoutAttendance.setVisibility(View.VISIBLE);
-        btnSOS.setVisibility(View.VISIBLE);
+        if (scanLayout != null)
+            scanLayout.setVisibility(View.GONE);
+        if (btnTrackMyRide != null)
+            btnTrackMyRide.setVisibility(View.GONE);
+        if (layoutAttendance != null)
+            layoutAttendance.setVisibility(View.VISIBLE);
+        if (btnSOS != null)
+            btnSOS.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -543,7 +556,8 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
         rotate.setDuration(3000);
         rotate.setInterpolator(new LinearInterpolator());
         rotate.setRepeatCount(Animation.INFINITE); //Repeat animation indefinitely
-        imgVehicle.startAnimation(rotate);
+        if (imgVehicle != null)
+            imgVehicle.startAnimation(rotate);
     }
 
     @Override
@@ -580,7 +594,8 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     private void getNextTrip() {
         if (NetworkUtils.isNetworkAvailable(activity)) {
-            boardingPassPresenter.getNextTrip(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), activity.macId);
+            if (boardingPassPresenter != null)
+                boardingPassPresenter.getNextTrip(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN), activity.macId);
         } else {
             uiUtils.noInternetDialog();
 
