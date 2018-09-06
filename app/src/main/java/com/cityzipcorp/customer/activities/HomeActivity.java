@@ -394,7 +394,6 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
     @Override
     protected void onPause() {
         super.onPause();
-        unRegisterReceivers();
     }
 
     private void unRegisterReceivers() {
@@ -472,7 +471,6 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private void navigateToLogin() {
         sharedPreferenceManager.clearValue(SharedPreferenceManagerConstant.ACCESS_TOKEN);
-        sharedPreferenceManager.clearValue(SharedPreferenceManagerConstant.FCM_TOKEN);
         sharedPreferenceManager.clearValue(SharedPreferenceManagerConstant.IMAGE_DATA);
         sharedPreferenceManager.clearValue(SharedPreferenceManagerConstant.BASE_URL);
         Intent intent = new Intent(HomeActivity.this, LoginActivity.class);

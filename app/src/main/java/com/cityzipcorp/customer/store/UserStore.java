@@ -126,13 +126,13 @@ public class UserStore {
                 if (response.isSuccessful()) {
                     statusCallback.onSuccess();
                 } else {
-                    statusCallback.onFailure(new Error("Unable to update details at this time. Please try again after some time"));
+                    statusCallback.onFailure(new Error("Unable to logout"));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                statusCallback.onFailure(new Error("Unable to update details at this time. Please try again after some time"));
+                statusCallback.onFailure(new Error("Unable to logout"));
 
             }
         });
@@ -231,15 +231,15 @@ public class UserStore {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Log.d("NotificationType Sync Status", "Fcm registration successfully");
+                    Log.d("Fcm Sync Status", "Fcm registration successfully");
                 } else {
-                    Log.d(" NotificationType Sync Status", "Fcm registration failure wu=ith status code" + response.code());
+                    Log.d("Fcm Sync Status", "Fcm registration failure wu=ith status code" + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                Log.d(" NotificationType Sync Status", "Fcm registration failure");
+                Log.d("Fcm Sync Status", "Fcm registration failure");
             }
         });
     }

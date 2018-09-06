@@ -49,7 +49,6 @@ public class MessageService extends FirebaseMessagingService {
 
         Map<String, String> map = remoteMessage.getData();
         String type = map.get("t");
-
         if (isForeground()) {
             broadcastFcmIntent(type);
         } else {

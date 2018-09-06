@@ -279,7 +279,14 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
             cardBoardingPass.setVisibility(View.VISIBLE);
             startAnimation();
             if (boardingPass.getAttendedAt() != null) {
-                attendanceSuccess();
+                if (scanLayout != null)
+                    scanLayout.setVisibility(View.GONE);
+                if (btnTrackMyRide != null)
+                    btnTrackMyRide.setVisibility(View.GONE);
+                if (layoutAttendance != null)
+                    layoutAttendance.setVisibility(View.VISIBLE);
+                if (btnSOS != null)
+                    btnSOS.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -520,14 +527,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     @Override
     public void attendanceSuccess() {
-        if (scanLayout != null)
-            scanLayout.setVisibility(View.GONE);
-        if (btnTrackMyRide != null)
-            btnTrackMyRide.setVisibility(View.GONE);
-        if (layoutAttendance != null)
-            layoutAttendance.setVisibility(View.VISIBLE);
-        if (btnSOS != null)
-            btnSOS.setVisibility(View.VISIBLE);
+        getPassDetails();
     }
 
     @Override
