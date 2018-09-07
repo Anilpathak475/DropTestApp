@@ -22,7 +22,10 @@ platform :android do
     ensure_git_branch(branch: "develop")
     gradle(task: "incrementVersionCode")
     gradle(task: "clean assemblestagingrelease")
-    crashlytics
+    crashlytics(
+      groups: ["Procedure"],
+      notifications: true,
+    )
     git_add
     git_commit(
       path: "app/version.properties",
@@ -40,7 +43,10 @@ platform :android do
     ensure_git_branch(branch: "preprod")
     gradle(task: "incrementVersionCode")
     gradle(task: "clean assemblepreprodrelease")
-    crashlytics
+    crashlytics(
+      groups: ["Procedure"],
+      notifications: true,
+    )
     git_add
     git_commit(
       path: "app/version.properties",

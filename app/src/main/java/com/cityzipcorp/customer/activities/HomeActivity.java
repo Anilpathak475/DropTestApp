@@ -128,19 +128,24 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra("message");
-            NotificationType notificationType = NotificationType.valueOf(message);
-            switch (notificationType) {
-                case opt:
-                    otpChanged();
-                    break;
-                case am:
-                case nbp:
-                case ubp:
-                    boardingPassChanged();
-                    break;
-                default:
-
-                    break;
+            if (message != null) {
+                try {
+                    NotificationType notificationType = NotificationType.valueOf(message);
+                    switch (notificationType) {
+                        case opt:
+                            otpChanged();
+                            break;
+                        case am:
+                        case nbp:
+                        case ubp:
+                            boardingPassChanged();
+                            break;
+                        default:
+                            break;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     };
