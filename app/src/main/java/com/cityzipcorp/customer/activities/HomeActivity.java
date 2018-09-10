@@ -159,6 +159,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         } else {
             replaceFragment(new BoardingPassFragment(), getString(string.boarding_pass));
         }
+        navigationView.setSelectedItemId(id.boarding_pass);
     }
 
     private void otpChanged() {
@@ -170,6 +171,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
         } else {
             replaceFragment(new ProfileFragment(), getString(string.profile));
         }
+        navigationView.setSelectedItemId(R.id.profile);
     }
 
     private BroadcastReceiver dataReceiver = new BroadcastReceiver() {
