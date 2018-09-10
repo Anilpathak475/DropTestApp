@@ -465,6 +465,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
             cardNextTrip.setVisibility(View.GONE);
         if (txtNoBoardingPass != null)
             txtNoBoardingPass.setVisibility(View.VISIBLE);
+        activity.setTitle("No Trip Scheduled");
     }
 
     @Override
@@ -525,6 +526,7 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
                     cardNextTrip.setVisibility(View.VISIBLE);
                 if (txtNextTripDetails != null)
                     txtNextTripDetails.setText(tripDetails);
+                activity.setTitle("Next Trip");
             } else {
                 noTrip();
             }

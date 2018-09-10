@@ -249,7 +249,7 @@ public class HomeActivity extends BaseActivity implements GoogleApiClient.Connec
             navigationView.setVisibility(View.GONE);
             onInCompleteProfile(new GroupAndShiftFragment(), getString(string.group_and_shift));
             hideNavigationBar();
-        } else if (!profileStatus.isNodalUpdated() || !profileStatus.isHomeUpdated()) {
+        } else if (!profileStatus.isNodalUpdated() || !profileStatus.isHomeUpdated() || !profileStatus.isOptedIn()) {
             setUpBottomNavigationView(2);
         } else {
             setUpBottomNavigationView(0);

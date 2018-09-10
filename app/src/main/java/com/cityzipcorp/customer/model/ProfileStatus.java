@@ -15,6 +15,14 @@ public class ProfileStatus {
     @SerializedName("has_nodal_stop")
     private boolean isNodalUpdated;
 
+    @SerializedName("has_opted_in")
+    private boolean isOptedIn;
+
+
+    public boolean isOptedIn() {
+        return isOptedIn;
+    }
+
     public boolean isGenderUpdated() {
         return isGenderUpdated;
     }
