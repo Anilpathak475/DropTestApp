@@ -540,7 +540,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
         if (!onGoingProfileRequest)
             if (NetworkUtils.isNetworkAvailable(activity)) {
                 onGoingProfileRequest = true;
-                optInSwitch.setOnCheckedChangeListener(null);
+                if (optInSwitch != null)
+                    optInSwitch.setOnCheckedChangeListener(null);
                 UserStore.getInstance(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.BASE_URL), activity.macId).
                         getProfileInfo(sharedPreferenceUtils.getValue(SharedPreferenceManagerConstant.ACCESS_TOKEN),
                                 new UserCallback() {
@@ -551,9 +552,12 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
                                             try {
                                                 uiUtils.dismissDialog();
                                                 setValues(user);
-                                                noDataLayout.setVisibility(View.GONE);
-                                                layoutMain.setVisibility(View.VISIBLE);
-                                                swipeRefreshLayout.setRefreshing(false);
+                                                if (noDataLayout != null)
+                                                    noDataLayout.setVisibility(View.GONE);
+                                                if (layoutMain != null)
+                                                    layoutMain.setVisibility(View.VISIBLE);
+                                                if (swipeRefreshLayout != null)
+                                                    swipeRefreshLayout.setRefreshing(false);
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                                 uiUtils.dismissDialog();
@@ -572,7 +576,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
             } else {
                 uiUtils.noInternetDialog();
                 uiUtils.dismissDialog();
-                swipeRefreshLayout.setRefreshing(false);
+                if (swipeRefreshLayout != null)
+                    swipeRefreshLayout.setRefreshing(false);
             }
     }
 
@@ -600,7 +605,8 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        swipeRefreshLayout.setRefreshing(true);
+        if (swipeRefreshLayout != null)
+            swipeRefreshLayout.setRefreshing(true);
         getProfileInfo();
     }
 
@@ -640,25 +646,32 @@ public class ProfileFragment extends BaseFragment implements SwipeRefreshLayout.
 
     private void setWeeklyOffs(String weekOff) {
         if (weekOff.equalsIgnoreCase("Monday")) {
-            toggleButtonMon.setChecked(true);
+            if (toggleButtonMon != null)
+                toggleButtonMon.setChecked(true);
         }
         if (weekOff.equalsIgnoreCase("Tuesday")) {
-            toggleButtonTue.setChecked(true);
+            if (toggleButtonTue != null)
+                toggleButtonTue.setChecked(true);
         }
         if (weekOff.equalsIgnoreCase("Wednesday")) {
-            toggleButtonWed.setChecked(true);
+            if (toggleButtonWed != null)
+                toggleButtonWed.setChecked(true);
         }
         if (weekOff.equalsIgnoreCase("Thursday")) {
-            toggleButtonThu.setChecked(true);
+            if (toggleButtonThu != null)
+                toggleButtonThu.setChecked(true);
         }
         if (weekOff.equalsIgnoreCase("Friday")) {
-            toggleButtonFri.setChecked(true);
+            if (toggleButtonFri != null)
+                toggleButtonFri.setChecked(true);
         }
         if (weekOff.equalsIgnoreCase("Saturday")) {
-            toggleButtonSat.setChecked(true);
+            if (toggleButtonSat != null)
+                toggleButtonSat.setChecked(true);
         }
         if (weekOff.equalsIgnoreCase("Sunday")) {
-            toggleButtonSun.setChecked(true);
+            if (toggleButtonSun != null)
+                toggleButtonSun.setChecked(true);
         }
     }
 

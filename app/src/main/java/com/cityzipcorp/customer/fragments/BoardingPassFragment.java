@@ -512,17 +512,25 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     @Override
     public void nextTripSuccess(NextTrip nextTrip) {
-        String tripType = nextTrip.getTripType().equals("pick_up") ? "Pick up" : "Drop";
-        String tripDetails = tripType + "," +
-                " " + CalenderUtil.getDay(nextTrip.getTimestamp()) +
-                " " + CalenderUtil.getMonthAndDate(nextTrip.getTimestamp()) +
-                ", " + CalenderUtil.getTime(nextTrip.getTimestamp());
+        if (nextTrip != null) {
+            if (nextTrip.getTimestamp() != null) {
+                String tripType = nextTrip.getTripType().equals("pick_up") ? "Pick up" : "Drop";
 
-        if (cardNextTrip != null)
-            cardNextTrip.setVisibility(View.VISIBLE);
-        if (txtNextTripDetails != null)
-            txtNextTripDetails.setText(tripDetails);
+                String tripDetails = tripType + "," +
+                        " " + CalenderUtil.getDay(nextTrip.getTimestamp()) +
+                        " " + CalenderUtil.getMonthAndDate(nextTrip.getTimestamp()) +
+                        ", " + CalenderUtil.getTime(nextTrip.getTimestamp());
 
+                if (cardNextTrip != null)
+                    cardNextTrip.setVisibility(View.VISIBLE);
+                if (txtNextTripDetails != null)
+                    txtNextTripDetails.setText(tripDetails);
+            } else {
+                noTrip();
+            }
+        } else {
+            noTrip();
+        }
     }
 
     @Override

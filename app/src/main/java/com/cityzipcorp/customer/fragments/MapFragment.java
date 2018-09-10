@@ -291,7 +291,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                     vehicleMarker = googleMap.addMarker(new MarkerOptions().
                             position(latLng).
                             title("Vehicle Location").icon(BitmapDescriptorFactory.
-                            fromBitmap(getCarBitmap(R.drawable.cab_marker))));
+                            fromBitmap(getCarBitmap(R.drawable.track_cab_pin))));
 
                 } else {
                     //   float rotation = (float) bearingBetweenLocations(vehicleMarker.getPosition(), latLng);
