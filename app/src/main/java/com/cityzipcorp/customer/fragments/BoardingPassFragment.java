@@ -258,25 +258,37 @@ BoardingPassFragment extends BaseFragment implements BoardingPassView, SwipeRefr
 
     private void setPassDetails(BoardingPass boardingPass) {
         try {
-            cardNextTrip.setVisibility(View.GONE);
+            if (cardNextTrip != null)
+                cardNextTrip.setVisibility(View.GONE);
             this.boardingPass = boardingPass;
             if (activity != null)
                 activity.setTitle("Pass ID: #" + boardingPass.getId().substring(0, 8).toUpperCase());
-            txtVehicleName.setText(replaceNull(boardingPass.getVehicleColor() + " " + boardingPass.getVehicleType() + " " + boardingPass.getVehicleModel()));
-            txtVehicleNo.setText(boardingPass.getVehicleNumber());
+            if (txtVehicleName != null)
+                txtVehicleName.setText(replaceNull(boardingPass.getVehicleColor() + " " + boardingPass.getVehicleType() + " " + boardingPass.getVehicleModel()));
+            if (txtVehicleNo != null)
+                txtVehicleNo.setText(boardingPass.getVehicleNumber());
             if (boardingPass.isOtp()) {
-                layoutOtp.setVisibility(View.VISIBLE);
-                scanLayout.setVisibility(View.GONE);
+                if (layoutOtp != null)
+                    layoutOtp.setVisibility(View.VISIBLE);
+                if (scanLayout != null)
+                    scanLayout.setVisibility(View.GONE);
             } else {
-                layoutOtp.setVisibility(View.GONE);
-                scanLayout.setVisibility(View.VISIBLE);
+                if (layoutOtp != null)
+                    layoutOtp.setVisibility(View.GONE);
+                if (scanLayout != null)
+                    scanLayout.setVisibility(View.VISIBLE);
             }
-            txtOtp.setText(String.format(" %s", boardingPass.getOtp()));
-            txtAddress.setText(boardingPass.getStopAddress());
-            txtAddress.setText(boardingPass.getStopAddress());
-            txtDate.setText(CalenderUtil.getPassDateFromDate(boardingPass.getStopTimestamp()));
-            txtStartTime.setText(CalenderUtil.getTime(boardingPass.getStopTimestamp()));
-            cardBoardingPass.setVisibility(View.VISIBLE);
+            if (txtOtp != null)
+                txtOtp.setText(String.format(" %s", boardingPass.getOtp()));
+            if (txtAddress != null)
+                txtAddress.setText(boardingPass.getStopAddress());
+
+            if (txtDate != null)
+                txtDate.setText(CalenderUtil.getPassDateFromDate(boardingPass.getStopTimestamp()));
+            if (txtStartTime != null)
+                txtStartTime.setText(CalenderUtil.getTime(boardingPass.getStopTimestamp()));
+            if (cardBoardingPass != null)
+                cardBoardingPass.setVisibility(View.VISIBLE);
             startAnimation();
             if (boardingPass.getAttendedAt() != null) {
                 if (scanLayout != null)
