@@ -640,6 +640,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         protected void onPostExecute(Address coreAddress) {
             super.onPostExecute(coreAddress);
             if (coreAddress != null) {
+                address = null;
+                address = new com.cityzipcorp.customer.model.Address();
                 txtAddressHome.setText(replaceNull(coreAddress.getAddressLine(0)));
                 address.setPostalCode(replaceNull(coreAddress.getPostalCode()));
                 address.setCity(replaceNull(coreAddress.getLocality()));
