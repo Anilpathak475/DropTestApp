@@ -56,15 +56,13 @@ android {
 
         preprod {
             minSdkVersion 17
-            applicationId 'com.cityzipcorp.driver.preprod'
+            applicationId 'com.cityzipcorp.customer.preprod'
             targetSdkVersion 26
             versionCode code
             versionName name
             multiDexEnabled true
-            buildConfigField 'String', 'BASE_URL', "\"https://api-preprod.cityzipcorp.in\""
-            buildConfigField 'String', 'LOCATION_URL', "\"https://api-location-preprod.cityzipcorp.in/api/v1/gpslogs/collect/\""
-            buildConfigField 'String', 'LOCATION_API_TOKEN', "\"d9b3a7d17de8386cfdf28e7e0251f062b22e76e5\""
-            resValue 'string', 'google_maps_api_key', "\"AIzaSyBoKzJEERnb-Ib4rDOxPT7HG6p9WV1R4wI\""
+            buildConfigField 'String', 'BASE_URL_CONTRACT', "\"https://api-preprod.cityzipcorp.in/api/v1/customer_contracts/summary/\""
+            resValue 'string', 'google_maps_api_key', "\"AIzaSyDAmlBKUTYq6bc3D42L7i9_krGre-zvUrg\""
         }
 
         staging {
