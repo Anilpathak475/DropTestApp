@@ -126,13 +126,16 @@ public class CalenderUtil {
         long minutesInMilli = secondsInMilli * 60;
         long hoursInMilli = minutesInMilli * 60;
 
-        long elapsedHours = Math.abs(different / hoursInMilli);
+        long elapsedHours = different / hoursInMilli;
 
-
-        if (elapsedHours < 4) {
-            String currTime = getAMPMValueFromDate(startDate);
-            String targetTime = getAMPMValueFromDate(endDate);
-            return currTime.equalsIgnoreCase(targetTime);
+        if (elapsedHours > 0) {
+            if (elapsedHours < 4) {
+                String currTime = getAMPMValueFromDate(startDate);
+                String targetTime = getAMPMValueFromDate(endDate);
+                return currTime.equalsIgnoreCase(targetTime);
+            }
+        } else {
+            return true;
         }
 
         return false;
